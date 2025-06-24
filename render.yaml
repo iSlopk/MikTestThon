@@ -1,12 +1,12 @@
 databases:
-  - name: DataMikthon
+  - name: Mikthon
     ipAllowList: []
     region: frankfurt
     plan: free
 services:
   - type: web
     plan: free
-    name: WebMikthon
+    name: Mikthon
     env: python
     repo: https://github.com/iSlopk/MikTestThon
     buildCommand: pip install -U -r requirements.txt
