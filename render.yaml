@@ -15,6 +15,10 @@ services:
     envVars:
       - key: ALIVE_NAME
         sync: false
+      - key: API_HASH 
+        sync: false
+      - key: APP_ID 
+        sync: false
       - key: ENV
         value: ANYTHING
       - key: STRING_SESSION
