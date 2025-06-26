@@ -305,8 +305,7 @@ async def show_team_points(event):
 @zedub.bot_cmd(pattern="^/(p|delp)(?:\s+(\d+))?$")
 async def manage_points(event):
     global TEAMS
-    if not TEAM_MODE_STATUS:
-        return await event.reply("❌ وضع الفرق غير مُفعل.")
+    if not TEAM_MODEعل.")
     cmd = event.pattern_match.group(1)
     points = int(event.pattern_match.group(2) or 1)
     user_id = await get_user_id(event, event.pattern_match.groups())
@@ -317,9 +316,11 @@ async def manage_points(event):
         return await event.reply("❌ المستخدم غير مسجل في أي فريق.")
     if cmd == "p":
         TEAMS[team_name]["points"] += points
+        set_points(event.chat_id, user_id, get_points(event.chat_id, user_id) + points)  # تحديث قاعدة البيانات الفردية
         await event.reply(f"✅ تم إضافة {points} نقاط لفريق {team_name}.")
     else:
         TEAMS[team_name]["points"] = max(0, TEAMS[team_name]["points"] - points)
+        set_points(event.chat_id, user_id, max(0, get_points(event.chat_id, user_id) - points))  # تحديث قاعدة البيانات الفردية
         await event.reply(f"❌ تم خصم {points} نقاط من فريق {team_name}.")
         
         
