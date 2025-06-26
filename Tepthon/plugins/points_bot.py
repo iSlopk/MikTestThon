@@ -90,13 +90,18 @@ async def points_manage(event):
     global TEAM_MODE_STATUS
     if TEAM_MODE_STATUS:
         # إذا كان وضع الفرق مُفعل، استخدم وظيفة إدارة الفرق
-        return await team_manage كان وضع الفرق غير مُفعل، استخدم النظام العادي
+        return await team_manage_points(event)
+    else:
+        # إذا كان وضع الفرق غير مُفعل، استخدم النظام العادي
         return await individual_manage_points(event)
 
 async def individual_manage_points(event):
     """إدارة النقاط في الوضع العادي"""
     if not event.is_group:
-        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعاتين فقط.")
+        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات.")
+    perms = await event.client.get_permissions(event.chat_id, event.sender_id)
+    if not perms.is_admin:
+        return await safe_edit_or_reply(event, "❗️الأمر متاح للمشرفين فقط.")
     args = event.pattern_match.group(1) 
     args = args.split() if args else []
     cmd = event.text.split()[0].lower().replace(cmhd, "/")
