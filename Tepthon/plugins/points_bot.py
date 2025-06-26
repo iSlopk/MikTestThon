@@ -38,6 +38,8 @@ def get_points(chat_id, user_id):
         return row[0] if row else 0
 
 def set_points(chat_id, user_id, points):
+    points = min(points, MAX_POINTS)  # الحد الأقصى
+    points = max(points, 0)  # الحد الأدنى
     try:
         with get_db() as db:
             db.execute(
