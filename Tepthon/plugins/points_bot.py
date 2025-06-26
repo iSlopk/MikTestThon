@@ -1,6 +1,7 @@
 import asyncio
 import sqlite3
 from telethon import events
+from telethon.tl.custom import Button
 from telethon.errors.rpcerrorlist import MessageAuthorRequiredError
 from . import zedub
 from ..Config import Config
