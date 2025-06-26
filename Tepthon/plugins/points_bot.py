@@ -307,18 +307,20 @@ async def join_team(event):
     team_name = event.pattern_match.group(1).decode('utf-8') if isinstance(event.pattern_match.group(1), bytes) else event.pattern_match.group(1)
     
     user_id = event.sender_id
-    MAX_MEMBERS = 
+    MAX_MEMBERS = 10  # تعيين قيمة ثابتة للحد الأقصى لعدد الأعضاء
     
     # التحقق من أن المستخدم غير مسجل بالفعل في فريق آخر
     for team in TEAMS.values():
         if user_id in team["members"]:
             return await event.reply("❌ أنت مسجل بالفعل في أحد الفرق.")
     
-    # التحقق من أن الفريق غير ممتلئ
+    # التحقق من أن الفريق غير موجود
     if team_name not in TEAMS:
         return await event.reply("❌ الفريق غير موجود.")
     
-    if len(TEAMS("❌ هذا الفريق ممتلئ بالفعل.")
+    # التحقق من أن الفريق غير ممتلئ
+    if len(TEAMS[team_name]["members"]) >= MAX_MEMBERS:
+        return await event.reply("❌ هذا الفريق ممتلئ بالفعل.")
     
     # إضافة المستخدم إلى الفريق
     TEAMS[team_name]["members"].append(user_id)
