@@ -419,9 +419,6 @@ async def update_team_names(event):
         names = event.pattern_match.group(1).split(",")
         names = [name.strip() for name in names]
         
-        if len(names) != len(TEAMS):
-            return await event.reply(f"❌ يجب إدخال {len(TEAMS)} أسماء فرق.")
-        
         # تحديث أسماء الفرق
         old_keys = list(TEAMS.keys())
         for i, name in enumerate(names):
