@@ -6,9 +6,6 @@ from telethon.errors.rpcerrorlist import MessageAuthorRequiredError
 from . import zedub
 from ..Config import Config
 from ..core.managers import edit_or_reply
-from Tepthon.utils.decorator import zedub, safe_edit_or_reply
-from Tepthon.sql_helper.points_sql import get_points, set_points
-
 
 TEAM_MODE_STATUS = False
 TEAMS = {}
