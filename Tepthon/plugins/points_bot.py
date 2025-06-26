@@ -364,3 +364,4 @@ async def team_manage_points(event):
         # خصم النقاط من الفريق
         TEAMS[team_name]["points"] = max(0, TEAMS[team_name]["points"] - points)
         await event.reply(f"❌ تم خصم {points} نقاط من فريق {team_name}.")
+        
