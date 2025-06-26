@@ -296,7 +296,7 @@ async def register_teams(event):
         await event.reply("📝 اختر الفريق الذي تريد التسجيل فيه:", buttons=buttons)
     except Exception as e:
         # التعامل مع الأخطاء المحتملة
-        await event.reply(f"❌ حدث خطأ أثناء إنشاء الأزرار: {str(e)}")tons)
+        await event.reply(f"❌ حدث خطأ أثناء إنشاء الأزرار: {str(e)}")
     
     
 @zedub.tgbot.on(events.CallbackQuery(pattern=r"join_team\|(.+)"))
