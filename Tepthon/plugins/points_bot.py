@@ -106,7 +106,7 @@ async def team_commands(event):
     """الأوامر الخاصة بالفرق"""
     global TEAM_MODE_STATUS
     if not TEAM_MODE_STATUS:  # تحقق 
-    await safe_edit_or_reply(event, "❌ هذا الأمر متاح فقط في وضع الفرق.")
+        await safe_edit_or_reply(event, "❌ هذا الأمر متاح فقط في وضع الفرق.")
     
     # توجيه الأوامر إلى الوظائف المناسبة
     cmd = event.text.split()[0].lower().replace(cmhd, "/")
