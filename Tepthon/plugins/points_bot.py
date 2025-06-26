@@ -13,6 +13,7 @@ TEAMS = {}
 plugin_category = "بوت النقاط"
 cmhd = Config.COMMAND_HAND_LER
 DB_PATH = "points_db.sqlite"
+MAX_POINTS = 1000
 
 def get_db():
     return sqlite3.connect(DB_PATH)
