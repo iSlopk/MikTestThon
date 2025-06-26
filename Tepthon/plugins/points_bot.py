@@ -250,8 +250,8 @@ async def deactivate_team_mode(event):
 async def set_teams(event):
     global TEAMS
     num_teams = int(event.pattern_match.group(1))
-    if num_teams < 2:
-        return await event.reply("❌ يجب أن يكون عدد الفرق 2 أو أكثر.")
+    if num_teams < 2 or num_teams > 10:
+        return await event.reply("❌ يجب أن يكون عدد الفرق بين 2 و 10.")
     TEAMS = {f"Team {i+1}": {"members": [], "points": 0} for i in range(num_teams)}
     await event.reply(f"✅ تم إنشاء {num_teams} فرق. يرجى إدخال أسماء الفرق باستخدام الرد.")
     
@@ -274,6 +274,8 @@ async def join_team(event):
     for team in TEAMS.values():
         if user_id in team["members"]:
             return await event.reply("❌ أنت مسجل بالفعل في أحد الفرق.")
+    if len(TEAMS[team_name]["members"]) >= MAX_MEMBERS:
+        return await event.reply("❌ هذا الفريق ممتلئ بالفعل.")
     TEAMS[team_name]["members"].append(user_id)
     await event.reply(f"✅ تم تسجيلك في فريق {team_name}.")
     
