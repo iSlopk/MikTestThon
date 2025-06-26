@@ -275,14 +275,28 @@ async def set_teams(event):
     await event.reply(f"✅ تم إنشاء {num_teams} فرق. يرجى إدخال أسماء الفرق باستخدام الرد على هذه الرسالة.")
     
     
+from telethon.tl.custom import Button  # تأكد من استيراد Button في أعلى الملف
+
 @zedub.bot_cmd(pattern="^/register$")
 async def register_teams(event):
+    """وظيفة تسجيل الفرق"""
+    global TEAM_MODE_STATUS, TEAMS
+
+    # تحقق من وضع الفرق
     if not TEAM_MODE_STATUS:
-        return await event.reply("❌ وضع الفرق غير مُفعل.")
+        return await event.reply("❌ وضع الفرق غير مُفعل. يرجى تفعيل الوضع باستخدام الأمر /tmod.")
+
+    # تحقق من وجود الفرق
     if not TEAMS:
-        return await event.reply("❌ لا توجد فرق مسجلة. يرجى استخدام /setteams لإنشاء الفرق أولاً.")
-    buttons = [[Button.inline(name, f"join_team|{name}")] for name in TEAMS.keys()]
-    await event.reply("📝 اختر الفريق الذي تريد التسجيل فيه:", buttons=buttons)
+        return await event.reply("❌ لا توجد فرق مسجلة. يرجى إنشاء الفرق باستخدام الأمر /setteams <عدد الفرق>.")
+
+    # إنشاء الأزرار للفرق
+    try:
+        buttons = [[Button.inline(name, f"join_team|{name}")] for name in TEAMS.keys()]
+        await event.reply("📝 اختر الفريق الذي تريد التسجيل فيه:", buttons=buttons)
+    except Exception as e:
+        # التعامل مع الأخطاء المحتملة
+        await event.reply(f"❌ حدث خطأ أثناء إنشاء الأزرار: {str(e)}")tons)
     
     
 @zedub.tgbot.on(events.CallbackQuery(pattern=r"join_team\|(.+)"))
