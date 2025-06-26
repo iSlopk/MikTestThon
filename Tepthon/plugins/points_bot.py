@@ -270,6 +270,7 @@ async def register_teams(event):
 async def join_team(event):
     team_name = event.pattern_match.group(1)
     user_id = event.sender_id
+    MAX_MEMBERS = 10
     for team in TEAMS.values():
         if user_id in team["members"]:
             return await event.reply("❌ أنت مسجل بالفعل في أحد الفرق.")
