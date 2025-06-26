@@ -253,7 +253,7 @@ async def set_teams(event):
     if num_teams < 2 or num_teams > 10:
         return await event.reply("❌ يجب أن يكون عدد الفرق بين 2 و 10.")
     TEAMS = {f"Team {i+1}": {"members": [], "points": 0} for i in range(num_teams)}
-    await event.reply(f"✅ تم إنشاء {num_teams} فرق. يرجى إدخال أسماء الفرق باستخدام الرد.")
+    await event.reply(f"✅ تم إنشاء {num_teams} فرق. يرجى إدخال أسماء الفرق باستخدام الرد على هذه الرسالة.")
     
     
 @zedub.bot_cmd(pattern="^/register$")
