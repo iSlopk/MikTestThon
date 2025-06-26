@@ -305,7 +305,8 @@ async def show_team_points(event):
 @zedub.bot_cmd(pattern="^/(p|delp)(?:\s+(\d+))?$")
 async def manage_points(event):
     global TEAMS
-    if not TEAM_MODEعل.")
+    if not TEAM_MODE_STATUS:
+    return await event.reply("❌ وضع الفرق غير مُفعل.")
     cmd = event.pattern_match.group(1)
     points = int(event.pattern_match.group(2) or 1)
     user_id = await get_user_id(event, event.pattern_match.groups())
