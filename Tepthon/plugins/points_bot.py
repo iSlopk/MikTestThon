@@ -365,3 +365,22 @@ async def team_manage_points(event):
         TEAMS[team_name]["points"] = max(0, TEAMS[team_name]["points"] - points)
         await event.reply(f"❌ تم خصم {points} نقاط من فريق {team_name}.")
         
+@zedub.bot_cmd(pattern=r"^(.+)$")
+async def update_team_names(event):
+    global TEAMS
+    if not TEAM_MODE_STATUS or not TEAMS:
+        return await event.reply("❌ يجب تفعيل وضع الفرق وإنشاء الفرق أولاً باستخدام /tmod و /setteams.")
+    
+    if event.is_reply and event.reply_to_msg_id:
+        names = event.pattern_match.group(1).split(",")
+        names = [name.strip() for name in names]
+        
+        if len(names) != len(TEAMS):
+            return await event.reply(f"❌ يجب إدخال {len(TEAMS)} أسماء فرق.")
+        
+        # تحديث أسماء الفرق
+        old_keys = list(TEAMS.keys())
+        for i, name in enumerate(names):
+            TEAMS[name] = TEAMS.pop(old_keys[i])
+        
+        await event.reply("✅ تم تحديث أسماء الفرق بنجاح.")
