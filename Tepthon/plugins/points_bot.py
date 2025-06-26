@@ -260,6 +260,8 @@ async def set_teams(event):
 async def register_teams(event):
     if not TEAM_MODE_STATUS:
         return await event.reply("❌ وضع الفرق غير مُفعل.")
+    if not TEAMS:
+        return await event.reply("❌ لا توجد فرق مسجلة. يرجى استخدام /setteams لإنشاء الفرق أولاً.")
     buttons = [[Button.inline(name, f"join_team|{name}")] for name in TEAMS.keys()]
     await event.reply("📝 اختر الفريق الذي تريد التسجيل فيه:", buttons=buttons)
     
