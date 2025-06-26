@@ -323,5 +323,44 @@ async def manage_points(event):
         TEAMS[team_name]["points"] = max(0, TEAMS[team_name]["points"] - points)
         set_points(event.chat_id, user_id, max(0, get_points(event.chat_id, user_id) - points))  # تحديث قاعدة البيانات الفردية
         await event.reply(f"❌ تم خصم {points} نقاط من فريق {team_name}.")
-        
-        
+async def team_manage_points(event):
+    """
+    إدارة النقاط في وضع الفرق.
+    """
+    global TEAMS
+    if not event.is_group:
+        return await event.reply("❗️ يعمل فقط في المجموعات.")
+    
+    perms = await event.client.get_permissions(event.chat_id, event.sender_id)
+    if not perms.is_admin:
+        return await event.reply("❗️ الأمر متاح للمشرفين فقط.")
+    
+    args = event.pattern_match.group(1)
+    args = args.split() if args else []
+    cmd = event.text.split()[0].lower().replace(Config.COMMAND_HAND_LER, "/")
+    
+    points = 1
+    
+    if len(args) > 1:
+        try:
+            points = abs(int(args[1]))
+        except Exception:
+            pass
+    
+    user_id = await get_user_id(event, args)
+    if not user_id:
+        return await event.reply("❌ يرجى تحديد المستخدم.")
+    
+    # تحديد الفريق الذي ينتمي إليه المستخدم
+    team_name = next((name for name, data in TEAMS.items() if user_id in data["members"]), None)
+    if not team_name:
+        return await event.reply("❌ المستخدم غير مسجل في أي فريق.")
+    
+    if cmd == "/p":
+        # إضافة النقاط للفريق
+        TEAMS[team_name]["points"] += points
+        await event.reply(f"✅ تم إضافة {points} نقاط لفريق {team_name}.")
+    else:
+        # خصم النقاط من الفريق
+        TEAMS[team_name]["points"] = max(0, TEAMS[team_name]["points"] - points)
+        await event.reply(f"❌ تم خصم {points} نقاط من فريق {team_name}.")
