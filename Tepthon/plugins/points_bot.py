@@ -212,6 +212,24 @@ async def reset_points(event):
         # إذا كان وضع الفرق غير مُفعل، استخدم النظام العادي
         return await reset_individual_points(event)
 
+async def reset_team_points(event):
+    """إعادة تعيين نقاط جميع الفرق إلى صفر"""
+    global TEAM_MODE_STATUS, TEAMS
+    
+    # التحقق من وضع الفرق
+    if not TEAM_MODE_STATUS:
+        return await event.reply("❌ وضع الفرق غير مُفعل.")
+    
+    # التحقق من وجود الفرق
+    if not TEAMS:
+        return await event.reply("❌ لا توجد فرق لإعادة تعيين نقاطها.")
+    
+    # إعادة تعيين النقاط لجميع الفرق
+    for team in TEAMS.values():
+        team["points"] = 0
+    
+    await event.reply("✅ تم إعادة تعيين نقاط جميع الفرق إلى صفر.")
+    
 async def reset_individual_points(event):
     """إعادة جميع النقاط الفردية إلى صفر"""
     if not event.is_group:
