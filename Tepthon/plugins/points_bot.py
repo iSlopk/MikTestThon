@@ -415,9 +415,6 @@ async def team_manage_points(event):
 @zedub.bot_cmd(pattern=r"^(.+)$")
 async def update_team_names(event):
     global TEAMS
-    if not TEAMS:
-        return await event.reply("❌ يجب إنشاء الفرق أولاً باستخدام /setteams.")
-    
     if event.is_reply and event.reply_to_msg_id:
         names = event.pattern_match.group(1).split(",")
         names = [name.strip() for name in names]
