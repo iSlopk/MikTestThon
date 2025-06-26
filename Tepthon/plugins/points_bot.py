@@ -84,6 +84,40 @@ async def get_user_id(event, args):
             pass
     return None
 
+
+@zedub.bot_cmd(pattern=fr"^(?:{cmhd}p|{cmhd}delp|{cmhd}rstp|{cmhd}ps)(?:\s+(.+))?$")
+async def individual_commands(event):
+    """الأوامر الفردية"""
+    global TEAM_MODE_STATUS
+    if TEAM_MODE_STATUS:  # تحقق من وضع الفرق
+        return await safe_edit_or_reply(event, "❌ هذا الأمر متاح فقط في وضع الأفراد.")
+    
+    # توجيه الأوامر إلى الوظائف المناسبة
+    cmd = event.text.split()[0].lower().replace(cmhd, "/")
+    if cmd == "/p" or cmd == "/delp":
+        return await individual_manage_points(event)
+    elif cmd == "/ps":
+        return await show_individual_points(event)
+    elif cmd == "/rstp":
+        return await reset_individual_points(event)
+
+@zedub.bot_cmd(pattern=fr"^(?:{cmhd}tp|{cmhd}tdelp|{cmhd}trstp|{cmhd}tps)(?:\s+(.+))?$")
+async def team_commands(event):
+    """الأوامر الخاصة بالفرق"""
+    global TEAM_MODE_STATUS
+    if not TEAM_MODE_STATUS:  # تحقق 
+    await safe_edit_or_reply(event, "❌ هذا الأمر متاح فقط في وضع الفرق.")
+    
+    # توجيه الأوامر إلى الوظائف المناسبة
+    cmd = event.text.split()[0].lower().replace(cmhd, "/")
+    if cmd == "/tp" or cmd == "/tdelp":
+        return await team_manage_points(event)
+    elif cmd == "/tps":
+        return await show_team_points(event)
+    elif cmd == "/trstp":
+        return await reset_team_points(event)
+
+
 @zedub.bot_cmd(pattern=fr"^(?:{cmhd}p|{cmhd}delp)(?:\s+(.+))?$")
 async def points_manage(event):
     """إضافة أو خصم نقاط"""
