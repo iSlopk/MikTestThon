@@ -369,3 +369,11 @@ async def create_teams_panel(event):
         [Button.text("أسماء الأفرقة")]
     ]
     await event.edit("إعدادات الأفرقة:", buttons=buttons)
+    
+    
+@bot.on(events.CallbackQuery(pattern='عدد الأفرقة'))
+async def choose_team_count(event):
+    buttons = [
+        [Button.text(str(i)) for i in range(2, 11)]
+    ]
+    await event.edit("اختر عدد الأفرقة:", buttons=buttons)
