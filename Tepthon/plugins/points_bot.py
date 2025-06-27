@@ -13,6 +13,14 @@ plugin_category = "بوت النقاط"
 cmhd = Config.COMMAND_HAND_LER
 DB_PATH = "points_db.sqlite"
 
+team_mode_enabled = False
+
+def load_team_mode():
+    global team_mode_enabled
+    # حاول قراءة قيمة وضع الأفرقة من ملف أو قاعدة بيانات
+    team_mode_enabled = False   # هذه القيمة مبدئية، غيّرها إذا أضفت حفظ/قراءة من ملف
+
+
 def get_db():
     return sqlite3.connect(DB_PATH)
 
