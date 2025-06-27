@@ -246,14 +246,36 @@ async def deactivate_team_mode(event):
     await event.reply("🔄 تم تعطيل وضع الفرق. عاد البوت إلى وضع الأفراد.")
     
     
-@zedub.bot_cmd(pattern="^/setteams (\d+)$")
+@zedub.bot_cmd(pattern=r"^(?:[./#])?setteams (\d+)$")
 async def set_teams(event):
-    global TEAMS
-    num_teams = int(event.pattern_match.group(1))
+    global TEAMS, TEAM_NAMES
+    num_teams = int(event.pattern_match.group(1 حتى يتم استخدام /setteams لتحديد عدد الفرق من جديد.")
+    
     if num_teams < 2:
         return await event.reply("❌ يجب أن يكون عدد الفرق 2 أو أكثر.")
+    
     TEAMS = {f"Team {i+1}": {"members": [], "points": 0} for i in range(num_teams)}
-    await event.reply(f"✅ تم إنشاء {num_teams} فرق. يرجى إدخال أسماء الفرق باستخدام الرد.")
+    TEAM_NAMES = []  # قائمة لتخزين أسماء الفرق التي سيتم إدخالها
+    TEAM_NAMES_LOCKED = False  # رفع القفل عن تعديل أسماء الفرق
+    
+    await event.reply(f"✅ تم إنشاء {num_teams} فرق. يرجى إدخال أسماء الفرق باستخدام الرد على هذه الرسالة.")
+
+@zedub.tgbot.on(events.NewMessage(pattern=r"^(?:[./#])?teamname (.+)$"))
+async def add_team_name(event):
+    global TEAMS, TEAM_NAMES, TEAM_NAMES_LOCKED
+    team_name = event.pattern_match.group(1)
+    
+    # التحقق إذا تم إدخال جميع أسماء الفرق بالفعل
+    if len(TEAM_NAMES) >= len(TEAMS):
+        TEAM_NAMES_LOCKED = True  # قفل تعديل أسماء الفرق بعد اكتمال الإدخال
+        return await event)
+    TEAMS[f"Team {team_index}"] = {"name": team_name, "members": [], "points": 0}
+    
+    if len(TEAM_NAMES) == len(TEAMS):
+        TEAM_NAMES_LOCKED = True  # قفل تعديل أسماء الفرق بعد اكتمال الإدخال
+        return await event.reply("✅ تم إدخال جميع أسماء الفرق بنجاح.")
+    else:
+        await event.reply(f"✅ تم إضافة اسم الفريق: {team_name}. يرجى إدخال اسم الفريق التالي.")
     
     
 @zedub.bot_cmd(pattern="^/register$")
