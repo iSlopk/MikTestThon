@@ -281,7 +281,7 @@ async def show_teams(event):
         return await event.reply("❌ وضع الفرق غير مُفعل.")
     text = "**📊 الفرق وأعضاؤها:**\n"
     for name, data in TEAMS.items():
-        text += f"🔹 {name}:\n"
+        text += f"ㅤ• {name}:\n"
         for member in data["members"]:
             text += f"- [{member}](tg://user?id={member})\n"
     await event.reply(text)
@@ -293,7 +293,7 @@ async def show_team_points(event):
         return await event.reply("❌ وضع الفرق غير مُفعل.")
     text = "**📊 نقاط الفرق:**\n\n"
     for name, data in TEAMS.items():
-        text += f"🔹 {name}: {data['points']} نقاط\n"
+        text += f"ㅤ• {name}: {data['points']} نقاط\n"
     await event.reply(text)
     
     
