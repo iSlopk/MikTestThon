@@ -228,7 +228,7 @@ async def reset_individual_points(event):
         
         
         
-@zedub.bot_cmd(pattern="^/tmod$")
+@zedub.bot_cmd(pattern=r"^(?:[./#])?tmod$")
 async def activate_team_mode(event):
     global TEAM_MODE_STATUS, TEAMS
     if TEAM_MODE_STATUS:
@@ -237,7 +237,7 @@ async def activate_team_mode(event):
     TEAMS = {}
     await event.reply("🚀 وضع الفرق مُفعل. يرجى إدخال عدد الفرق باستخدام الرد على هذه الرسالة.")
 
-@zedub.bot_cmd(pattern="^/pmod$")
+@zedub.bot_cmd(pattern=r"^(?:[./#])?pmod$")
 async def deactivate_team_mode(event):
     global TEAM_MODE_STATUS
     if not TEAM_MODE_STATUS:
