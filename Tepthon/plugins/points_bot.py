@@ -352,3 +352,11 @@ async def send_team_mode_panel(event):
         [Button.text("إنشاء الأفرقة")]
     ]
     await event.respond("لوحة تحكم الأفرقة:", buttons=buttons)
+    
+    
+@bot.on(events.CallbackQuery(pattern='إغلاق الوضع والعودة لوضع الأفراد'))
+async def close_team_mode(event):
+    global team_mode_enabled
+    team_mode_enabled = False
+    # (قم بحفظ القيمة إذا كنت تعتمد على ملف أو db)
+    await event.edit("تم العودة لوضع الأفراد.")
