@@ -360,3 +360,12 @@ async def close_team_mode(event):
     team_mode_enabled = False
     # (قم بحفظ القيمة إذا كنت تعتمد على ملف أو db)
     await event.edit("تم العودة لوضع الأفراد.")
+    
+    
+@bot.on(events.CallbackQuery(pattern='إنشاء الأفرقة'))
+async def create_teams_panel(event):
+    buttons = [
+        [Button.text("عدد الأفرقة")],
+        [Button.text("أسماء الأفرقة")]
+    ]
+    await event.edit("إعدادات الأفرقة:", buttons=buttons)
