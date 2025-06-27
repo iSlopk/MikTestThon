@@ -383,3 +383,15 @@ async def choose_team_count(event):
 async def ask_team_names(event):
     await event.edit("أرسل أسماء الأفرقة بين قوسين، مثال: (الصقور 🦅، الشجعان 👮🏻‍♂️)")
     # انتظر الرد وادخل الدالة التالية عند الرد
+    
+    
+@bot.on(events.NewMessage(in_reply_to=last_bot_message_id))
+async def receive_team_names(event):
+    text = event.raw_text
+    if text.startswith('(') and text.endswith(')'):
+        names = [n.strip() for n in text[1:-1].split(',')]
+        # تحقق أن العدد يساوي العدد المختار سابقاً
+        # ثم خزّنهم في متغير أو قاعدة بيانات
+    
+    
+  
