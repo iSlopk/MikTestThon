@@ -377,3 +377,9 @@ async def choose_team_count(event):
         [Button.text(str(i)) for i in range(2, 11)]
     ]
     await event.edit("اختر عدد الأفرقة:", buttons=buttons)
+    
+    
+@bot.on(events.CallbackQuery(pattern='أسماء الأفرقة'))
+async def ask_team_names(event):
+    await event.edit("أرسل أسماء الأفرقة بين قوسين، مثال: (الصقور 🦅، الشجعان 👮🏻‍♂️)")
+    # انتظر الرد وادخل الدالة التالية عند الرد
