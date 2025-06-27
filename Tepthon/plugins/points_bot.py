@@ -346,3 +346,9 @@ async def manage_points(event):
         await event.reply(f"❌ تم خصم {points} نقاط من فريق {team_name}.")
         
         
+async def send_team_mode_panel(event):
+    buttons = [
+        [Button.text("إغلاق الوضع والعودة لوضع الأفراد")],
+        [Button.text("إنشاء الأفرقة")]
+    ]
+    await event.respond("لوحة تحكم الأفرقة:", buttons=buttons)
