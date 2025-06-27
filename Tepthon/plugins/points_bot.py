@@ -291,7 +291,7 @@ async def show_teams(event):
 async def show_team_points(event):
     if not TEAM_MODE_STATUS:
         return await event.reply("❌ وضع الفرق غير مُفعل.")
-    text = "**📊 نقاط الفرق:**\n"
+    text = "**📊 نقاط الفرق:**\n\n"
     for name, data in TEAMS.items():
         text += f"🔹 {name}: {data['points']} نقاط\n"
     await event.reply(text)
