@@ -213,7 +213,8 @@ async def update_teams_message(event):
             try:
                 user = await event.client.get_entity(user_id)
                 name = user.first_name
-            except = str(user_id)
+            except Exception:
+                name = str(user_id)
             text += f"- {name} (<code>{user_id}</code>)\n"
     try:
         await event.client.edit_message(event.chat_id, TEAMS_MSG_ID, text, parse_mode="html")
