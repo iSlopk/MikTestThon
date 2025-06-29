@@ -47,7 +47,9 @@ def get_points(chat_id, user_id):
         return row[0] if row else 0
 
 def set_points(chat_id, user_id, points):
-    with getINSERT OR REPLACE INTO points (chat_id, user_id, points) VALUES (?, ?, ?)",
+    with get_db() as db:
+        db.execute(
+            "INSERT OR REPLACE INTO points (chat_id, user_id, points) VALUES (?, ?, ?)",
             (chat_id, user_id, points)
         )
 
