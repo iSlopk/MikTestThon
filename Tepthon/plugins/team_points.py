@@ -46,7 +46,8 @@ async def cmd_tmod(event):
       [Button.inline("🔙 وضع الأفراد", b"pmod")],  
       [Button.inline("🔧 إنشاء الفرق", b"setup_teams")]  
     ]  
-    return await safe_edit(event, "✅ تم تفعيل وضع الفرق.", buttons=buttons)  
+    await event.reply("✅ تم تفعيل وضع الفرق.", buttons=buttons)
+    await event.delete()ons)  
   
 @zedub.bot_cmd(pattern=fr"^{cmhd}pmod$")  
 async def cmd_pmod(event):  
