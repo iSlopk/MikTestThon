@@ -175,3 +175,38 @@ async def team_points(event):
         return await safe_edit(event,text)  
   
 # تأكد من حفظ TEAMS وTEAM_MODE عند restart إذا أردت
+
+@zedub.bot_cmd(pattern=fr"^(?:{cmhd}tp|{cmhd}tdp)(?:\s+(.+))?$")
+async def manage_team_points(event):
+    chat = event.chat_id
+    if not TEAM_MODE.get(chat): return
+
+    cmd = event.text.split()[0].lower().replace(cmhd, "/")
+    args = event.pattern_match.group(1)
+    args = args.split() if args else []
+    uid = await get_user_id(event, args)
+    if not uid:
+        return await safe_edit(event, "❗ حدد مستخدم بالرد/منشن/آيدي")
+
+    # حدد الفريق الذي ينتمي إليه المستخدم
+    team_idx = None
+    for idx, members in TEAMS[chat]['members'].items():
+        if uid in members:
+            team_idx = idx
+            break
+
+    if team_idx is None:
+        return await safe_edit(event, "❗ هذا المستخدم غير مسجل في أي فريق.")
+
+    # احصل على أعضاء الفريق بالكامل
+    members = TEAMS[chat]['members'][team_idx]
+    delta = 1 if cmd == "/tp" else -1
+
+    for member_id in members:
+        current = get_points(chat, member_id)
+        new_pts = max(current + delta, 0)
+        set_points(chat, member_id, new_pts)
+
+    sign = "➕" if delta > 0 else "➖"
+    team_name = TEAMS[chat]['names'][team_idx]
+    return await safe_edit(event, f"{sign} تم {'إضافة' if delta > 0 else 'خصم'} نقطة لكل أعضاء فريق: {team_name}")
