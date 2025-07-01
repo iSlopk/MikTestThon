@@ -100,7 +100,7 @@ async def callback_handler(event):
         )
         
   
-  @zedub.bot_cmd(events.NewMessage)
+@zedub.bot_cmd(events.NewMessage)
 async def receive_names(ev):
     chat = ev.chat_id
 
