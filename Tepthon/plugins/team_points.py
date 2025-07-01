@@ -98,6 +98,30 @@ async def callback_handler(event):
             "🔔 التسجيل مفتوح للفرق عبر أمر /tp\nيمكن لكل عضو تغيير فريقه مرة واحدة.",
             buttons=None
         )
+        
+  
+  @zedub.bot_cmd(events.NewMessage)
+async def receive_names(ev):
+    chat = ev.chat_id
+
+    # تأكد أن الرسالة في مجموعة ووضع الفرق مفعّل
+    if not ev.is_group or not TEAM_MODE.get(chat):
+        return
+
+    # تأكد أن الأسماء لم تُحدد بعد (أي لا تزال في مرحلة إعداد الفرق)
+    if TEAMS.get(chat) and not TEAMS[chat]['names']:
+        text = ev.text.strip()
+
+        # تقسيم النص إلى أسماء حسب الفاصلة العربية "،"
+        names = [x.strip() for x in text.strip("()").split("،")]
+
+        if len(names) == TEAMS[chat]['count']:
+            TEAMS[chat]['names'] = names
+            TEAMS[chat]['members'] = {i: [] for i in range(len(names))}
+            await ev.reply("✅ تم تحديد الأسماء.", buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]])
+        else:
+            await ev.reply(f"⚠️ عدد الأسماء ({len(names)}) لا يطابق عدد الفرق المحدد ({TEAMS[chat]['count']})، حاول مجددًا.")
+  
         # الترقب  
         @zedub.bot_cmd(events.NewMessage)  
         async def receive_names(ev):  
