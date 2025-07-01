@@ -67,22 +67,37 @@ async def cmd_pmod(event):
 # التعامل مع أزرار وضع الفرق  
 @zedub.zedub.on(CallbackQuery)
 async def callback_handler(event):
-    chat = event.message.chat_id  
-    data = event.data.decode()  
-    if data=="pmod":  
-        TEAM_MODE[chat]=False  
-        return await event.edit("✅ تم العودة لوضع الأفراد.", buttons=None)  
-    if data=="setup_teams":  
-        kb = [[Button.inline(str(i), f"team_count_{i}") for i in range(2,6)],  
-              [Button.inline(str(i), f"team_count_{i}") for i in range(6,11)],  
-              [Button.inline("✔️ تحديد أسماء الفرق", b"team_names")]]  
-        return await event.edit("اختر عدد الفرق:", buttons=kb)  
-    if data.startswith("team_count_"):  
-        n=int(data.split("_")[-1])  
-        TEAMS[chat]['count']=n  
-        return await event.edit(f"✅ اخترت {n} فرق.\nاضغط لتعيين أسماء الفرق.", buttons=[[Button.inline("📝 أسماء الفرق", b"team_names")]])  
-    if data=="team_names":  
-        await event.reply("📩 أرسل أسماء الفرق مثل: (الصقور 🦅، الشجعان 👮🏻‍♂️)")  
+    chat = event.message.chat_id
+    data = event.data.decode()
+
+    if data == "pmod":
+        TEAM_MODE[chat] = False
+        return await event.edit("✅ تم العودة لوضع الأفراد.", buttons=None)
+
+    if data == "setup_teams":
+        kb = [
+            [Button.inline(str(i), f"team_count_{i}") for i in range(2, 6)],
+            [Button.inline(str(i), f"team_count_{i}") for i in range(6, 11)],
+            [Button.inline("✔️ تحديد أسماء الفرق", b"team_names")]
+        ]
+        return await event.edit("اختر عدد الفرق:", buttons=kb)
+
+    if data.startswith("team_count_"):
+        n = int(data.split("_")[-1])
+        TEAMS[chat]['count'] = n
+        return await event.edit(
+            f"✅ اخترت {n} فرق.\nاضغط لتعيين أسماء الفرق.",
+            buttons=[[Button.inline("📝 أسماء الفرق", b"team_names")]]
+        )
+
+    if data == "team_names":
+        return await event.reply("📩 أرسل أسماء الفرق مثل: (الصقور 🦅، الشجعان 👮🏻‍♂️)")
+
+    if data == "start_signup":
+        return await event.edit(
+            "🔔 التسجيل مفتوح للفرق عبر أمر /tp\nيمكن لكل عضو تغيير فريقه مرة واحدة.",
+            buttons=None
+        )
         # الترقب  
         @zedub.bot_cmd(events.NewMessage)  
         async def receive_names(ev):  
@@ -121,8 +136,8 @@ async def team_points(event):
         TEAMS[chat]['members'].setdefault(idx,[]).append(uid)  
         TEAM_NAME=TEAMS[chat]['names'][idx]  
         return await safe_edit(event, f"✅ انضممت إلى فريق: {TEAM_NAME}")  
-    if cmd=="/tdp":  
-        TEAM_MODE and None  
+    if cmd=="/tdp":
+        return await safe_edit(event, "🛠️ لم يتم تفعيل خصم النقاط بعد.")
         # خصم نفس النقاط الفريقية  
     if cmd=="/trstp":  
         TEAMS[chat]['members']={}  
