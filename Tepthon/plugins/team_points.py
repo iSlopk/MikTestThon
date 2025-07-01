@@ -3,7 +3,7 @@ import sqlite3
 from telethon import events, Button  
 from telethon.errors.rpcerrorlist import MessageAuthorRequiredError  
 from telethon.tl.types import ChannelParticipantsAdmins  
-  
+from telethon.events import CallbackQuery
 from . import zedub  
 from ..Config import Config  
 from ..core.managers import edit_or_reply  
