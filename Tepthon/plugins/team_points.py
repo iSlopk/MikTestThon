@@ -70,7 +70,7 @@ async def cmd_tmod(event):
         "❗ استخدم:\n/tmod on ← تفعيل وضع الفرق\n/tmod off ← تعطيل وضع الفرق"
     )
 
-@zedub.zedub.on(CallbackQuery)
+@zedub.on(CallbackQuery)
 async def callback_handler(event):
     chat = event.message.chat_id
     data = event.data.decode()
