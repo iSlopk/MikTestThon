@@ -65,8 +65,8 @@ async def cmd_pmod(event):
     return await safe_edit(event, "✅ تم الرجوع لوضع الأفراد.")  
   
 # التعامل مع أزرار وضع الفرق  
-@zedub.bot_cmd(events.CallbackQuery)  
-async def callback_handler(event):  
+@zedub.zedub.on(CallbackQuery)
+async def callback_handler(event):
     chat = event.message.chat_id  
     data = event.data.decode()  
     if data=="pmod":  
