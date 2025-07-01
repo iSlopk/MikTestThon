@@ -39,15 +39,24 @@ async def safe_edit(event, text, **k):
   
 @zedub.bot_cmd(pattern=fr"^{cmhd}tmod$")  
 async def cmd_tmod(event):  
-    if not await is_user_admin(event): return await safe_edit(event, "❗ للمشرفين فقط.")  
+    if not await is_user_admin(event):
+        return await safe_edit(event, "❗ للمشرفين فقط.")  
+
     TEAM_MODE[event.chat_id] = True  
-    TEAMS[event.chat_id] = {'count':2,'names':[], 'members':{}, 'changed':set()}  
+    TEAMS[event.chat_id] = {
+        'count': 2,
+        'names': [],
+        'members': {},
+        'changed': set()
+    }
+
     buttons = [  
-      [Button.inline("🔙 وضع الأفراد", b"pmod")],  
-      [Button.inline("🔧 إنشاء الفرق", b"setup_teams")]  
+        [Button.inline("🔙 وضع الأفراد", b"pmod")],  
+        [Button.inline("🔧 إنشاء الفرق", b"setup_teams")]  
     ]  
+
     await event.reply("✅ تم تفعيل وضع الفرق.", buttons=buttons)
-    await event.delete()ons)  
+    await event.delete()
   
 @zedub.bot_cmd(pattern=fr"^{cmhd}pmod$")  
 async def cmd_pmod(event):  
