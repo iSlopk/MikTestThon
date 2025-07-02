@@ -1,5 +1,5 @@
 import sqlite3
-from telethon import Button
+from telethon import Button, events
 from telethon.errors.rpcerrorlist import MessageAuthorRequiredError
 from telethon.tl.types import ChannelParticipantsAdmins
 from telethon.events import CallbackQuery, NewMessage
