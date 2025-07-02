@@ -93,7 +93,7 @@ async def callback_handler(event):
                 buttons=[[Button.inline("📝 أسماء الفرق", b"team_names")]]
             )
         except ValueError:
-            return await event.answer("⚠️ رقم غير صالح.")
+            return await event.answer("⚠️ رقم غير صالح.", alert=False))
 
     if data == "team_names":
         AWAITING_NAMES.add(chat)
