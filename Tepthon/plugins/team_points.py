@@ -105,10 +105,10 @@ async def callback_handler(event):
             buttons=None
         )
 
-@zedub.bot_cmd(NewMessage)
+@zedub.bot_cmd(events.NewMessage)
 async def receive_names(ev):
     chat = ev.chat_id
-    if not ev.is_group or not TEAM_MODE.get(chat):
+    if not ev.is_group or chat not in AWAITING_NAMES:
         return
 
     if TEAMS.get(chat) and not TEAMS[chat]['names']:
@@ -118,14 +118,11 @@ async def receive_names(ev):
         if len(names) == TEAMS[chat]['count']:
             TEAMS[chat]['names'] = names
             TEAMS[chat]['members'] = {i: [] for i in range(len(names))}
-            await ev.reply(
-                "✅ تم تحديد الأسماء.",
-                buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
-            )
+            AWAITING_NAMES.discard(chat)  # ✅ أوقف الانتظار بعد النجاح
+            await ev.reply("✅ تم تحديد الأسماء.", buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]])
         else:
             await ev.reply(
-                f"⚠️ عدد الأسماء المدخلة ({len(names)}) "
-                f"لا يُطابق العدد المطلوب ({TEAMS[chat]['count']})."
+                f"⚠️ عدد الأسماء ({len(names)}) لا يطابق عدد الفرق المحددة ({TEAMS[chat]['count']}), حاول مجددًا."
             )
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
