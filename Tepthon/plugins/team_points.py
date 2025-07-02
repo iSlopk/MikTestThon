@@ -3,7 +3,6 @@ from telethon import Button, events
 from telethon.errors.rpcerrorlist import MessageAuthorRequiredError
 from telethon.tl.types import ChannelParticipantsAdmins
 from telethon.events import CallbackQuery, NewMessage
-from . import zedub
 from ..core.session import zedub
 from ..Config import Config
 from ..core.managers import edit_or_reply
