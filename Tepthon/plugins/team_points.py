@@ -85,12 +85,15 @@ async def callback_handler(event):
         return await event.edit("اختر عدد الفرق:", buttons=kb)
 
     if data.startswith("team_count_"):
-        n = int(data.split("_")[2])
-        TEAMS[chat]['count'] = n
-        return await event.edit(
-            f"✅ اخترت {n} فرق.\nاضغط لتعيين أسماء الفرق.",
-            buttons=[[Button.inline("📝 أسماء الفرق", b"team_names")]]
-        )
+        try:
+            n = int(data.split("_")[-1])
+            TEAMS[chat]['count'] = n
+            return await event.edit(
+                f"✅ اخترت {n} فرق.\nاضغط لتعيين أسماء الفرق.",
+                buttons=[[Button.inline("📝 أسماء الفرق", b"team_names")]]
+            )
+        except ValueError:
+            return await event.answer("⚠️ رقم غير صالح.")
 
     if data == "team_names":
         AWAITING_NAMES.add(chat)
