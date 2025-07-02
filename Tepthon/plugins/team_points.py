@@ -15,8 +15,9 @@ plugin_category = "بوت النقاط"
 cmhd = Config.COMMAND_HAND_LER
 DB_PATH = "points_db.sqlite"
 
-TEAM_MODE = {}  # chat_id → bool
-TEAMS = {}      # chat_id → { count, names, members, changed }
+AWAITING_NAMES = set()
+TEAM_MODE = {}
+TEAMS = {}
 
 def get_db():
     return sqlite3.connect(DB_PATH)
