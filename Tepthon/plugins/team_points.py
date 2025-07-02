@@ -4,6 +4,7 @@ from telethon.errors.rpcerrorlist import MessageAuthorRequiredError
 from telethon.tl.types import ChannelParticipantsAdmins
 from telethon.events import CallbackQuery, NewMessage
 from . import zedub
+from ..core.session import zedub
 from ..Config import Config
 from ..core.managers import edit_or_reply
 from ..utils.points_helpers import (
@@ -71,7 +72,7 @@ async def cmd_tmod(event):
         "❗ استخدم:\n/tmod on ← تفعيل وضع الفرق\n/tmod off ← تعطيل وضع الفرق"
     )
 
-@zedub.on(CallbackQuery)
+@zedub.on(events.CallbackQuery)
 async def callback_handler(event):
     chat = event.message.chat_id
     data = event.data.decode()
