@@ -102,11 +102,34 @@ async def callback_handler(event):
         )
 
     if data == "start_signup":
-        return await event.edit(
-            "🔔 التسجيل مفتوح للفرق عبر أمر /autoreg\n"
-            "يمكن لكل عضو تغييره مرة واحدة.",
-            buttons=None
-        )
+        team_buttons = [
+            [Button.inline(name, f"join_team_{i}")]
+            for i, name in enumerate(TEAMS[chat]['names'])
+        ]
+
+        # عرض قائمة الفرق مع أعضائها
+        lines = ["📊 **الفرق الحالية:**\n"]
+        for idx, name in enumerate(TEAMS[chat]['names']):
+            members = TEAMS[chat]['members'].get(idx, [])
+            mentions = []
+            for uid in members:
+                mentions.append(f"[عضو](tg://user?id={uid})")
+            mention_line = "، ".join(mentions) if mentions else "— لا أحد بعد"
+            lines.append(f"**{name}**:\n{mention_line}\n")
+
+        return await event.edit("\n".join(lines), buttons=team_buttons)
+
+    if data.startswith("join_team_"):
+        team_idx = int(data.split("_")[-1])
+        user_id = event.sender_id
+
+        for members in TEAMS[chat]['members'].values():
+            if user_id in members:
+                return await event.answer("❗ أنت بالفعل في فريق ولا يمكنك تغييره.", alert=True)
+
+        TEAMS[chat]['members'].setdefault(team_idx, []).append(user_id)
+        team_name = TEAMS[chat]['names'][team_idx]
+        return await event.answer(f"✅ انضممت إلى فريق {team_name}", alert=True)
 
 @zedub.bot_cmd(events.NewMessage)
 async def receive_names(ev):
