@@ -73,7 +73,7 @@ async def cmd_tmod(event):
 
 @zedub.tgbot.on(events.CallbackQuery)
 async def callback_handler(event):
-    chat = event.message.chat_id
+    chat = event.chat_id
     data = event.data.decode()
 
     if data == "setup_teams":
