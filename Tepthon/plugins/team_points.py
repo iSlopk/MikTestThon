@@ -93,43 +93,64 @@ async def callback_handler(event):
                 buttons=[[Button.inline("📝 أسماء الفرق", b"team_names")]]
             )
         except ValueError:
-            return await event.answer("⚠️ رقم غير صالح.", alert=False)
+            return await event.answer("⚠️ رقم غير صالح.", alert=True)
 
     if data == "team_names":
         AWAITING_NAMES.add(chat)
         return await event.reply(
-            "📩 أرسل أسماء الفرق مثل: (Mik2 🔴، Mik1 🟢،...)"
+            "📩 أرسل أسماء الفرق مثل: (فريق1 🔴، فريق2 🟢،...)"
         )
 
     if data == "start_signup":
+        # زر لكل فريق
         team_buttons = [
-            [Button.inline(name, f"join_team_{i}")]
+            [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
-        # عرض قائمة الفرق مع أعضائها
-        lines = ["📊 **الفرق الحالية:**\n"]
+        # بناء نص عرض الفرق + أعضائها
+        lines = ["🔔 **التسجيل مفتوح الآن**", ""]
         for idx, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(idx, [])
-            mentions = []
-            for uid in members:
-                mentions.append(f"[عضو](tg://user?id={uid})")
-            mention_line = "، ".join(mentions) if mentions else "— لا أحد بعد"
-            lines.append(f"**{name}**:\n{mention_line}\n")
+            if members:
+                mentions = "، ".join(f"[{(await event.client.get_entity(uid)).first_name}](tg://user?id={uid})"
+                                     for uid in members)
+            else:
+                mentions = "— لا أحد بعد"
+            lines.append(f"**{name}**:\n{mentions}\n")
 
-        return await event.edit("\n".join(lines), buttons=team_buttons)
+        return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
     if data.startswith("join_team_"):
-        team_idx = int(data.split("_")[-1])
-        user_id = event.sender_id
+        idx = int(data.split("_")[-1])
+        uid = event.sender_id
 
+        # تحقق من الانضمام المسبق
         for members in TEAMS[chat]['members'].values():
-            if user_id in members:
-                return await event.answer("❗ أنت بالفعل في فريق ولا يمكنك تغييره.", alert=True)
+            if uid in members:
+                return await event.answer("❗ أنت بالفعل في فريق.", alert=True)
 
-        TEAMS[chat]['members'].setdefault(team_idx, []).append(user_id)
-        team_name = TEAMS[chat]['names'][team_idx]
-        return await event.answer(f"✅ انضممت إلى فريق {team_name}", alert=True)
+        TEAMS[chat]['members'].setdefault(idx, []).append(uid)
+        team_name = TEAMS[chat]['names'][idx]
+        await event.answer(f"✅ انضممت إلى فريق {team_name}", alert=True)
+
+        # تحديث العرض بعد الانضمام
+        team_buttons = [
+            [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
+            for i, name in enumerate(TEAMS[chat]['names'])
+        ]
+
+        lines = ["🔔 **التسجيل مفتوح الآن**", ""]
+        for j, name in enumerate(TEAMS[chat]['names']):
+            members = TEAMS[chat]['members'].get(j, [])
+            if members:
+                mentions = "، ".join(f"[{(await event.client.get_entity(m)).first_name}](tg://user?id={m})"
+                                     for m in members)
+            else:
+                mentions = "— لا أحد بعد"
+            lines.append(f"**{name}**:\n{mentions}\n")
+
+        return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
 @zedub.bot_cmd(events.NewMessage)
 async def receive_names(ev):
