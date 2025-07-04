@@ -162,17 +162,35 @@ async def receive_names(ev):
 
     if TEAMS.get(chat) and not TEAMS[chat]['names']:
         text = ev.text.strip()
-        names = [x.strip() for x in text.strip("()").split("،")]
 
-        if len(names) == TEAMS[chat]['count']:
-            TEAMS[chat]['names'] = names
-            TEAMS[chat]['members'] = {i: [] for i in range(len(names))}
-            AWAITING_NAMES.discard(chat)  # ✅ أوقف الانتظار بعد النجاح
-            await ev.reply("✅ تم تحديد الأسماء.", buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]])
-        else:
-            await ev.reply(
-                f"⚠️ عدد الأسماء ({len(names)}) لا يطابق عدد الفرق المحددة ({TEAMS[chat]['count']}), حاول مجددًا."
+        # تقسيم الأسماء باستخدام فواصل متعددة (,،*-|/)
+        raw_names = re.split(r"[،,*\-|/\\]+", text.strip("()"))
+        cleaned = []
+
+        for name in raw_names:
+            name = name.strip()
+
+            if not name or name in cleaned:
+                continue
+
+            if len(name) > 15:
+                return await ev.reply(f"⚠️ الاسم **{name}** طويل جدًا (الحد الأقصى 15 حرفًا).")
+
+            cleaned.append(name)
+
+        if len(cleaned) != TEAMS[chat]['count']:
+            return await ev.reply(
+                f"⚠️ عدد الأسماء ({len(cleaned)}) لا يطابق عدد الفرق المحددة ({TEAMS[chat]['count']}), حاول مجددًا."
             )
+
+        TEAMS[chat]['names'] = cleaned
+        TEAMS[chat]['members'] = {i: [] for i in range(len(cleaned))}
+        AWAITING_NAMES.discard(chat)
+
+        await ev.reply(
+            "✅ تم تحديد أسماء الفرق بنجاح.",
+            buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
+        )
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
 async def autoreg(event):
