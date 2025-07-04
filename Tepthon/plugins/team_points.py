@@ -193,7 +193,7 @@ async def receive_names(ev):
             buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
         )
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}دفه(?:\s+(.+))?$")
+@zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
 async def autoreg(event):
     chat = event.chat_id
     if not TEAM_MODE.get(chat):
