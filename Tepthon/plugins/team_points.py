@@ -82,7 +82,7 @@ async def callback_handler(event):
         kb = [
             [Button.inline(str(i), f"team_count_{i}") for i in range(2, 6)],
             [Button.inline(str(i), f"team_count_{i}") for i in range(6, 11)],
-            [Button.inline("✔️ تحديد أسماء الفرق", b"team_names")]
+            [Button.inline("✔️بواسطة تحديد أسماء الفرق", b"team_names")]
         ]
         return await event.edit("اختر عدد الفرق :", buttons=kb)
 
