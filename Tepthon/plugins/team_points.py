@@ -152,7 +152,7 @@ async def callback_handler(event):
             else:
                 mentions = "اُبوك يالطفش مافيه ناس بالتيم، زعلن (╯︵╰,) "
 
-            lines.append(f"**{name}**:\n\n{mentions}\n")
+            lines.append(f"• **{name}**:\n\n{mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
