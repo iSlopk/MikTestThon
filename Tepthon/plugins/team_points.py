@@ -111,7 +111,7 @@ async def callback_handler(event):
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
-        lines = ["🔔 **التسجيل مفتوح الآن**", ""]
+        lines = ["🔔 **التسجيل مفتوح الآن** **🛗 الأفرقة:", ""]
         for idx, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(idx) or []
 
@@ -119,7 +119,7 @@ async def callback_handler(event):
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
                 mentions = "، ".join(f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
-                mentions = "— لا أحد بعد"
+                mentions = "اُبوك يالطفش ما عندي ناس، زعلن (╯︵╰,) "
 
             lines.append(f"**{name}**:\n{mentions}\n")
 
