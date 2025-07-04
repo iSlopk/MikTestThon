@@ -91,8 +91,8 @@ async def callback_handler(event):
             n = int(data.split("_")[-1])
             TEAMS[chat]['count'] = n
             return await event.edit(
-                f"✅ اخترت {n} فرق.\nاضغط لتعيين أسماء الفرق",
-                buttons=[[Button.inline("📝 أسماء الفرق", b"team_names")]]
+                f"✅ اخترت عدد الفرق : [{n}] \nاضغط لتعيين أسماء الفرق",
+                buttons=[[Button.inline("📝 تسمية الفرق", b"team_names")]]
             )
         except ValueError:
             return await event.answer("⚠️ رقم غير صالح", alert=True)
