@@ -138,11 +138,11 @@ async def callback_handler(event):
         await event.answer(f"✅ مبروك عليك دخلت فريق {team_name}", alert=True)
 
         team_buttons = [
-            [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
+            [Button.inline(f"➕ انضم لـ ({name})", f"join_team_{i}")]
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
-        lines = ["🔔 **التسجيل مفتوح الآن**", ""]
+        lines = ["🔔 **التسجيل مفتوح الآن**\n\n 🛗 الأفرقة:", ""]
         for j, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(j) or []
 
