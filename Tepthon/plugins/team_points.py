@@ -84,7 +84,7 @@ async def callback_handler(event):
             [Button.inline(str(i), f"team_count_{i}") for i in range(6, 11)],
             [Button.inline("✔️ تحديد أسماء الفرق", b"team_names")]
         ]
-        return await event.edit("اختر عدد الفرق:", buttons=kb)
+        return await event.edit("اختر عدد الفرق :", buttons=kb)
 
     if data.startswith("team_count_"):
         try:
