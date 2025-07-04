@@ -175,7 +175,7 @@ async def receive_names(ev):
                 continue
 
             if len(name) > 15:
-                return await ev.reply(f"⚠️ الاسم **{name}** طويل جدًا (الحد الأقصى 15 حرفًا)")
+                return await ev.reply(f"⚠️ **يابوي اسم التيم {name} مره طويل والحد المسموح هو** (`١٥ حرف`)")
 
             cleaned.append(name)
 
