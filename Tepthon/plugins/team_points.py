@@ -111,7 +111,7 @@ async def callback_handler(event):
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
-        lines = ["🔔 **التسجيل مفتوح الآن** **🛗 الأفرقة:", ""]
+        lines = ["🔔 **التسجيل مفتوح الآن** *\n\n 🛗 **الأفرقة**:", ""]
         for idx, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(idx) or []
 
