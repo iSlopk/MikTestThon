@@ -46,7 +46,7 @@ async def is_user_admin(event):
 @zedub.bot_cmd(pattern=fr"^{cmhd}tmod(?:\s+(on|off))?$")
 async def cmd_tmod(event):
     if not await is_user_admin(event):
-        return await safe_edit(event, "❗ الأمر للمشرفين فقط.")
+        return await safe_edit(event, "❗ الأمر للمشرفين فقط")
 
     arg = event.pattern_match.group(1)
     if arg == "on":
@@ -60,13 +60,13 @@ async def cmd_tmod(event):
         buttons = [
             [Button.inline("🔧 إنشاء الفرق", b"setup_teams")]
         ]
-        await event.reply("✅ تم تفعيل وضع الفرق.", buttons=buttons)
+        await event.reply("✅ تم تفعيل وضع الفرق", buttons=buttons)
         await event.delete()
         return
 
     if arg == "off":
         TEAM_MODE[event.chat_id] = False
-        return await safe_edit(event, "✅ تم الرجوع لوضع الأفراد.")
+        return await safe_edit(event, "✅ تم الرجوع لوضع الأفراد")
 
     return await safe_edit(
         event,
@@ -91,11 +91,11 @@ async def callback_handler(event):
             n = int(data.split("_")[-1])
             TEAMS[chat]['count'] = n
             return await event.edit(
-                f"✅ اخترت {n} فرق.\nاضغط لتعيين أسماء الفرق.",
+                f"✅ اخترت {n} فرق.\nاضغط لتعيين أسماء الفرق",
                 buttons=[[Button.inline("📝 أسماء الفرق", b"team_names")]]
             )
         except ValueError:
-            return await event.answer("⚠️ رقم غير صالح.", alert=True)
+            return await event.answer("⚠️ رقم غير صالح", alert=True)
 
     if data == "team_names":
         AWAITING_NAMES.add(chat)
@@ -129,7 +129,7 @@ async def callback_handler(event):
 
         for members in TEAMS[chat]['members'].values():
             if uid in members:
-                return await event.answer("❗ أنت بالفعل في فريق.", alert=True)
+                return await event.answer("❗ أنت بالفعل في فريق", alert=True)
 
         TEAMS[chat]['members'].setdefault(idx, []).append(uid)
         team_name = TEAMS[chat]['names'][idx]
@@ -173,13 +173,13 @@ async def receive_names(ev):
                 continue
 
             if len(name) > 15:
-                return await ev.reply(f"⚠️ الاسم **{name}** طويل جدًا (الحد الأقصى 15 حرفًا).")
+                return await ev.reply(f"⚠️ الاسم **{name}** طويل جدًا (الحد الأقصى 15 حرفًا)")
 
             cleaned.append(name)
 
         if len(cleaned) != TEAMS[chat]['count']:
             return await ev.reply(
-                f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا."
+                f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
             )
 
         TEAMS[chat]['names'] = cleaned
@@ -187,7 +187,7 @@ async def receive_names(ev):
         AWAITING_NAMES.discard(chat)
 
         await ev.reply(
-            "✅ تم تحديد أسماء الفرق بنجاح.",
+            "✅ تم تحديد أسماء الفرق بنجاح",
             buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
         )
 
@@ -201,11 +201,11 @@ async def autoreg(event):
     args = args.split() if args else []
     uid = await get_user_id(event, args)
     if not uid:
-        return await safe_edit(event, "❗ حدد مستخدم بالرد أو منشن أو آيدي.")
+        return await safe_edit(event, "❗ حدد مستخدم بالرد أو منشن أو آيدي")
 
     for members in TEAMS[chat]['members'].values():
         if uid in members:
-            return await safe_edit(event, "❗ المستخدم مسجل بالفعل في فريق.")
+            return await safe_edit(event, "❗ المستخدم مسجل بالفعل في فريق")
 
     idx = uid % TEAMS[chat]['count']
     TEAMS[chat]['members'].setdefault(idx, []).append(uid)
@@ -232,7 +232,7 @@ async def manage_team_points(event):
             break
 
     if team_idx is None:
-        return await safe_edit(event, "❗ المستخدم غير مسجل في أي فريق.")
+        return await safe_edit(event, "❗ المستخدم غير مسجل في أي فريق")
 
     members = TEAMS[chat]['members'][team_idx]
     delta = 1 if cmd == "/tp" else -1
@@ -247,5 +247,5 @@ async def manage_team_points(event):
     team_name = TEAMS[chat]['names'][team_idx]
     return await safe_edit(
         event,
-        f"{sign} تم {action} نقطة لكل أعضاء فريق **{team_name}**."
+        f"{sign} تم {action} نقطة لكل أعضاء فريق **{team_name}**"
     )
