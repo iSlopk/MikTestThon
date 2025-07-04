@@ -107,7 +107,7 @@ async def callback_handler(event):
 
     if data == "start_signup":
         team_buttons = [
-            [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
+            [Button.inline(f"➕ انضم لـ ({name})", f"join_team_{i}")]
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
