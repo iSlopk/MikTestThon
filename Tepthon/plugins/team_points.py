@@ -121,7 +121,7 @@ async def callback_handler(event):
             else:
                 mentions = "اُبوك يالطفش ما عندي ناس، زعلن (╯︵╰,) "
 
-            lines.append(f"**{name}**:\n{mentions}\n")
+            lines.append(f"**{name}**:\n\n{mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
@@ -131,11 +131,11 @@ async def callback_handler(event):
 
         for members in TEAMS[chat]['members'].values():
             if uid in members:
-                return await event.answer("❗ أنت بالفعل في فريق", alert=True)
+                return await event.answer("❗يا نصاب انت موجود بفريق", alert=True)
 
         TEAMS[chat]['members'].setdefault(idx, []).append(uid)
         team_name = TEAMS[chat]['names'][idx]
-        await event.answer(f"✅ انضممت إلى فريق {team_name}", alert=True)
+        await event.answer(f"✅ مبروك عليك دخلت فريق {team_name}", alert=True)
 
         team_buttons = [
             [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
