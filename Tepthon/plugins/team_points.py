@@ -109,7 +109,7 @@ async def callback_handler(event):
 
         lines = ["🔔 **التسجيل مفتوح الآن**", ""]
         for idx, name in enumerate(TEAMS[chat]['names']):
-            members = TEAMS[chat]['members'].get(idx, [])
+            members = TEAMS[chat]['members'].get(idx) or []
             mentions = (
                 "، ".join(
                     f"[{(await event.client.get_entity(m)).first_name}](tg://user?id={m})"
@@ -124,7 +124,6 @@ async def callback_handler(event):
         idx = int(data.split("_")[-1])
         uid = event.sender_id
 
-        # تحقق من الانضمام المسبق
         for members in TEAMS[chat]['members'].values():
             if uid in members:
                 return await event.answer("❗ أنت بالفعل في فريق.", alert=True)
@@ -133,7 +132,6 @@ async def callback_handler(event):
         team_name = TEAMS[chat]['names'][idx]
         await event.answer(f"✅ انضممت إلى فريق {team_name}", alert=True)
 
-        # تحديث العرض بعد الانضمام
         team_buttons = [
             [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
             for i, name in enumerate(TEAMS[chat]['names'])
@@ -141,7 +139,7 @@ async def callback_handler(event):
 
         lines = ["🔔 **التسجيل مفتوح الآن**", ""]
         for j, name in enumerate(TEAMS[chat]['names']):
-            members = TEAMS[chat]['members'].get(j, [])
+            members = TEAMS[chat]['members'].get(j) or []
             mentions = (
                 "، ".join(
                     f"[{(await event.client.get_entity(m)).first_name}](tg://user?id={m})"
