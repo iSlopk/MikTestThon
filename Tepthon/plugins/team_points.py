@@ -249,5 +249,5 @@ async def manage_team_points(event):
     team_name = TEAMS[chat]['names'][team_idx]
     return await safe_edit(
         event,
-        f"{sign} تم {action} نقطة لكل أعضاء فريق **{team_name}**"
+        f"{sign} تم {action} نقطة للفريق:**{team_name}**"
     )
