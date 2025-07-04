@@ -179,8 +179,7 @@ async def receive_names(ev):
 
         if len(cleaned) != TEAMS[chat]['count']:
             return await ev.reply(
-                f
-"⚠️ :عدد الأسماء ({len(cleaned)})\n لا :يطابق عدد الفرق المحددة ({TEAMS[chat]['count']}), حاول مجددًا."
+                f"⚠️ :عدد الأسماء ({len(cleaned)})\n لا :يطابق عدد الفرق المحددة ({TEAMS[chat]['count']}), حاول مجددًا."
             )
 
         TEAMS[chat]['names'] = cleaned
