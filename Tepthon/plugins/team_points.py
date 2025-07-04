@@ -1,3 +1,4 @@
+import asyncio
 import sqlite3
 from telethon import Button, events
 from telethon.errors.rpcerrorlist import MessageAuthorRequiredError
@@ -110,12 +111,13 @@ async def callback_handler(event):
         lines = ["🔔 **التسجيل مفتوح الآن**", ""]
         for idx, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(idx) or []
-            mentions = (
-                "، ".join(
-                    f"[{(await event.client.get_entity(m)).first_name}](tg://user?id={m})"
-                    for m in members
-                ) if members else "— لا أحد بعد"
-            )
+
+            if members:
+                entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
+                mentions = "، ".join(f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+            else:
+                mentions = "— لا أحد بعد"
+
             lines.append(f"**{name}**:\n{mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
@@ -140,12 +142,13 @@ async def callback_handler(event):
         lines = ["🔔 **التسجيل مفتوح الآن**", ""]
         for j, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(j) or []
-            mentions = (
-                "، ".join(
-                    f"[{(await event.client.get_entity(m)).first_name}](tg://user?id={m})"
-                    for m in members
-                ) if members else "— لا أحد بعد"
-            )
+
+            if members:
+                entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
+                mentions = "، ".join(f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+            else:
+                mentions = "— لا أحد بعد"
+
             lines.append(f"**{name}**:\n{mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
