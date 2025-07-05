@@ -101,8 +101,9 @@ async def callback_handler(event):
         AWAITING_NAMES.add(chat)
         return await event.reply(
             "📩 أرسل أسماء الفرق مثل:\
-            \n( Mik | Sloom )\
-            \n\nالفواصل المدعومة: ( `،` `,` `*` `\` `-` `|` `/` `+` )"
+            \n( MikTeam | SloomTeam )\
+            \n\nالفواصل المدعومة:\
+            \n( `،` `,` `*` `\` `-` `|` `/` `+` )"
         )
 
     if data == "start_signup":
