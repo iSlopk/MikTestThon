@@ -329,3 +329,6 @@ async def show_teams_members(event):
         text += f"\n• **{name}**:\n    - {joined}\n"
 
     await safe_edit(event, text)
+
+
+# It's not the end .. (:
