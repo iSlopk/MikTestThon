@@ -322,13 +322,11 @@ async def show_teams_members(event):
 ###############################
 #### تعريب الأوامر / استبدال الأوامر ####
 ###############################
-
-
+"""
 def register_alias(chat_id: int, alias: str, original: str):
     """تسجيل alias وربطه بكوماند أصلي"""
     ALIASES.setdefault(chat_id, {})[alias] = original
-
-    # احذف أي باترن سابق للـ alias نفسه
+    
     for (pattern, handler) in ALIAS_HANDLERS.get(chat_id, []):
         if alias in pattern.pattern:
             zedub.remove_event_handler(handler, event=NewMessage(pattern=pattern))
@@ -372,7 +370,6 @@ async def del_alias(event):
 
     del ALIASES[chat][alias]
 
-    # إزالة الباترن والدالة
     handlers = ALIAS_HANDLERS.get(chat, [])
     for (pattern, handler) in handlers:
         if alias in pattern.pattern:
@@ -380,3 +377,5 @@ async def del_alias(event):
     ALIAS_HANDLERS[chat] = [h for h in handlers if alias not in h[0].pattern]
 
     return await safe_edit(event, f"🗑️ تم حذف `{alias}` بنجاح.")
+    """
+ 
