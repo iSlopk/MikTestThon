@@ -267,7 +267,7 @@ async def manage_team_points(event):
     return await safe_edit(
         event,
         f"{sign} تم {action} نقطة للفريق:\
-        \n**{team_name}**"
+        \n«**{team_name}**»"
     )
     
 
