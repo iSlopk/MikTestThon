@@ -19,6 +19,7 @@ DB_PATH = "points_db.sqlite"
 
 AWAITING_NAMES = set()
 TEAM_MODE = {}
+ALIASES = {}
 TEAMS = {}
 
 def get_db():
