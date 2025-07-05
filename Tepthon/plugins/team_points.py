@@ -150,14 +150,14 @@ async def callback_handler(event):
                 return await event.answer("❗يا نصاب انت موجود بفريق", alert=False)
 
         if len(TEAMS[chat]['members'].get(idx, [])) >= 8:
-            return await event.answer("⚠️ عدد أعضاء الفريق وصل للحد الأقصى (8 أعضاء)", alert=False)
+            return await event.answer("⚠️ عدد أعضاء الفريق وصل للحد الأقصى (8 أعضاء)", alert=True)
             
         TEAMS[chat]['members'].setdefault(idx, []).append(uid)
         team_name = TEAMS[chat]['names'][idx]
-        await event.answer(f"✅ مبروك عليك دخلت فريق {team_name}", alert=False)
+        await event.answer(f"✅ تم تسجيلك بفريق {team_name}", alert=False)
 
         team_buttons = [
-            [Button.inline(f"➕ انضم لـ ({name})", f"join_team_{i}")]
+            [Button.inline(f"➕ انضم لـ <{name}>", f"join_team_{i}")]
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
