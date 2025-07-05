@@ -82,7 +82,7 @@ async def callback_handler(event):
         kb = [
             [Button.inline(str(i), f"team_count_{i}") for i in range(2, 6)],
             [Button.inline(str(i), f"team_count_{i}") for i in range(6, 11)],
-            [Button.inline("✔️بواسطة تحديد أسماء الفرق", b"team_names")]
+            [Button.inline("✔️ تحديد بأسماء الفرق", b"team_names")]
         ]
         return await event.edit("اختر عدد الفرق :", buttons=kb)
 
@@ -102,7 +102,7 @@ async def callback_handler(event):
         return await event.reply(
             "📩 أرسل أسماء الفرق مثل:\
             \n( Mik | Sloom )\
-            \nالفواصل المدعومة: (`،` `,` `*` `\` `-` `|` `/` `+`)"
+            \n\nالفواصل المدعومة: ( `،` `,` `*` `\` `-` `|` `/` `+` )"
         )
 
     if data == "start_signup":
@@ -111,7 +111,7 @@ async def callback_handler(event):
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
-        lines = ["🔔 **التسجيل مفتوح الآن** *\n\n 🛗 **الأفرقة**:", ""]
+        lines = ["🔔 | **التسجيل مفتوح الآن**\n\n🛗 | **الأفــرقــة**:", ""]
         for idx, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(idx) or []
 
