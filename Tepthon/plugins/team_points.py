@@ -106,6 +106,19 @@ async def callback_handler(event):
             \n( `،` `,` `*` `\` `-` `|` `/` `+` )"
         )
 
+    if data == "confirm_names":
+        if chat in TEAMS and "_preview_names" in TEAMS[chat]:
+            names = TEAMS[chat].pop("_preview_names")
+            TEAMS[chat]['names'] = names
+            TEAMS[chat]['members'] = {i: [] for i in range(len(names))}
+            AWAITING_NAMES.discard(chat)
+            return await event.edit(
+                "✅ تم حفظ أسماء الفرق بنجاح.",
+                buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
+            )
+        else:
+            return await event.answer("⚠️ لا يوجد أسماء لحفظها.", alert=True)
+
     if data == "start_signup":
         team_buttons = [
             [Button.inline(f"➕ انضم لـ ({name})", f"join_team_{i}")]
