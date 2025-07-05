@@ -113,7 +113,7 @@ async def callback_handler(event):
             TEAMS[chat]['members'] = {i: [] for i in range(len(names))}
             AWAITING_NAMES.discard(chat)
             return await event.edit(
-                "✅ تم حفظ أسماء الفرق بنجاح.",
+                "✅ تم حفظ أسماء الفرق بنجاح",
                 buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
             )
         else:
