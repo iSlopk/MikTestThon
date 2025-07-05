@@ -274,6 +274,8 @@ async def manage_team_points(event):
         new_pts = max(min(current + delta, MAX_POINTS), 0)
         set_points(chat, member_id, new_pts)
 
+    total = sum(get_points(chat, member_id) for member_id in members)
+
     sign = "➕" if delta > 0 else "➖"
     action = "إضافة" if delta > 0 else "خصم"
     team_name = TEAMS[chat]['names'][team_idx]
