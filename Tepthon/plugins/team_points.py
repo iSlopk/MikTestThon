@@ -119,7 +119,7 @@ async def callback_handler(event):
                 buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
             )
         else:
-            return await event.answer("⚠️ لا يوجد أسماء لحفظها.", alert=False)
+            return await event.answer("⚠️ لا يوجد أسماء لحفظها", alert=True)
 
     if data == "start_signup":
         team_buttons = [
