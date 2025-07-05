@@ -272,7 +272,7 @@ async def manage_team_points(event):
     return await safe_edit(
         event,
         f"{sign} تم {action} نقطة للفريق:\
-        \n«**{team_name}**»"
+        \n«**{team_name}**»\n\n💠 نقاطهم الحالية: ({total})"
     )
     
 
@@ -280,7 +280,7 @@ async def manage_team_points(event):
 async def team_points_summary(event):
     chat = event.chat_id
     if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
-        return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل.")
+        return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
 
     text = "📊 **نقاط الفرق:**\n"
     for idx, name in enumerate(TEAMS[chat]['names']):
