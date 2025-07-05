@@ -24,6 +24,7 @@ TEAM_MODE = {}
 TEAMS = {}
 
 MAX_POINTS = 99
+MAX_TEAM_MEMBERS = 8
 
 def get_db():
     return sqlite3.connect(DB_PATH)
