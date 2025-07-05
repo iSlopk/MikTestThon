@@ -17,9 +17,10 @@ plugin_category = "بوت النقاط"
 cmhd = Config.COMMAND_HAND_LER
 DB_PATH = "points_db.sqlite"
 
+ALIASES: dict[int, dict[str, str]] = {}
+ALIAS_HANDLERS = {}
 AWAITING_NAMES = set()
 TEAM_MODE = {}
-ALIASES = {}
 TEAMS = {}
 
 def get_db():
@@ -318,42 +319,64 @@ async def show_teams_members(event):
     await safe_edit(event, text)
 
 
-@zedub.bot_cmd(pattern=r"^\$([^\s]+)$")
-async def alias_trigger(event):
-    chat = event.chat_id
-    alias = event.pattern_match.group(1)
-    command = ALIASES.get(chat, {}).get(alias)
+###############################
+#### تعريب الأوامر / استبدال الأوامر ####
+###############################
 
-    if not command:
-        return
 
-    # محاكاة تنفيذ الأمر الأصلي
-    event.text = f"/{command}"
-    event.raw_text = event.text
-    await event.client.dispatch_event(event)
+def register_alias(chat_id: int, alias: str, original: str):
+    """تسجيل alias وربطه بكوماند أصلي"""
+    ALIASES.setdefault(chat_id, {})[alias] = original
 
-@zedub.bot_cmd(pattern=r"^/pers\s+([^\s]+)$")
+    # احذف أي باترن سابق للـ alias نفسه
+    for (pattern, handler) in ALIAS_HANDLERS.get(chat_id, []):
+        if alias in pattern.pattern:
+            zedub.remove_event_handler(handler, event=NewMessage(pattern=pattern))
+    
+    pattern = re.compile(fr"^[!/.]{re.escape(alias)}(?:\s+.*)?$")
+
+    async def handler(event):
+        event.text = original if original.startswith(cmhd) else cmhd + original
+        event.raw_text = event.text
+        await zedub.dispatch_event(event)
+
+    zedub.add_event_handler(handler, NewMessage(pattern=pattern, outgoing=True))
+    ALIAS_HANDLERS.setdefault(chat_id, []).append((pattern, handler))
+
+
+@zedub.bot_cmd(pattern=fr"^{cmhd}?pers\s+(.+)$")
 async def set_alias(event):
+    if not event.is_group:
+        return await safe_edit(event, "❗ للأوامر في المجموعات فقط.")
     if not event.is_reply:
-        return await event.reply("❗ يجب الرد على رسالة تحتوي على الأمر الأصلي (مثل `$tp`)")
+        return await safe_edit(event, "❗ الرد على رسالة تحتوي على `$command`.")
 
     reply = await event.get_reply_message()
     if not reply.text or not reply.text.startswith("$"):
-        return await event.reply("❗ الرسالة المردود عليها يجب أن تحتوي على أمر يبدأ بـ `$`")
+        return await safe_edit(event, "❗ الرسالة يجب أن تبدأ بـ `$`.")
 
     original = reply.text[1:].strip()
-    new_cmd = event.pattern_match.group(1).strip()
-
-    ALIASES.setdefault(event.chat_id, {})[new_cmd] = original
-    await event.reply(f"✅ تم ربط `{new_cmd}` بـ `$ {original}`")
-
-@zedub.bot_cmd(pattern=r"^/delpers\s+([^\s]+)$")
-async def del_alias(event):
-    chat = event.chat_id
     alias = event.pattern_match.group(1).strip()
 
-    if chat in ALIASES and alias in ALIASES[chat]:
-        del ALIASES[chat][alias]
-        await event.reply(f"🗑️ تم حذف الاختصار `{alias}`")
-    else:
-        await event.reply("❗ لا يوجد اختصار بهذا الاسم.")
+    register_alias(event.chat_id, alias, original)
+
+    return await safe_edit(event, f"✅ `{alias}` مرتبطة بـ `$ {original}` ويمكن استخدامها مباشرة.")
+
+@zedub.bot_cmd(pattern=fr"^{cmhd}?delpers\s+(.+)$")
+async def del_alias(event):
+    alias = event.pattern_match.group(1).strip()
+    chat = event.chat_id
+
+    if chat not in ALIASES or alias not in ALIASES[chat]:
+        return await safe_edit(event, f"❗ لا يوجد اختصار `{alias}`.")
+
+    del ALIASES[chat][alias]
+
+    # إزالة الباترن والدالة
+    handlers = ALIAS_HANDLERS.get(chat, [])
+    for (pattern, handler) in handlers:
+        if alias in pattern.pattern:
+            zedub.remove_event_handler(handler, event=NewMessage(pattern=pattern))
+    ALIAS_HANDLERS[chat] = [h for h in handlers if alias not in h[0].pattern]
+
+    return await safe_edit(event, f"🗑️ تم حذف `{alias}` بنجاح.")
