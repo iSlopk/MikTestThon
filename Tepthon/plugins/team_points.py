@@ -299,13 +299,14 @@ async def tpoints_alias(event):
 async def show_teams_members(event):
     chat = event.chat_id
     if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
-        return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل.")
+        return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
 
     text = "🗂️ **تفاصيل الفرق وأعضائها:**\n"
     for idx, name in enumerate(TEAMS[chat]['names']):
         members = TEAMS[chat]['members'].get(idx, [])
         if not members:
-            text += f"\n• **{name}**:\n    - لا يوجد أعضاء\n"
+            text += f"\n• **{name}**:\
+            \n_مافيه احد في الفريق_\n"
             continue
 
         mentions = []
