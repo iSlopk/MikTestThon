@@ -317,9 +317,6 @@ async def show_teams_members(event):
     await safe_edit(event, text)
 
 
-# تخزين الأوامر البديلة: {chat_id: {alias: original_command}}
-ALIASES = {}
-
 @zedub.bot_cmd(pattern=r"^\$([^\s]+)$")
 async def alias_trigger(event):
     chat = event.chat_id
