@@ -268,3 +268,49 @@ async def manage_team_points(event):
         event,
         f"{sign} تم {action} نقطة للفريق:**{team_name}**"
     )
+    
+
+@zedub.bot_cmd(pattern=fr"^{cmhd}tps$")
+async def team_points_summary(event):
+    chat = event.chat_id
+    if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
+        return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل.")
+
+    text = "📊 **نقاط الفرق:**\n"
+    for idx, name in enumerate(TEAMS[chat]['names']):
+        members = TEAMS[chat]['members'].get(idx, [])
+        total = sum(get_points(chat, uid) for uid in members)
+        text += f"\n• **{name}**: `{total}` نقطة"
+    await safe_edit(event, text)
+
+
+@zedub.bot_cmd(pattern=fr"^{cmhd}tpoints$")
+async def tpoints_alias(event):
+    return await team_points_summary(event)
+
+
+@zedub.bot_cmd(pattern=fr"^{cmhd}showt$")
+async def show_teams_members(event):
+    chat = event.chat_id
+    if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
+        return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل.")
+
+    text = "🗂️ **تفاصيل الفرق وأعضائها:**\n"
+    for idx, name in enumerate(TEAMS[chat]['names']):
+        members = TEAMS[chat]['members'].get(idx, [])
+        if not members:
+            text += f"\n• **{name}**:\n    - لا يوجد أعضاء\n"
+            continue
+
+        mentions = []
+        entities = await asyncio.gather(*(event.client.get_entity(uid) for uid in members))
+        for e in entities:
+            if e.username:
+                mentions.append(f"@{e.username}")
+            else:
+                mentions.append(f"[{e.first_name}](tg://user?id={e.id})")
+
+        joined = "، ".join(mentions)
+        text += f"\n• **{name}**:\n    - {joined}\n"
+
+    await safe_edit(event, text)
