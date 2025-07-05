@@ -149,6 +149,9 @@ async def callback_handler(event):
             if uid in members:
                 return await event.answer("❗يا نصاب انت موجود بفريق", alert=False)
 
+        if len(TEAMS[chat]['members'].get(idx, [])) >= 8:
+            return await event.answer("⚠️ عدد أعضاء الفريق وصل للحد الأقصى (8 أعضاء)", alert=False)
+            
         TEAMS[chat]['members'].setdefault(idx, []).append(uid)
         team_name = TEAMS[chat]['names'][idx]
         await event.answer(f"✅ مبروك عليك دخلت فريق {team_name}", alert=False)
