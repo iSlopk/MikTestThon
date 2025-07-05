@@ -345,16 +345,6 @@ class ZedUserBotClient(TelegramClient):
                 LOGS.debug(e)
         self.running_processes.clear()
 
-    async def dispatch_event(self, event):
-            """
-            تنفيذ الحدث يدويًا من خلال جميع المعالجات المسجلة.
-            يُستخدم لتفعيل الأوامر البديلة المرتبطة ديناميكيًا.
-            """
-            if not hasattr(self, "_event_builders"):
-                return
-            for builder, callback in self._event_builders:
-                if builder.filter(event):
-                    await callback(event)
 
 ZedUserBotClient.fast_download_file = download_file
 ZedUserBotClient.fast_upload_file = upload_file
