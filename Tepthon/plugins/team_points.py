@@ -23,6 +23,8 @@ AWAITING_NAMES = set()
 TEAM_MODE = {}
 TEAMS = {}
 
+MAX_POINTS = 100
+
 def get_db():
     return sqlite3.connect(DB_PATH)
 
