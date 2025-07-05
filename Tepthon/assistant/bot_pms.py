@@ -90,15 +90,16 @@ async def bot_start(event):
     my_fullname = f"{my_first} {my_last}" if my_last else my_first
     my_username = f"@{user.username}" if user.username else my_mention
     if gvarstatus("START_BUTUN") is not None:
-        zz_txt = "⌔ قنـاتـي ⌔"
-        zz_ch = gvarstatus("START_BUTUN")
+        zz_txt = "⌔ DEV ⌔"
+        zz_ch = gvarstatus("ASX16")
+        #zz_ch = gvarstatus("START_BUTUN")
     elif user.username:
-        zz_txt = "⌔ لـ التواصـل خـاص ⌔"
+        zz_txt = "⌔ DEV ⌔"
         zz_ch = user.username
     else:
-        zz_txt = "⌔ قنـاة السـورس ⌔"
-        zz_ch = "slopk"
-    custompic = gvarstatus("BOT_START_PIC") or None
+        zz_txt = "⌔ DEV ⌔"
+        zz_ch = "ASX16"
+    # custompic = gvarstatus("BOT_START_PIC") or None
     if chat.id != Config.OWNER_ID:
         customstrmsg = gvarstatus("START_TEXT") or None
         if customstrmsg is not None:
