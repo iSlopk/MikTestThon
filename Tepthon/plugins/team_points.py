@@ -286,7 +286,7 @@ async def team_points_summary(event):
     for idx, name in enumerate(TEAMS[chat]['names']):
         members = TEAMS[chat]['members'].get(idx, [])
         total = sum(get_points(chat, uid) for uid in members)
-        text += f"\n• **{name}**: ({total})\n"
+        text += f"\n• **{name}**: (**{total}**)\n"
     await safe_edit(event, text)
 
 
