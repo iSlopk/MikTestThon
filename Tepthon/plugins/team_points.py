@@ -95,7 +95,7 @@ async def callback_handler(event):
                 buttons=[[Button.inline("📝 تسمية الفرق", b"team_names")]]
             )
         except ValueError:
-            return await event.answer("⚠️ رقم غير صالح", alert=True)
+            return await event.answer("⚠️ رقم غير صالح", alert=False)
 
     if data == "team_names":
         AWAITING_NAMES.add(chat)
@@ -117,7 +117,7 @@ async def callback_handler(event):
                 buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
             )
         else:
-            return await event.answer("⚠️ لا يوجد أسماء لحفظها.", alert=True)
+            return await event.answer("⚠️ لا يوجد أسماء لحفظها.", alert=False)
 
     if data == "start_signup":
         team_buttons = [
@@ -145,11 +145,11 @@ async def callback_handler(event):
 
         for members in TEAMS[chat]['members'].values():
             if uid in members:
-                return await event.answer("❗يا نصاب انت موجود بفريق", alert=True)
+                return await event.answer("❗يا نصاب انت موجود بفريق", alert=False)
 
         TEAMS[chat]['members'].setdefault(idx, []).append(uid)
         team_name = TEAMS[chat]['names'][idx]
-        await event.answer(f"✅ مبروك عليك دخلت فريق {team_name}", alert=True)
+        await event.answer(f"✅ مبروك عليك دخلت فريق {team_name}", alert=False)
 
         team_buttons = [
             [Button.inline(f"➕ انضم لـ ({name})", f"join_team_{i}")]
