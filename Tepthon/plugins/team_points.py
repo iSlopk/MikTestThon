@@ -315,3 +315,47 @@ async def show_teams_members(event):
         text += f"\n• **{name}**:\n    - {joined}\n"
 
     await safe_edit(event, text)
+
+
+# تخزين الأوامر البديلة: {chat_id: {alias: original_command}}
+ALIASES = {}
+
+@zedub.bot_cmd(pattern=r"^\$([^\s]+)$")
+async def alias_trigger(event):
+    chat = event.chat_id
+    alias = event.pattern_match.group(1)
+    command = ALIASES.get(chat, {}).get(alias)
+
+    if not command:
+        return
+
+    # محاكاة تنفيذ الأمر الأصلي
+    event.text = f"/{command}"
+    event.raw_text = event.text
+    await event.client.dispatch_event(event)
+
+@zedub.bot_cmd(pattern=r"^/pers\s+([^\s]+)$")
+async def set_alias(event):
+    if not event.is_reply:
+        return await event.reply("❗ يجب الرد على رسالة تحتوي على الأمر الأصلي (مثل `$tp`)")
+
+    reply = await event.get_reply_message()
+    if not reply.text or not reply.text.startswith("$"):
+        return await event.reply("❗ الرسالة المردود عليها يجب أن تحتوي على أمر يبدأ بـ `$`")
+
+    original = reply.text[1:].strip()
+    new_cmd = event.pattern_match.group(1).strip()
+
+    ALIASES.setdefault(event.chat_id, {})[new_cmd] = original
+    await event.reply(f"✅ تم ربط `{new_cmd}` بـ `$ {original}`")
+
+@zedub.bot_cmd(pattern=r"^/delpers\s+([^\s]+)$")
+async def del_alias(event):
+    chat = event.chat_id
+    alias = event.pattern_match.group(1).strip()
+
+    if chat in ALIASES and alias in ALIASES[chat]:
+        del ALIASES[chat][alias]
+        await event.reply(f"🗑️ تم حذف الاختصار `{alias}`")
+    else:
+        await event.reply("❗ لا يوجد اختصار بهذا الاسم.")
