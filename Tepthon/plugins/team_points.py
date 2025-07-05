@@ -133,7 +133,7 @@ async def callback_handler(event):
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
                 mentions = "، ".join(f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
-                mentions = "اُبوك يالطفش مافيه ناس بالتيم، زعلن (╯︵╰,) "
+                mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
 
             lines.append(f"• **{name}**:\n    - {mentions}\n")
 
@@ -164,7 +164,7 @@ async def callback_handler(event):
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
                 mentions = "، ".join(f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
-                mentions = "اُبوك يالطفش مافيه ناس بالتيم، زعلن (╯︵╰,) "
+                mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
 
             lines.append(f"• **{name}**:\n    - {mentions}\n")
 
