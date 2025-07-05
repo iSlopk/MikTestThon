@@ -185,14 +185,17 @@ async def receive_names(ev):
                 f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
             )
 
-        TEAMS[chat]['names'] = cleaned
-        TEAMS[chat]['members'] = {i: [] for i in range(len(cleaned))}
-        AWAITING_NAMES.discard(chat)
+        TEAMS[chat]['_preview_names'] = cleaned
 
-        await ev.reply(
-            "✅ تم تحديد أسماء الفرق بنجاح",
-            buttons=[[Button.inline("🚀 ابدأ التسجيل", b"start_signup")]]
-        )
+        preview = "**📋 المعاينة قبل الحفظ:**\n\n"
+        for i, name in enumerate(cleaned, 1):
+            preview += f"{i}. {name}\n"
+
+        buttons = [
+            [Button.inline("✅ تأكيد الأسماء", b"confirm_names")],
+            [Button.inline("🔄 تعديل", b"team_names")]
+        ]
+        return await ev.reply(preview, buttons=buttons)
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
 async def autoreg(event):
