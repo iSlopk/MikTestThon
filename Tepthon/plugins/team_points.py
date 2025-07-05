@@ -263,7 +263,7 @@ async def manage_team_points(event):
 
     for member_id in members:
         current = get_points(chat, member_id)
-        new_pts = max(current + delta, 0)
+        new_pts = max(min(current + delta, MAX_POINTS), 0)
         set_points(chat, member_id, new_pts)
 
     sign = "➕" if delta > 0 else "➖"
