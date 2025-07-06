@@ -58,6 +58,32 @@ def build_rank_image(user, uid, count, photo):
     draw.text((160, 150), f"📨 الرسائل: {count}", fill="black", font=font)
     return img
 
+def build_special_top(user, count, photo, rank):
+    """بطاقات مخصصة للمراتب 1–3"""
+    colors = {
+        1: (212,175,55),
+        2: (192,192,192),
+        3: (205,127,50),
+    }
+    img = Image.new("RGB", (600, 300), colors[rank])
+    draw = ImageDraw.Draw(img)
+    font_large = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 32)
+    font_small = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 24)
+
+    # الصورة
+    if photo:
+        img.paste(photo.resize((200,200)), (20, 50))
+
+    # النصوص
+    name = user.user.first_name + (f" {user.user.last_name}" if user.user.last_name else "")
+    uname = f"@{user.user.username}" if user.user.username else ""
+    draw.text((240, 60), f"{rank}. {name}", fill="black", font=font_large)
+    draw.text((240, 110), uname, fill="black", font=font_small)
+    draw.text((240, 160), f"📨 رسائل: {count}", fill="black", font=font_small)
+
+    return img
+
+
 @bot.on(events.NewMessage(pattern=fr"^{cmhd}توب(\d+)$"))
 async def top_n_handler(event):
     n = int(event.pattern_match.group(1))
