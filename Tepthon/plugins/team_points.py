@@ -305,6 +305,16 @@ async def tpoints_alias(event):
     return await team_points_summary(event)
 
 
+@zedub.bot_cmd(pattern=fr"^{cmhd}trstp$")
+async def reset_team_points(event):
+    chat = event.chat_id
+    if not TEAM_MODE.get(chat):
+        return await safe_edit(event, "❗ وضع الفرق غير مفعل.")
+
+    reset_all_points(chat)
+    return await safe_edit(event, "♻️ تم إعادة تعيين نقاط جميع الفرق إلى `0`.")
+    
+
 @zedub.bot_cmd(pattern=fr"^{cmhd}showt$")
 async def show_teams_members(event):
     chat = event.chat_id
