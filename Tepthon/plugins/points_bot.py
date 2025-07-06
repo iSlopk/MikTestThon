@@ -128,7 +128,7 @@ async def handle_event(event, args, cmd, points):
     # محاولة الحصول على معلومات المستخدم
     try:
         user = await event.client.get_entity(uid)
-        name = user.first_name + (" " + user.last_name if user.last_name else "")
+        name = f"@{user.username}" if user.username else f"{user.first_name} — `{user.id}`"
     except Exception:
         name = str(uid)
     user_id = uid
@@ -142,7 +142,7 @@ async def handle_event(event, args, cmd, points):
         set_points(event.chat_id, uid, new_points)
         return await safe_edit_or_reply(
             event,
-            f"➕ تم إضافة {points} نقطة.\n👤 المستخدم : [{name}](tg://user?id={user_id})\n🔢 عدد نقاطه : [{new_points}]"
+            f"➕ تم إضافة {points} نقطة.\n👤 المستخدم : {name}\n🔢 عدد نقاطه : [{new_points}]"
         )
     # إذا كان الأمر هو /delp يتم خصم النقاط
     else:
@@ -150,7 +150,7 @@ async def handle_event(event, args, cmd, points):
         set_points(event.chat_id, uid, new_points)
         return await safe_edit_or_reply(
             event,
-            f"➖ تم خصم {points} نقطة.\n👤 المستخدم : [{name}](tg://user?id={user_id})\n🔢 عدد نقاطه : [{new_points}]")
+            f"➖ تم خصم {points} نقطة.\n👤 المستخدم : {name}\n🔢 عدد نقاطه : [{new_points}]")
 
 @zedub.bot_cmd(pattern=fr"^(?:{cmhd}ps|{cmhd}points)(?:\s+(.+))?$")
 async def show_points(event):
@@ -177,14 +177,14 @@ async def show_points(event):
                 
             except Exception:
                 name = str(user_id)
-            text += f"{i}- [{name}](tg://user?id={user_id}) [{pts}]\n"
+            text += f"{i}- {name} [{pts}]\n"
         return await safe_edit_or_reply(event, text)
     else:
         pts = get_points(event.chat_id, uid)
         try:
             user = await event.client.get_entity(uid)
             
-            name = user.first_name + (" " + user.last_name if user.last_name else "")
+            name = f"@{user.username}" if user.username else f"{user.first_name} — `{user.id}`"
             
         except Exception:
             name = str(uid)
