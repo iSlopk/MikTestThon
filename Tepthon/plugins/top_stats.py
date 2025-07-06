@@ -93,11 +93,15 @@ async def top_n_handler(event):
     for s in top:
         user_obj, photo = await fetch_user_details(s.user_id)
         results.append((user_obj, s.msg_count, photo))
+
     if n <= 3:
-        img = build_top_image(results)
-        b = io.BytesIO(); img.save(b, "PNG"); b.seek(0)
-        await event.reply(file=b, caption=f"🏆 أفضل {n}")
+        # إرسال بطاقة مخصصة لكل من توب 1، 2، 3
+        for idx, (user_obj, cnt, photo) in enumerate(results, start=1):
+            img = build_special_top(user_obj, cnt, photo, idx)
+            b = io.BytesIO(); img.save(b, "PNG"); b.seek(0)
+            await event.respond(file=b, caption=f"🏆 المرتبة {idx}")
     else:
+        # إرسال قائمة نصية عادية
         text = f"🏆 أفضل {n} حسب عدد الرسائل:\n\n"
         for idx, (user_obj, cnt, _) in enumerate(results, 1):
             name = user_obj.user.first_name + (f" {user_obj.user.last_name}" if user_obj.user.last_name else "")
