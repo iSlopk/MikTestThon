@@ -119,7 +119,7 @@ async def top_n_handler(event):
         # إرسال بطاقة مخصصة لكل من توب 1، 2، 3
         for idx, (user_obj, cnt, photo) in enumerate(results, start=1):
             img = build_special_top(user_obj, cnt, photo, idx)
-            b = io.BytesIO(); img.save(b, "PNG"); b.seek(0)
+            b = io.BytesIO(); img.save(b, "JPG"); b.seek(0)
             await event.respond(file=b, caption=f"🏆 المرتبة {idx}")
     else:
         # إرسال قائمة نصية عادية
