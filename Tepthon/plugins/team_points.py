@@ -354,9 +354,10 @@ async def show_teams_members(event):
     text = "🗂️ **تفاصيل الفرق وأعضائها:**\n"
     for idx, name in enumerate(TEAMS[chat]['names']):
         members = TEAMS[chat]['members'].get(idx, [])
+        member_count = len(members)
+        text += f"\n• **{name}** ({member_count} من {MAX_TEAM_MEMBERS} أعضاء):\n"
         if not members:
-            text += f"\n• **{name}**:\
-            \n_مافيه احد في الفريق_\n"
+            text += "    - _مافيه احد في الفريق_\n"
             continue
 
         mentions = []
