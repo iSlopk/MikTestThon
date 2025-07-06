@@ -252,7 +252,7 @@ async def autoreg(event):
     uid = await get_user_id(event, args)
     if not uid:
         return await safe_edit(event, "❗ حدد مستخدم بالرد أو منشن أو آيدي")
-
+   
     for members in TEAMS[chat]['members'].values():
         if uid in members:
             return await safe_edit(event, "❗ المستخدم مسجل بالفعل في فريق")
