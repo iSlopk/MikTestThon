@@ -240,7 +240,8 @@ async def receive_names(event):
                 return await event.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٢ حرف`)")
 
             cleaned.append(name)
-
+    if not cleaned:
+        return await event.reply("⚠️ لم يتم العثور على أسماء صالحة، تحقق من الصيغة")
         if len(cleaned) != TEAMS[chat]['count']:
             return await event.reply(
                 f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
