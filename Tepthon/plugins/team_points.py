@@ -145,61 +145,50 @@ async def callback_handler(event):
         else:
             return await event.answer("⚠️ لا يوجد أسماء لحفظها", alert=True)
 
-    if data == "start_signup":
-        team_buttons = [
-            [Button.inline(f"➕ انضم لـ <{name}>", f"join_team_{i}")]
-            for i, name in enumerate(TEAMS[chat]['names'])
-        ]
+...
 
-        lines = ["🔔 | **التسجيل مفتوح الآن**\n\n🛗 | **الأفــرقــة**:", ""]
-        for idx, name in enumerate(TEAMS[chat]['names']):
-            members = TEAMS[chat]['members'].get(idx) or []
+if data == "start_signup":
+    if not TEAMS.get(chat) or not TEAMS[chat].get('names') or not TEAMS[chat].get('members'):
+        return await event.answer("⚠️ حدث خطأ، تأكد من ضبط أسماء الفرق أولًا", alert=True)
 
-            if members:
-                entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
-                mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
-            else:
-                mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
-            member_count = len(members)
-            lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
+    team_buttons = [
+        [Button.inline(f"➕ انضم لـ <{name}>", f"join_team_{i}")]
+        for i, name in enumerate(TEAMS[chat]['names'])
+    ]
 
-        return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
+    # زر مغادرة الفريق وإغلاق التسجيل
+    control_buttons = [
+        Button.inline("🚪 مغادرة الفريق", b"leave_team"),
+        Button.inline("❌ إغلاق التسجيل", b"cancel_signup")
+    ]
 
-    if data.startswith("join_team_"):
-        idx = int(data.split("_")[-1])
-        uid = event.sender_id
-        if chat not in TEAMS:
-            return await event.answer("❗ لم يتم تفعيل وضع الفرق بعد", alert=True)
+    lines = ["🔔 | **التسجيل مفتوح الآن**\n\n🛗 | **الأفــرقــة**:", ""]
+    for idx, name in enumerate(TEAMS[chat]['names']):
+        members = TEAMS[chat]['members'].get(idx) or []
 
-        for members in TEAMS[chat]['members'].values():
-            if uid in members:
-                return await event.answer("❗انت موجود بفريق من اول", alert=False)
+        if members:
+            entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
+            mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+        else:
+            mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
+        member_count = len(members)
+        lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
 
-        if len(TEAMS[chat]['members'].get(idx, [])) >= MAX_TEAM_MEMBERS:
-            return await event.answer("⚠️ عدد أعضاء الفريق وصل للحد الأقصى (8 أعضاء)", alert=True)
-            
-        TEAMS[chat]['members'].setdefault(idx, []).append(uid)
-        team_name = TEAMS[chat]['names'][idx]
-        await event.answer(f"✅ تم تسجيلك بفريق {team_name}", alert=False)
+    return await event.edit("\n".join(lines), buttons=team_buttons + [control_buttons], link_preview=False)
 
-        team_buttons = [
-            [Button.inline(f"➕ انضم لـ <{name}>", f"join_team_{i}")]
-            for i, name in enumerate(TEAMS[chat]['names'])
-        ]
+if data == "leave_team":
+    uid = event.sender_id
+    for members in TEAMS[chat]['members'].values():
+        if uid in members:
+            members.remove(uid)
+            return await event.answer("✅ تم مغادرة الفريق بنجاح", alert=False)
+    return await event.answer("⚠️ لست ضمن أي فريق", alert=True)
 
-        lines = ["🔔 | **التسجيل مفتوح الآن**\n\n🛗 | **الأفــرقــة**:", ""]
-        for j, name in enumerate(TEAMS[chat]['names']):
-            members = TEAMS[chat]['members'].get(j) or []
+if data == "cancel_signup":
+    TEAMS[chat]['members'] = {i: [] for i in range(len(TEAMS[chat]['names']))}
+    return await event.edit("❌ تم إغلاق التسجيل وحذف جميع الأعضاء")
 
-            if members:
-                entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
-                mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
-            else:
-                mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
-            member_count = len(members)
-            lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
 
-        return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
 @zedub.tgbot.on(events.NewMessage)
 async def receive_names(event):
