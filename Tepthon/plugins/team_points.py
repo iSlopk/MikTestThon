@@ -51,6 +51,18 @@ async def is_user_admin(event):
     )
     return any(a.id == event.sender_id for a in admins)
 
+def get_team_top_members(chat, team_idx):
+    members = TEAMS[chat]['members'].get(team_idx, [])
+    if not members:
+        return []
+   
+    return sorted(
+        [(uid, get_points(chat, uid)) for uid in members],
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+
 @zedub.bot_cmd(pattern=fr"^{cmhd}tmod(?:\s+(on|off))?$")
 async def cmd_tmod(event):
     if not await is_user_admin(event):
