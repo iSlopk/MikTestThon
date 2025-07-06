@@ -145,8 +145,8 @@ async def callback_handler(event):
                 mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
                 mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
-
-            lines.append(f"• **{name}**:\n    - {mentions}\n")
+            member_count = len(members)
+            lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
@@ -179,8 +179,8 @@ async def callback_handler(event):
                 mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
                 mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
-
-            lines.append(f"• **{name}**:\n    - {mentions}\n")
+            member_count = len(members)
+            lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
@@ -371,7 +371,8 @@ async def show_teams_members(event):
                 mentions.append(f"[{e.first_name}](tg://user?id={e.id})")
 
         joined = "، ".join(mentions)
-        text += f"\n• **{name}**:\n    - {joined}\n"
+        member_count = len(members)
+        text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {joined}\n"
 
     await safe_edit(event, text)
 
