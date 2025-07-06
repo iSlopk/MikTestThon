@@ -144,7 +144,7 @@ async def callback_handler(event):
 
             if members:
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
-                mentions = "، ".join(f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+                mentions = "، ".join(f"@{u.username}" if u.username else f"{u.first_name} — `{u.id}`" for u in entities)
             else:
                 mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
 
