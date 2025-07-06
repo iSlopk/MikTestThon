@@ -130,7 +130,7 @@ async def top_n_handler(event):
             text += f"{idx}. {name} {uname} — {cnt} رسائل\n"
         await edit_or_reply(event, text)
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}تصنيف(?:\s+(.+))?$")
+@zedub.bot_cmd(pattern=fr"^{cmhd}rank(?:\s+(.+))?$")
 async def rank_handler(event):
     args = event.pattern_match.group(1)
     uid = None
