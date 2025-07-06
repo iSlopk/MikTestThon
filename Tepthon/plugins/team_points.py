@@ -374,7 +374,7 @@ async def show_teams_members(event):
         members = TEAMS[chat]['members'].get(idx, [])
         member_count = len(members)
         if not members:
-            text += "    - _مافيه احد في الفريق_\n"
+            text += f"    - **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n_مافيه احد في الفريق_\n"
             continue
 
         mentions = []
