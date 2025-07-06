@@ -1,5 +1,6 @@
 import io
 import asyncio
+import os
 from PIL import Image, ImageDraw, ImageFont
 from telethon import Button, events
 from telethon.tl.functions.stats import GetBroadcastStatsRequest
