@@ -99,7 +99,7 @@ async def bot_start(event):
     else:
         zz_txt = "⌔ DEV ⌔"
         zz_ch = "ASX16"
-    # custompic = gvarstatus("BOT_START_PIC") or None
+    custompic = gvarstatus("BOT_START_PIC") or None
     if chat.id != Config.OWNER_ID:
         customstrmsg = gvarstatus("START_TEXT") or None
         if customstrmsg is not None:
