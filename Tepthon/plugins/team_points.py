@@ -22,8 +22,6 @@ plugin_category = "بوت النقاط"
 cmhd = Config.COMMAND_HAND_LER
 DB_PATH = "points_db.sqlite"
 
-ALIASES: dict[int, dict[str, str]] = {}
-ALIAS_HANDLERS = {}
 AWAITING_NAMES = set()
 TEAM_MODE = {}
 TEAMS = {}
