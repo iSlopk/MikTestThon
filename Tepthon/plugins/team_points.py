@@ -228,7 +228,7 @@ async def receive_names(ev):
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
 async def autoreg(event):
-    if not await is_user_admin(ev):
+    if not await is_user_admin(event):
         return
     chat = event.chat_id
     if not TEAM_MODE.get(chat):
