@@ -130,10 +130,11 @@ async def top_n_handler(event):
             text += f"{idx}. {name} {uname} — {cnt} رسائل\n"
         await edit_or_reply(event, text)
 
-@bot.on(events.NewMessage(pattern=fr"^{cmhd}تصنيف(?:\s+(.+))?$"))
+@zedub.bot_cmd(pattern=fr"^{cmhd}تصنيف(?:\s+(.+))?$")
 async def rank_handler(event):
     args = event.pattern_match.group(1)
     uid = None
+
     if args:
         if args.strip().isdigit():
             uid = int(args)
@@ -142,11 +143,25 @@ async def rank_handler(event):
             uid = ent.id
     elif event.is_reply:
         uid = (await event.get_reply_message()).sender_id
+
     if not uid:
         return await edit_or_reply(event, "❗ لم يتم تحديد مستخدم.")
+
+    # جلب إحصائيات التفاعل للعثور على ترتيب المستخدم
     top = await fetch_top_senders(event.chat_id, 1000)
-    count = next((s.msg_count for s in top if s.user_id == uid), 0)
+    rank_position = 0
+    for i, sender in enumerate(top, 1):
+        if sender.user_id == uid:
+            rank_position = i
+            break
+
+    # جلب بيانات المستخدم وصورته الشخصية
     user_obj, photo = await fetch_user_details(uid)
-    img = build_rank_image(user_obj, uid, count, photo)
-    b = io.BytesIO(); img.save(b, "PNG"); b.seek(0)
+
+    # إنشاء الصورة وتصميم البطاقة
+    img = build_rank_image(user_obj, uid, rank_position, photo)
+    b = io.BytesIO()
+    img.save(b, "PNG")
+    b.seek(0)
+
     await edit_or_reply(event, file=b)
