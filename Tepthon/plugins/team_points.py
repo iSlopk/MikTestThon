@@ -88,6 +88,9 @@ async def callback_handler(event):
     chat = event.chat_id
     data = event.data.decode()
 
+    if not data.startswith("join_team_") and not await is_user_admin(event):
+        return await event.answer("❗ للمشرفين فقط", alert=True)
+
     if data == "setup_teams":
         kb = [
             [Button.inline(str(i), f"team_count_{i}") for i in range(2, 6)],
@@ -185,6 +188,8 @@ async def callback_handler(event):
 
 @zedub.bot_cmd(events.NewMessage)
 async def receive_names(ev):
+    if not await is_user_admin(event):
+        return await event.answer("❗ للمشرفين فقط", alert=True)
     chat = ev.chat_id
     if not ev.is_group or chat not in AWAITING_NAMES:
         return
@@ -225,6 +230,8 @@ async def receive_names(ev):
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
 async def autoreg(event):
+    if not await is_user_admin(ev):
+        return
     chat = event.chat_id
     if not TEAM_MODE.get(chat):
         return
@@ -246,6 +253,8 @@ async def autoreg(event):
 
 @zedub.bot_cmd(pattern=fr"^(?:{cmhd}tp|{cmhd}tdp)(?:\s+(.+))?$")
 async def manage_team_points(event):
+    if not await is_user_admin(event):
+        return await safe_edit(event, "❗ الأمر للمشرفين فقط")
     chat = event.chat_id
     if not TEAM_MODE.get(chat):
         return
@@ -296,6 +305,8 @@ async def manage_team_points(event):
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}tps$")
 async def team_points_summary(event):
+    if not await is_user_admin(event):
+        return await safe_edit(event, "❗ الأمر للمشرفين فقط")
     chat = event.chat_id
     if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
         return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
@@ -310,11 +321,15 @@ async def team_points_summary(event):
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}tpoints$")
 async def tpoints_alias(event):
+    if not await is_user_admin(event):
+        return await safe_edit(event, "❗ الأمر للمشرفين فقط")
     return await team_points_summary(event)
 
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}trstp$")
 async def confirm_reset_points(event):
+    if not await is_user_admin(event):
+        return await safe_edit(event, "❗ الأمر للمشرفين فقط")
     chat = event.chat_id
     if not TEAM_MODE.get(chat):
         return await safe_edit(event, "❗ وضع الفرق غير مفعل.")
@@ -332,6 +347,8 @@ async def handle_reset_all_points(event):
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}showt$")
 async def show_teams_members(event):
+    if not await is_user_admin(event):
+        return await safe_edit(event, "❗ الأمر للمشرفين فقط")
     chat = event.chat_id
     if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
         return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
