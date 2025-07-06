@@ -266,6 +266,14 @@ async def manage_team_points(event):
     if team_idx is None:
         return await safe_edit(event, "❗ المستخدم غير مسجل في أي فريق")
 
+    number = 1
+    for arg in args:
+        if arg.isdigit():
+            number = int(arg)
+            break
+
+    delta = number if event.text.startswith(f"{cmhd}tp") else -number
+
     members = TEAMS[chat]['members'][team_idx]
     delta = 1 if cmd == "/tp" else -1
 
@@ -281,8 +289,8 @@ async def manage_team_points(event):
     team_name = TEAMS[chat]['names'][team_idx]
     return await safe_edit(
         event,
-        f"{sign} تم {action} نقطة للفريق:\
-        \n«**{team_name}**»\n\n💠 نقاطهم الحالية: ({total})"
+        f"{sign} تم {action} ({abs(delta)}) نقاط للفريق:\
+        \n**{team_name}**\n\n💠 نقاطهم الحالية: (**{total}**)"
     )
     
 
