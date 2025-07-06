@@ -139,50 +139,9 @@ async def setup_bot():
         sys.exit()
 
 
-async def mybot(): #Code by T.me/zzzzl1l
-    MikthonAL = bot.me.first_name
-    Malath = bot.uid
-    zel_zal = f"[{MikthonAL}](tg://user?id={Malath})"
-    f"ـ {zel_zal}"
-    f"•⎆┊هــذا البــوت خــاص بـ {zel_zal} يمكـنك التواصــل معـه هـنا 🧸♥️"
-    zilbot = await zedub.tgbot.get_me()
-    bot_name = zilbot.first_name
-    botname = f"@{zilbot.username}"
-    if bot_name.startswith("مسـاعـد"):
-        print("تم تشغيل البوت بنجــاح")
-    else:
-        try:
-            await bot.send_message("@BotFather", "/setinline")
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", botname)
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", "Mikthon")
-            await asyncio.sleep(3)
-            await bot.send_message("@BotFather", "/setname")
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", botname)
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", f"مسـاعـد - {bot.me.first_name} ")
-            await asyncio.sleep(3)
-            await bot.send_message("@BotFather", "/setuserpic")
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", botname)
-            await asyncio.sleep(1)
-            await bot.send_file("@BotFather", "Tepthon/zilzal/logo.jpg")
-            await asyncio.sleep(3)
-            await bot.send_message("@BotFather", "/setabouttext")
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", botname)
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", f"- بـوت ميكثـون المسـاعـد ♥️🦾 الخـاص بـ  {bot.me.first_name} ")
-            await asyncio.sleep(3)
-            await bot.send_message("@BotFather", "/setdescription")
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", botname)
-            await asyncio.sleep(1)
-            await bot.send_message("@BotFather", f"•⎆┊أنـا البــوت المسـاعـد الخــاص بـ {zel_zal} \n•⎆┊بـواسطـتـي يمكـنك التواصــل مـع مـالكـي 🧸♥️\n•⎆┊قنـاة السـورس 🌐 @slopk 🌐")
-        except Exception as e:
-            print(e)
+async def mybot():
+    # تم إيقاف التعديلات التلقائية، محتوى التعريف لدى بوت فاذر معلق
+    return
 
 
 async def startupmessage():
