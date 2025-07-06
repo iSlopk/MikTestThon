@@ -370,7 +370,7 @@ async def show_teams_members(event):
                 mentions.append(f"[{e.first_name}](tg://user?id={e.id})")
 
         joined = "، ".join(mentions)
-
+        text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {joined}\n"
     await safe_edit(event, text)
 
 
