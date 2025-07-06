@@ -202,15 +202,15 @@ async def callback_handler(event):
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
 @zedub.tgbot.on(events.NewMessage)
-async def receive_names(event):
-    if not await is_user_admin(event):
-        return await event.answer("❗ للمشرفين فقط", alert=True)
-    chat = event.chat_id
-    if not event.is_group or chat not in AWAITING_NAMES:
+async def receive_names(ev):
+    if not await is_user_admin(ev):
+        return await ev.answer("❗ للمشرفين فقط", alert=True)
+    chat = ev.chat_id
+    if not ev.is_group or chat not in AWAITING_NAMES:
         return
 
     if TEAMS.get(chat) and not TEAMS[chat]['names']:
-        text = event.text.strip()
+        text = ev.text.strip()
 
         raw_names = re.split(r"[،,*\-|/\\]+", text.strip("()"))
         cleaned = []
@@ -222,12 +222,12 @@ async def receive_names(event):
                 continue
 
             if len(name) > 12:
-                return await event.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٢ حرف`)")
+                return await ev.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٢ حرف`)")
 
             cleaned.append(name)
 
         if len(cleaned) != TEAMS[chat]['count']:
-            return await event.reply(
+            return await ev.reply(
                 f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
             )
 
@@ -241,7 +241,7 @@ async def receive_names(event):
             [Button.inline("✅ تأكيد الأسماء", b"confirm_names")],
             [Button.inline("🔄 تعديل", b"team_names")]
         ]
-        return await event.reply(preview, buttons=buttons)
+        return await ev.reply(preview, buttons=buttons)
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
 async def autoreg(event):
