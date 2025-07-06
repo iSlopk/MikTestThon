@@ -161,7 +161,7 @@ async def rank_handler(event):
     # إنشاء الصورة وتصميم البطاقة
     img = build_rank_image(user_obj, uid, rank_position, photo)
     b = io.BytesIO()
-    img.save(b, "PNG")
+    img.save(b, "JPG")
     b.seek(0)
 
     await edit_or_reply(event, file=b)
