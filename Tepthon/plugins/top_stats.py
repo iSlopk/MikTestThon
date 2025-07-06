@@ -32,8 +32,8 @@ def build_special_top(user, count, photo, rank):
     colors = {1: (212,175,55), 2: (192,192,192), 3: (205,127,50)}
     img = Image.new("RGB", (600, 300), colors.get(rank, (245,245,245)))
     draw = ImageDraw.Draw(img)
-    font_large = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 32)
-    font_small = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 24)
+    font_large = ImageFont.truetype("Tepthon/assets/NotoNaskhArabic-Regular.ttf", 32)
+    font_small = ImageFont.truetype("Tepthon/assets/NotoNaskhArabic-Regular.ttf", 24)
 
     if photo:
         img.paste(photo.resize((200,200)), (20, 50))
@@ -49,9 +49,9 @@ def build_rank_image(user, uid, rank_pos, photo):
     width, height = 600, 220
     img = Image.new("RGB", (width, height), (30,30,30))
     draw = ImageDraw.Draw(img)
-    font_name = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 28)
-    font_info = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 22)
-    font_bio  = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 20)
+    font_name = ImageFont.truetype("Tepthon/assets/NotoNaskhArabic-Regular.ttf", 28)
+    font_info = ImageFont.truetype("Tepthon/assets/NotoNaskhArabic-Regular.ttf", 22)
+    font_bio  = ImageFont.truetype("Tepthon/assets/NotoNaskhArabic-Regular.ttf", 20)
 
     if photo:
         img.paste(photo.resize((160,160)), (20,20))
