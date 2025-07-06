@@ -306,13 +306,20 @@ async def tpoints_alias(event):
 
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}trstp$")
-async def reset_team_points(event):
+async def confirm_reset_points(event):
     chat = event.chat_id
     if not TEAM_MODE.get(chat):
         return await safe_edit(event, "❗ وضع الفرق غير مفعل.")
 
+    buttons = [[Button.inline("🧹 نعم، إعادة تعيين", b"reset_all_points")]]
+    return await safe_edit(event, "⚠️ هل أنت متأكد أنك تريد تصفير نقاط جميع الفرق؟", buttons=buttons)
+
+@zedub.tgbot.on(events.CallbackQuery(data=b"reset_all_points"))
+async def handle_reset_all_points(event):
+    chat = event.chat_id
     reset_all_points(chat)
-    return await safe_edit(event, "♻️ تم إعادة تعيين نقاط جميع الفرق إلى `0`.")
+    await event.edit("✅ تم تصفير جميع نقاط الفرق.")
+    
     
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}showt$")
