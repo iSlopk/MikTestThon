@@ -168,8 +168,9 @@ async def callback_handler(event):
     if data.startswith("join_team_"):
         idx = int(data.split("_")[-1])
         uid = event.sender_id
-    if chat not in TEAMS:
-        return await event.answer("❗ لم يتم تفعيل وضع الفرق بعد", alert=True)
+        if chat not in TEAMS:
+            return await event.answer("❗ لم يتم تفعيل وضع الفرق بعد", alert=True)
+
         for members in TEAMS[chat]['members'].values():
             if uid in members:
                 return await event.answer("❗انت موجود بفريق من اول", alert=False)
