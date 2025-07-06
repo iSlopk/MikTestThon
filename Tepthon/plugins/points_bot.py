@@ -128,7 +128,7 @@ async def handle_event(event, args, cmd, points):
     # محاولة الحصول على معلومات المستخدم
     try:
         user = await event.client.get_entity(uid)
-        name = f"@{user.username}" if user.username else f"{user.first_name} — `{user.id}`"
+        name = f"@{user.username}" if user.username else  f"[{user.first_name}](tg://user?id={user.id})"
     except Exception:
         name = str(uid)
     user_id = uid
@@ -173,7 +173,7 @@ async def show_points(event):
             try:
                 user = await event.client.get_entity(user_id)
                 
-                name = f"@{user.username}" if user.username else f"{user.first_name} — `{user.id}`"
+                name = f"@{user.username}" if user.username else  f"[{user.first_name}](tg://user?id={user.id})"
                 
             except Exception:
                 name = str(user_id)
@@ -184,7 +184,7 @@ async def show_points(event):
         try:
             user = await event.client.get_entity(uid)
             
-            name = f"@{user.username}" if user.username else f"{user.first_name} — `{user.id}`"
+            name = f"@{user.username}" if user.username else  f"[{user.first_name}](tg://user?id={user.id})"
             
         except Exception:
             name = str(uid)
