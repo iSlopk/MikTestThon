@@ -310,7 +310,7 @@ async def team_points_summary(event):
         return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
 
     text = "📊 **نقاط الفرق:**\n"
-     for idx, name in enumerate(TEAMS[chat]['names']):
+    for idx, name in enumerate(TEAMS[chat]['names']):
         members = TEAMS[chat]['members'].get(idx, [])
         total = sum(get_points(chat, uid) for uid in members)
         member_count = len(members)
@@ -356,7 +356,6 @@ async def show_teams_members(event):
     for idx, name in enumerate(TEAMS[chat]['names']):
         members = TEAMS[chat]['members'].get(idx, [])
         member_count = len(members)
-        text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS} أعضاء):\n"
         if not members:
             text += "    - _مافيه احد في الفريق_\n"
             continue
