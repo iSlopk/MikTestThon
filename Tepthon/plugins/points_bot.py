@@ -173,7 +173,7 @@ async def show_points(event):
             try:
                 user = await event.client.get_entity(user_id)
                 
-                name = user.first_name + (" " + user.last_name if user.last_name else "")
+                name = f"@{user.username}" if user.username else f"{user.first_name} — `{user.id}`"
                 
             except Exception:
                 name = str(user_id)
