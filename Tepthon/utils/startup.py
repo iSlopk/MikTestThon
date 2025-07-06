@@ -43,8 +43,8 @@ from .tools import create_supergroup
 ENV = bool(os.environ.get("ENV", False))
 LOGS = logging.getLogger("Tepthon")
 cmdhr = Config.COMMAND_HAND_LER
-Zed_Vip = (1332671807, 62625462, 6550930943, 59930048, 580896714)
-Zed_Dev = (1332671807, 92595000)
+Zed_Vip = (1332671807)
+Zed_Dev = (1332671807)
 zchannel = {"@slopk"}
 heroku_api = "https://api.heroku.com"
 if Config.HEROKU_APP_NAME is not None and Config.HEROKU_API_KEY is not None:
