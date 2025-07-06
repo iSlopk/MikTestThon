@@ -314,8 +314,7 @@ async def team_points_summary(event):
         members = TEAMS[chat]['members'].get(idx, [])
         total = sum(get_points(chat, uid) for uid in members)
         member_count = len(members)
-        text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\
-        \n    - (**{total}**)\n"
+        text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - (**{total}**)\n"
     await safe_edit(event, text)
 
 
@@ -371,8 +370,6 @@ async def show_teams_members(event):
                 mentions.append(f"[{e.first_name}](tg://user?id={e.id})")
 
         joined = "، ".join(mentions)
-        member_count = len(members)
-        text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {joined}\n"
 
     await safe_edit(event, text)
 
