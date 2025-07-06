@@ -206,14 +206,29 @@ async def receive_names(event):
     if not await is_user_admin(event):
         return await event.answer("❗ للمشرفين فقط", alert=True)
     chat = event.chat_id
-    if not event.is_group or chat not in AWAITING_NAMES:
+    
+    if not event.is_group:
         return
-
-    if TEAMS.get(chat) and not TEAMS[chat]['names']:
-        text = event.text.strip()
-
-        raw_names = re.split(r"[،,*\-|/\\]+", text.strip("()"))
-        cleaned = []
+      
+    if chat not in AWAITING_NAMES:
+        return
+       
+    if chat not in TEAMS:
+        return
+        
+    if TEAMS[chat]['names']:
+        return
+       
+       
+    text = event.text.strip()
+        
+       
+    if not text:
+        return await event.reply("⚠️ يرجى إرسال أسماء الفرق أولاً")
+    
+    raw_names = re.split(r"\s*[،,*\-|/\\]+\s*", text.strip("()"))
+    cleaned = []
+    
 
         for name in raw_names:
             name = name.strip()
