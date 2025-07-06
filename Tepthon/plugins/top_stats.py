@@ -104,7 +104,7 @@ def build_special_top(user, count, photo, rank):
     return img
 
 
-@bot.on(events.NewMessage(pattern=fr"^{cmhd}sat(\d+)$"))
+@zedub.bot_cmd(events.NewMessage(pattern=fr"^{cmhd}sat(\d+)$"))
 async def top_n_handler(event):
     n = int(event.pattern_match.group(1))
     await event.delete()
