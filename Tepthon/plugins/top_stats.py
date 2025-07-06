@@ -10,7 +10,6 @@ from ..core.managers import edit_or_reply
 from ..Config import Config
 
 cmhd = Config.COMMAND_HAND_LER
-bot = zedub.tgbot
 
 async def fetch_top_senders(chat_id, limit):
     stats = await zedub(GetBroadcastStatsRequest(channel=chat_id))
