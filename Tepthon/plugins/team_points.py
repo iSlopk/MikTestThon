@@ -408,7 +408,7 @@ async def show_top_in_teams(event):
             user = await event.client.get_entity(uid)
             mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={uid})"
             display.append(f"{mention} ({pts})")
-        text += f"\n• **{name}**: " + "، ".join(display) + "\n"
+        text += f"\n• **{name}**: " + "\n ".join(display) + "\n"
     return await safe_edit(event, text)
 
 
