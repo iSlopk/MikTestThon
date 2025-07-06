@@ -33,7 +33,7 @@ def build_top_image(results):
     height = 200 * rows
     img = Image.new("RGB", (500, height), (245, 245, 245))
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("Tepthon/assets/NotoNaskhArabic-Regular.ttf", 24)
+    font = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 24)
     for idx, (user, count, photo) in enumerate(results):
         y0 = idx * 200 + 10
         if photo:
