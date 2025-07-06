@@ -384,5 +384,27 @@ async def show_teams_members(event):
         text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {joined}\n"
     await safe_edit(event, text)
 
+@zedub.bot_cmd(pattern=fr"^{cmhd}topt$")
+async def show_top_in_teams(event):
+    if not await is_user_admin(event):
+        return await safe_edit(event, "❗ الأمر للمشرفين فقط")
+    chat = event.chat_id
+    if not TEAM_MODE.get(chat):
+        return await safe_edit(event, "❗ وضع الفرق غير مفعل.")
+    text = "🏅 **أعلى اللاعبين حسب النقاط في كل فريق:**\n"
+    for idx, name in enumerate(TEAMS[chat]['names']):
+        top_members = get_team_top_members(chat, idx)
+        if not top_members:
+            text += f"\n• **{name}**: لا يوجد أعضاء.\n"
+            continue
+        # عرض أول ثلاث نقاط كحد أقصى
+        display = []
+        for uid, pts in top_members[:3]:
+            user = await event.client.get_entity(uid)
+            mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={uid})"
+            display.append(f"{mention} ({pts})")
+        text += f"\n• **{name}**: " + "، ".join(display) + "\n"
+    return await safe_edit(event, text)
+
 
 # It's not the end .. (:
