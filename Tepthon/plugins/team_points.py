@@ -205,59 +205,72 @@ async def callback_handler(event):
 async def receive_names(event):
     if not await is_user_admin(event):
         return await event.answer("❗ للمشرفين فقط", alert=True)
+
     chat = event.chat_id
-    
+
     if not event.is_group:
         return
-      
+
     if chat not in AWAITING_NAMES:
         return
-       
+
+    # بداية التعديل
     if chat not in TEAMS:
         return
-        
+
     if TEAMS[chat]['names']:
         return
-       
-       
+    
+
     text = event.text.strip()
-        
-       
+
+    
     if not text:
         return await event.reply("⚠️ يرجى إرسال أسماء الفرق أولاً")
-    
+
     raw_names = re.split(r"\s*[،,*\-|/\\]+\s*", text.strip("()"))
     cleaned = []
     
 
-        for name in raw_names:
-            name = name.strip()
+    for name in raw_names:
+        name = name.strip()
 
-            if not name or name in cleaned:
-                continue
+        if not name or name in cleaned:
+            continue
 
-            if len(name) > 12:
-                return await event.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٢ حرف`)")
-
-            cleaned.append(name)
-    if not cleaned:
-        return await event.reply("⚠️ لم يتم العثور على أسماء صالحة، تحقق من الصيغة")
-        if len(cleaned) != TEAMS[chat]['count']:
+        if len(name) > 12:
             return await event.reply(
-                f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
+                f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٢ حرف`)"
             )
 
-        TEAMS[chat]['_preview_names'] = cleaned
+        cleaned.append(name)
 
-        preview = "**📋 المعاينة قبل الحفظ:**\n\n"
-        for i, name in enumerate(cleaned, 1):
-            preview += f"{i}. {name}\n"
+    
+    if not cleaned:
+        return await event.reply("⚠️ لم يتم العثور على أسماء صالحة، تحقق من الصيغة")
+    
 
-        buttons = [
-            [Button.inline("✅ تأكيد الأسماء", b"confirm_names")],
-            [Button.inline("🔄 تعديل", b"team_names")]
+    if len(cleaned) != TEAMS[chat]['count']:
+        return await event.reply(
+            f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
+        )
+
+    TEAMS[chat]['_preview_names'] = cleaned
+
+    preview = "**📋 المعاينة قبل الحفظ:**\n\n"
+    for i, name in enumerate(cleaned, 1):
+        preview += f"{i}. {name}\n"
+
+    
+    buttons = [
+        [
+            Button.inline("✅ تأكيد الأسماء", b"confirm_names"),
+            Button.inline("🔄 تعديل", b"team_names")
         ]
-        return await event.reply(preview, buttons=buttons)
+    ]
+    
+
+    return await event.reply(preview, buttons=buttons)
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
 async def autoreg(event):
