@@ -183,7 +183,7 @@ class Config(object):
     UPSTREAM_REPO_BRANCH = os.environ.get("UPSTREAM_REPO_BRANCH", "ZeZo")
     # dont touch this at all
     SUDO_USERS: Set[int] = set()
-    ZEDUBLOGO = None
+    ZEDUBLOGO = False
     BOTLOG = False
     BOTLOG_CHATID = 0
     # extra plugins realted vars below  4
