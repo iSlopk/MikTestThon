@@ -214,23 +214,19 @@ async def receive_names(event):
     if chat not in AWAITING_NAMES:
         return
 
-    # بداية التعديل
     if chat not in TEAMS:
         return
 
     if TEAMS[chat]['names']:
         return
-    
 
     text = event.text.strip()
 
-    
     if not text:
         return await event.reply("⚠️ يرجى إرسال أسماء الفرق أولاً")
 
     raw_names = re.split(r"\s*[،,*\-|/\\]+\s*", text.strip("()"))
     cleaned = []
-    
 
     for name in raw_names:
         name = name.strip()
@@ -245,10 +241,11 @@ async def receive_names(event):
 
         cleaned.append(name)
 
-    
     if not cleaned:
         return await event.reply("⚠️ لم يتم العثور على أسماء صالحة، تحقق من الصيغة")
-    
+
+    if len(set(cleaned)) != len(cleaned):
+        return await event.reply("⚠️ يوجد أسماء مكررة بين الفرق، الرجاء التأكد من تميز كل اسم")
 
     if len(cleaned) != TEAMS[chat]['count']:
         return await event.reply(
@@ -261,14 +258,12 @@ async def receive_names(event):
     for i, name in enumerate(cleaned, 1):
         preview += f"{i}. {name}\n"
 
-    
     buttons = [
         [
             Button.inline("✅ تأكيد الأسماء", b"confirm_names"),
             Button.inline("🔄 تعديل", b"team_names")
         ]
     ]
-    
 
     return await event.reply(preview, buttons=buttons)
 
