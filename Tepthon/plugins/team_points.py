@@ -81,7 +81,10 @@ async def cmd_tmod(event):
             [Button.inline("🔧 إنشاء الفرق", b"setup_teams")]
         ]
         await event.reply("✅ تم تفعيل وضع الفرق", buttons=buttons)
-        await event.delete()
+        try:
+            await event.delete()
+        except Exception:
+            pass
         return
 
     if arg == "off":
