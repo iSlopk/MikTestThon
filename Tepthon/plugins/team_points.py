@@ -146,18 +146,9 @@ async def callback_handler(event):
             return await event.answer("⚠️ لا يوجد أسماء لحفظها", alert=True)
 
     if data == "start_signup":
-        if not TEAMS.get(chat) or not TEAMS[chat].get('names') or not TEAMS[chat].get('members'):
-            return await event.answer("⚠️ حدث خطأ، تأكد من ضبط أسماء الفرق أولًا", alert=True)
-
         team_buttons = [
             [Button.inline(f"➕ انضم لـ <{name}>", f"join_team_{i}")]
             for i, name in enumerate(TEAMS[chat]['names'])
-        ]
-
-        # زر مغادرة الفريق وإغلاق التسجيل
-        control_buttons = [
-            Button.inline("🚪 مغادرة الفريق", b"leave_team"),
-            Button.inline("❌ إغلاق التسجيل", b"cancel_signup")
         ]
 
         lines = ["🔔 | **التسجيل مفتوح الآن**\n\n🛗 | **الأفــرقــة**:", ""]
@@ -172,85 +163,85 @@ async def callback_handler(event):
             member_count = len(members)
             lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
 
-        return await event.edit("\n".join(lines), buttons=team_buttons + [control_buttons], link_preview=False)
+        return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
-    if data == "leave_team":
+    if data.startswith("join_team_"):
+        idx = int(data.split("_")[-1])
         uid = event.sender_id
+        if chat not in TEAMS:
+            return await event.answer("❗ لم يتم تفعيل وضع الفرق بعد", alert=True)
+
         for members in TEAMS[chat]['members'].values():
             if uid in members:
-                members.remove(uid)
-                return await event.answer("✅ تم مغادرة الفريق بنجاح", alert=False)
-        return await event.answer("⚠️ لست ضمن أي فريق", alert=True)
+                return await event.answer("❗انت موجود بفريق من اول", alert=False)
 
-    if data == "cancel_signup":
-        TEAMS[chat]['members'] = {i: [] for i in range(len(TEAMS[chat]['names']))}
-        return await event.edit("❌ تم إغلاق التسجيل وحذف جميع الأعضاء")
+        if len(TEAMS[chat]['members'].get(idx, [])) >= MAX_TEAM_MEMBERS:
+            return await event.answer("⚠️ عدد أعضاء الفريق وصل للحد الأقصى (8 أعضاء)", alert=True)
+            
+        TEAMS[chat]['members'].setdefault(idx, []).append(uid)
+        team_name = TEAMS[chat]['names'][idx]
+        await event.answer(f"✅ تم تسجيلك بفريق {team_name}", alert=False)
+
+        team_buttons = [
+            [Button.inline(f"➕ انضم لـ <{name}>", f"join_team_{i}")]
+            for i, name in enumerate(TEAMS[chat]['names'])
+        ]
+
+        lines = ["🔔 | **التسجيل مفتوح الآن**\n\n🛗 | **الأفــرقــة**:", ""]
+        for j, name in enumerate(TEAMS[chat]['names']):
+            members = TEAMS[chat]['members'].get(j) or []
+
+            if members:
+                entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
+                mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+            else:
+                mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
+            member_count = len(members)
+            lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
+
+        return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
 @zedub.tgbot.on(events.NewMessage)
 async def receive_names(event):
     if not await is_user_admin(event):
         return await event.answer("❗ للمشرفين فقط", alert=True)
-
     chat = event.chat_id
-
-    if not event.is_group:
+    if not event.is_group or chat not in AWAITING_NAMES:
         return
 
-    if chat not in AWAITING_NAMES:
-        return
+    if TEAMS.get(chat) and not TEAMS[chat]['names']:
+        text = event.text.strip()
 
-    if chat not in TEAMS:
-        return
+        raw_names = re.split(r"[،,*\-|/\\]+", text.strip("()"))
+        cleaned = []
 
-    if TEAMS[chat]['names']:
-        return
+        for name in raw_names:
+            name = name.strip()
 
-    text = event.text.strip()
+            if not name or name in cleaned:
+                continue
 
-    if not text:
-        return await event.reply("⚠️ يرجى إرسال أسماء الفرق أولاً")
+            if len(name) > 12:
+                return await event.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٢ حرف`)")
 
-    raw_names = re.split(r"\s*[،,*\-|/\\]+\s*", text.strip("()"))
-    cleaned = []
+            cleaned.append(name)
 
-    for name in raw_names:
-        name = name.strip()
-
-        if not name or name in cleaned:
-            continue
-
-        if len(name) > 12:
+        if len(cleaned) != TEAMS[chat]['count']:
             return await event.reply(
-                f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٢ حرف`)"
+                f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
             )
 
-        cleaned.append(name)
+        TEAMS[chat]['_preview_names'] = cleaned
 
-    if not cleaned:
-        return await event.reply("⚠️ لم يتم العثور على أسماء صالحة، تحقق من الصيغة")
+        preview = "**📋 المعاينة قبل الحفظ:**\n\n"
+        for i, name in enumerate(cleaned, 1):
+            preview += f"{i}. {name}\n"
 
-    if len(set(cleaned)) != len(cleaned):
-        return await event.reply("⚠️ يوجد أسماء مكررة بين الفرق، الرجاء التأكد من تميز كل اسم")
-
-    if len(cleaned) != TEAMS[chat]['count']:
-        return await event.reply(
-            f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
-        )
-
-    TEAMS[chat]['_preview_names'] = cleaned
-
-    preview = "**📋 المعاينة قبل الحفظ:**\n\n"
-    for i, name in enumerate(cleaned, 1):
-        preview += f"{i}. {name}\n"
-
-    buttons = [
-        [
-            Button.inline("✅ تأكيد الأسماء", b"confirm_names"),
-            Button.inline("🔄 تعديل", b"team_names")
+        buttons = [
+            [Button.inline("✅ تأكيد الأسماء", b"confirm_names")],
+            [Button.inline("🔄 تعديل", b"team_names")]
         ]
-    ]
-
-    return await event.reply(preview, buttons=buttons)
+        return await event.reply(preview, buttons=buttons)
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
 async def autoreg(event):
