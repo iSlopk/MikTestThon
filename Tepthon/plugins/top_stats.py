@@ -45,17 +45,38 @@ def build_top_image(results):
     return img
 
 def build_rank_image(user, uid, count, photo):
-    img = Image.new("RGB", (500, 200), (245, 245, 245))
+    # أبعاد الصورة: مثلاً عرض 600 بكسل وارتفاع 200
+    width, height = 600, 200
+    img = Image.new("RGB", (width, height), (30, 30, 30))  # خلفية داكنة
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("arial.ttf", 24)
+
+    # خطوط النص
+    font_name = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 28)
+    font_info = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 22)
+    font_bio = ImageFont.truetype("Tepthon/plugins/assets/NotoNaskhArabic-Regular.ttf", 20)
+
+    # فارغة إذا ما فيه صورة شخصية
     if photo:
+        photo = photo.resize((160, 160))
         img.paste(photo, (20, 20))
+    else:
+        draw.rectangle((20,20,180,180), fill=(60,60,60))
+
+    # الاسم بجانب الصورة
     name = user.user.first_name + (f" {user.user.last_name}" if user.user.last_name else "")
-    uname = user.user.username or ""
-    draw.text((160, 30), name, fill="black", font=font)
-    draw.text((160, 70), f"@{uname}", fill="gray", font=font)
-    draw.text((160, 110), f"🆔 {uid}", fill="gray", font=font)
-    draw.text((160, 150), f"📨 الرسائل: {count}", fill="black", font=font)
+    draw.text((200, 30), name, fill="white", font=font_name)
+
+    # على الجانب الأيسر: معرف، ايدي، رانك
+    uname = f"@{user.user.username}" if user.user.username else "-"
+    draw.text((200, 70), uname, fill="lightgray", font=font_info)
+    draw.text((200, 100), f"🆔 {uid}", fill="lightgray", font=font_info)
+    # هنا الرانك في التوب مثلاً تحط count كرانك
+    draw.text((200, 130), f"🏅 الرتبة: {count}", fill="white", font=font_info)
+
+    # البايو في الوسط-اليمين
+    bio = user.full_user.about or ""
+    draw.text((20, 180), bio, fill="gray", font=font_bio)
+
     return img
 
 def build_special_top(user, count, photo, rank):
