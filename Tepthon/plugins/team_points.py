@@ -201,7 +201,7 @@ async def callback_handler(event):
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
-@zedub.bot_cmd(events.NewMessage)
+@zedub.tgbot.on(events.NewMessage)
 async def receive_names(ev):
     if not await is_user_admin(ev):
         return await ev.answer("❗ للمشرفين فقط", alert=True)
