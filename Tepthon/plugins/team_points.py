@@ -161,7 +161,10 @@ async def callback_handler(event):
             else:
                 mentions = "- مافيه ناس بالتيم :("
             member_count = len(members)
-            lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
+            lines.append(f"• اسم التيم : **{name}**\
+            \n• أعضاء الفريق : ({member_count} / {MAX_TEAM_MEMBERS})\
+            \n• الأعضاء :\
+            \n    - {mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
@@ -187,7 +190,7 @@ async def callback_handler(event):
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
-        lines = ["🔔 | **التسجيل مفتوح الآن**\n\n🛗 | **الأفــرقــة**:", ""]
+        lines = ["🧩 | **التسجيل مفتوح الآن**\n\n🎮 | **الأفــرقــة**:", ""]
         for j, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(j) or []
 
