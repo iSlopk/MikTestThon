@@ -216,6 +216,15 @@ async def receive_names(ev):
     if TEAMS.get(chat) and not TEAMS[chat]['names']:
         text = ev.text.strip()
 
+       
+    if not (text.startswith("(") and text.endswith(")")):
+        return
+
+       
+    if not re.search(r"[،,|/\-*\\]+", text):
+        return
+
+
         raw_names = re.split(r"[،,*\-|/\\]+", text.strip("()"))
         cleaned = []
 
