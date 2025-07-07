@@ -163,7 +163,8 @@ async def callback_handler(event):
             names = TEAMS[chat].pop("_preview_names")
             TEAMS[chat]['names'] = names
             TEAMS[chat]['members'] = {i: [] for i in range(len(names))}
-            TEAMS[chat]['leaves'] = {}  # لتعقب عدد مرات المغادرة
+            TEAMS[chat]['leaves'] = {}
+            
             AWAITING_NAMES.discard(chat)
             return await event.edit(
                 "✅ تم حفظ أسماء الفرق بنجاح",
