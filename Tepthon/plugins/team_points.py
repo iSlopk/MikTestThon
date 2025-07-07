@@ -128,7 +128,7 @@ async def callback_handler(event):
         AWAITING_NAMES.add(chat)
         return await event.reply(
             "📩 أرسل أسماء الفرق مثل:\
-            \n( `🟢 MikTeam | 🔴 SaTeam` )\
+            \n`( 🟢 MikTeam | 🔴 SaTeam )`\
             \n\nالفواصل المدعومة:\
             \n( `،` `,` `*` `\` `-` `|` `/` )"
         )
@@ -150,10 +150,10 @@ async def callback_handler(event):
     if data == "start_signup":
         team_buttons = []
         for i, name in enumerate(TEAMS[chat]['names']):
-            team_buttons.append([Button.inline(f"🏷 {name}", b"noop")])
+            team_buttons.append([Button.inline(f"{name}", b"noop")])
             team_buttons.append([
                 Button.inline("➕ انضمام", f"join_team_{i}"),
-                Button.inline("❌ مغادرة", f"leave_team_{i}")
+                Button.inline("🚶‍♂️ مغادرة", f"leave_team_{i}")
             ])
 
         lines = ["🧩 | **التسجيل مفتوح الآن**\n\n🎮 | **الأفــرقــة**:", ""]
