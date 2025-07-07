@@ -212,7 +212,7 @@ async def receive_names(ev):
     if TEAMS.get(chat) and not TEAMS[chat]['names']:
         text = ev.text.strip()
 
-        raw_names = re.split(r"[،,*\-|/\\]+", text.strip("()"))
+        raw_names = re.split(r"[،,*\+-|/\\]+", text.strip("()"))
         cleaned = []
 
         for name in raw_names:
