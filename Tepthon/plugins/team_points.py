@@ -337,7 +337,6 @@ async def manage_team_points(event):
         f"\n🔢 | نـقـاطـهـم : (**{total}**)"
     )
     
-
 @zedub.bot_cmd(pattern=fr"^{cmhd}tps$")
 async def team_points_summary(event):
     if not await is_user_admin(event):
