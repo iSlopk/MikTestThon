@@ -363,29 +363,33 @@ async def tpoints_alias(event):
 async def show_teams_members(event):
     if not await is_user_admin(event):
         return await safe_edit(event, "❗ الأمر للمشرفين فقط")
+
     chat = event.chat_id
     if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
         return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
 
     text = "🗂️ **تفاصيل الفرق وأعضائها:**\n"
+
     for idx, name in enumerate(TEAMS[chat]['names']):
         members = TEAMS[chat]['members'].get(idx, [])
         member_count = len(members)
+
+        text += f"\n• اسم التيم : `{name}`"
+        text += f"\n• عدد الأعضاء : `({member_count} / {MAX_TEAM_MEMBERS})`\n"
+
         if not members:
-            text += f"    - **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n_مافيه احد في الفريق_\n"
-            continue
+            text += "_مافيه احد في الفريق_\n"
+        else:
+            entities = await asyncio.gather(*(event.client.get_entity(uid) for uid in members))
+            for i, u in enumerate(entities, start=1):
+                if u.username:
+                    text += f"    {i}- @{u.username}\n"
+                else:
+                    text += f"    {i}- [{u.first_name}](tg://user?id={u.id})\n\n"
 
-        mentions = []
-        entities = await asyncio.gather(*(event.client.get_entity(uid) for uid in members))
-        for e in entities:
-            if e.username:
-                mentions.append(f"    - @{e.username}")
-            else:
-                mentions.append(f"    - [{e.first_name}](tg://user?id={e.id})")
+        text += "================\n"
 
-        joined = "\n".join(mentions)
-        text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {joined}\n"
-    await safe_edit(event, text)
+    await safe_edit(event, text.strip())
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}topt$")
 async def show_top_in_teams(event):
