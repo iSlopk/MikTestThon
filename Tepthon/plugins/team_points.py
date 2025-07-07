@@ -247,13 +247,13 @@ async def receive_names(ev):
             return await ev.reply(
                 f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
             )
-
+           
         TEAMS[chat]['_preview_names'] = cleaned
-
+           
         preview = "**📋 المعاينة قبل الحفظ:**\n\n"
         for i, name in enumerate(cleaned, 1):
             preview += f"{i}. {name}\n"
-
+            
         buttons = [
             [Button.inline("✅ تأكيد الأسماء", b"confirm_names")],
             [Button.inline("🔄 تعديل", b"team_names")]
