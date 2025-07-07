@@ -203,9 +203,23 @@ async def callback_handler(event):
                 mentions = "    - مافيه ناس بالتيم "
             member_count = len(members)
             lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
-
+        
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
+        
+        
+    if data.startswith("leave_team_"):
+        idx = int(data.split("_")[-1])
+        uid = event.sender_id
 
+        if chat not in TEAMS or idx not in TEAMS[chat]['members']:
+            return await event.answer("❗ لا يوجد هذا الفريق", alert=True)
+
+        if uid not in TEAMS[chat]['members'][idx]:
+            return await event.answer("❗ لست في هذا الفريق", alert=True)
+
+        TEAMS[chat]['members'][idx].remove(uid)
+        return await event.answer("✅ تم مغادرة الفريق", alert=True)
+        
 @zedub.tgbot.on(events.NewMessage)
 async def receive_names(ev):
     if not await is_user_admin(ev):
