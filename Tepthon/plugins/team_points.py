@@ -271,27 +271,78 @@ async def receive_names(ev):
         return await ev.reply(preview, buttons=buttons)
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}tadd(?:\s+(.+))?$")
-async def autoreg(event):
+async def tadd(event):
     if not await is_user_admin(event):
         return
+
     chat = event.chat_id
     if not TEAM_MODE.get(chat):
         return
 
     args = event.pattern_match.group(1)
     args = args.split() if args else []
+    
     uid = await get_user_id(event, args)
     if not uid:
         return await safe_edit(event, "❗ حدد مستخدم بالرد أو منشن أو آيدي")
-   
+
+    # تحقق إذا المستخدم داخل فريق
     for members in TEAMS[chat]['members'].values():
         if uid in members:
             return await safe_edit(event, "❗ المستخدم مسجل بالفعل في فريق")
 
-    idx = uid % TEAMS[chat]['count']
-    TEAMS[chat]['members'].setdefault(idx, []).append(uid)
-    team_name = TEAMS[chat]['names'][idx]
-    return await safe_edit(event, f"✅ انضم إلى فريق: {team_name}")
+    # اسم الفريق إن وجد
+    team_name = None
+    for arg in args:
+        if arg and not arg.isdigit():
+            team_name = arg.strip("`").lower()
+
+    target_idx = None
+    if team_name:
+        # إذا تم تحديد اسم فريق
+        for i, name in enumerate(TEAMS[chat]['names']):
+            if name.lower() == team_name:
+                if len(TEAMS[chat]['members'][i]) < MAX_TEAM_MEMBERS:
+                    target_idx = i
+                    break
+
+    # إذا ما وجد تيم بالاسم أو ممتلئ، يضيفه لأقل فريق عددًا
+    if target_idx is None:
+        sorted_teams = sorted(TEAMS[chat]['members'].items(), key=lambda x: len(x[1]))
+        for i, members in sorted_teams:
+            if len(members) < MAX_TEAM_MEMBERS:
+                target_idx = i
+                break
+
+    if target_idx is None:
+        return await safe_edit(event, "🚫 لا يوجد فريق متاح للإضافة")
+
+    TEAMS[chat]['members'][target_idx].append(uid)
+    name = TEAMS[chat]['names'][target_idx]
+    return await safe_edit(event, f"✅ تم إضافة العضو إلى الفريق: `{name}`")
+    
+@zedub.bot_cmd(pattern=fr"^{cmhd}tkick(?:\s+(.+))?$")
+async def tremove(event):
+    if not await is_user_admin(event):
+        return
+
+    chat = event.chat_id
+    if not TEAM_MODE.get(chat):
+        return await safe_edit(event, "❗ وضع الفرق غير مفعل")
+
+    args = event.pattern_match.group(1)
+    args = args.split() if args else []
+    
+    uid = await get_user_id(event, args)
+    if not uid:
+        return await safe_edit(event, "❗ حدد مستخدم بالرد أو منشن أو آيدي")
+
+    for idx, members in TEAMS[chat]['members'].items():
+        if uid in members:
+            members.remove(uid)
+            return await safe_edit(event, f"✅ تم إزالة المستخدم من الفريق: `{TEAMS[chat]['names'][idx]}`")
+
+    return await safe_edit(event, "🚫 المستخدم غير مسجل في أي فريق")
 
 @zedub.bot_cmd(pattern=fr"^{re.escape(cmhd)}(?:tp|tdp)(?:\s+(.+))?$")
 async def manage_team_points(event):
