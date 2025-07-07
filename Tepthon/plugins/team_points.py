@@ -326,13 +326,13 @@ async def manage_team_points(event):
     total = sum(get_points(chat, member_id) for member_id in members)
 
     sign = "➕" if delta > 0 else "➖"
-    action = "إضافة" if delta > 0 else "خصم"
+    action = "إضـافـة" if delta > 0 else "خـصـم"
     team_name = TEAMS[chat]['names'][team_idx]
     return await safe_edit(
         event,
-        f"{sign} | تم {action} :  (**{abs(delta)}**) نقاط\
+        f"{sign} | تـم {action} :  (**{abs(delta)}**) نقاط\
         \n🎮 | الـفـريـق :  `{team_name}`\
-        \n💠 نقاطهم الحالية : (**{total}**)"
+        \n🔢 | نـقـاطـهـم : (**{total}**)"
     )
     
 
