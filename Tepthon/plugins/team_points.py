@@ -155,7 +155,7 @@ async def callback_handler(event):
     if data == "team_names":
         AWAITING_NAMES.add(chat)
         return await event.reply(
-            "📩 أرسل أسماء الفرق مثل:\n`( 🟢 MikTeam | 🔴 SaTeam )`\n\nالفواصل المدعومة:\n( `،` `,` `*` `\\` `-` `|` `/` )"
+            "📩 أرسل أسماء الفرق مثل:\n`( 🟢 MikTeam | 🔴 SaTeam )`\n\nالفواصل المدعومة:\n( `،` `,` `*` `\` `-` `|` `/` )"
         )
 
     if data == "confirm_names":
@@ -163,8 +163,6 @@ async def callback_handler(event):
             names = TEAMS[chat].pop("_preview_names")
             TEAMS[chat]['names'] = names
             TEAMS[chat]['members'] = {i: [] for i in range(len(names))}
-            TEAMS[chat]['leaves'] = {}
-            
             AWAITING_NAMES.discard(chat)
             return await event.edit(
                 "✅ تم حفظ أسماء الفرق بنجاح",
@@ -181,17 +179,12 @@ async def callback_handler(event):
     if data.startswith("join_team_"):
         idx = int(data.split("_")[-1])
         uid = event.sender_id
-
         if chat not in TEAMS:
             return await event.answer("❗ لم يتم تفعيل وضع الفرق بعد", alert=True)
 
-        leaves = TEAMS[chat].setdefault("leaves", {})
-        if leaves.get(uid, 0) >= 2:
-            return await event.answer("🚫 لقد غادرت الفرق مرتين بالفعل ولا يمكنك الانضمام مجددًا", alert=True)
-
         for members in TEAMS[chat]['members'].values():
             if uid in members:
-                return await event.answer("❗ أنت بالفعل في فريق", alert=True)
+                return await event.answer("❗ انت بالفعل في فريق", alert=True)
 
         if len(TEAMS[chat]['members'].get(idx, [])) >= MAX_TEAM_MEMBERS:
             return await event.answer("⚠️ الفريق مكتمل", alert=True)
@@ -207,14 +200,20 @@ async def callback_handler(event):
         idx = int(data.split("_")[-1])
         uid = event.sender_id
 
-        if chat not in TEAMS or uid not in TEAMS[chat]['members'].get(idx, []):
-            return await event.answer("❗ أنت لست في هذا الفريق", alert=True)
+        if chat not in TEAMS or idx not in TEAMS[chat]['members']:
+            return await event.answer("❗ لا يوجد هذا الفريق", alert=True)
+
+        if uid not in TEAMS[chat]['members'][idx]:
+            return await event.answer("❗ لست في هذا الفريق", alert=True)
+
+        left_key = (chat, uid)
+        left_count = LEFT_COUNTS.get(left_key, 0)
+        if left_count >= 2:
+            return await event.answer("❗ لا يمكنك المغادرة أكثر من مرتين", alert=True)
 
         TEAMS[chat]['members'][idx].remove(uid)
-        TEAMS[chat].setdefault("leaves", {})
-        TEAMS[chat]["leaves"][uid] = TEAMS[chat]["leaves"].get(uid, 0) + 1
-
-        await event.answer("✅ غادرت الفريق", alert=True)
+        LEFT_COUNTS[left_key] = left_count + 1
+        await event.answer("✅ تم مغادرة الفريق", alert=True)
 
         text = await build_team_display(chat, event.client)()
         buttons = build_team_buttons(chat)
