@@ -237,8 +237,8 @@ async def receive_names(ev):
             if not name or name in cleaned:
                 continue
 
-            if len(name) > 12:
-                return await ev.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٢ حرف`)")
+            if len(name) > 15:
+                return await ev.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٥ حرف`)")
 
             cleaned.append(name)
 
