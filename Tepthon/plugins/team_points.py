@@ -186,7 +186,7 @@ async def callback_handler(event):
         await event.answer(f"✅ تم تسجيلك بفريق {team_name}", alert=False)
 
         team_buttons = [
-            [Button.inline(f"➕ انضم لـ <{name}>", f"join_team_{i}")]
+            [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
