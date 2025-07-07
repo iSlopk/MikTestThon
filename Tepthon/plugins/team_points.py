@@ -400,7 +400,7 @@ async def show_top_in_teams(event):
 async def reset_points(event):
     """إعادة جميع النقاط إلى صفر"""
     if not event.is_group:
-        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات.")
+        return await safe_edit(event, "❗️يعمل فقط في المجموعات.")
     if not await is_user_admin(event):
         return await safe_edit(event, "❗️الأمر متاح للمشرفين فقط.")
     ranking = get_all_points(event.chat_id)
