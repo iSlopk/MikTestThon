@@ -189,7 +189,7 @@ async def callback_handler(event):
             return await event.answer("⚠️ الفريق مكتمل", alert=True)
 
         TEAMS[chat]['members'].setdefault(idx, []).append(uid)
-        await event.answer("✅ تم الانضمام", alert=True)
+        await event.answer("✅ تم الانضمام", alert=False)
 
         text = await build_team_display(chat, event.client)()
         buttons = build_team_buttons(chat)
