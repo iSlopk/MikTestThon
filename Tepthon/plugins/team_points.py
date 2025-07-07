@@ -63,6 +63,33 @@ def get_team_top_members(chat, team_idx):
         reverse=True
     )
 
+def build_team_display(chat, client):
+    async def inner():
+        lines = ["🧩 | **التسجيل مفتوح الآن**\n\n🎮 | **الأفــرقــة**:", ""]
+        for idx, name in enumerate(TEAMS[chat]['names']):
+            members = TEAMS[chat]['members'].get(idx, [])
+            if members:
+                entities = await asyncio.gather(*(client.get_entity(m) for m in members))
+                mentions = "\n".join(
+                    f"    - @{u.username}" if u.username else f"    - [{u.first_name}](tg://user?id={u.id})"
+                    for u in entities
+                )
+            else:
+                mentions = "    - مافيه ناس بالتيم :("
+            member_count = len(members)
+            lines.append(f"• اسم التيم : `{name}`\n• عدد الأعضاء : `({member_count} / {MAX_TEAM_MEMBERS})`\n{mentions}\n")
+        return "\n".join(lines)
+    return inner
+
+def build_team_buttons(chat):
+    team_buttons = []
+    for i, name in enumerate(TEAMS[chat]['names']):
+        team_buttons.append([Button.inline(f"{name}", b"noop")])
+        team_buttons.append([
+            Button.inline("🔋 انضمام", f"join_team_{i}"),
+            Button.inline("🪫 مغادرة", f"leave_team_{i}")
+        ])
+    return team_buttons
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}tmod(?:\s+(on|off))?$")
 async def cmd_tmod(event):
