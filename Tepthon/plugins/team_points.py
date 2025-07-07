@@ -396,5 +396,18 @@ async def show_top_in_teams(event):
         text += f"\n• **{name}**: " + "\n".join(display) + "\n"
     return await safe_edit(event, text)
 
+@zedub.bot_cmd(pattern=fr"^{cmhd}trstp$")
+async def reset_points(event):
+    """إعادة جميع النقاط إلى صفر"""
+    if not event.is_group:
+        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات.")
+    if not await is_user_admin(event):
+        return await safe_edit_or_reply(event, "❗️الأمر متاح للمشرفين فقط.")
+    ranking = get_all_points(event.chat_id)
+    if ranking:
+        reset_all_points(event.chat_id)
+        return await safe_edit_or_reply(event, "✅ تم ترسيت نقاط الأفرقة.")
+    else:
+        return await safe_edit_or_reply(event, "🍃 لا يوجد نقاط مسجلة حالياً.")
 
 # It's not the end .. (:
