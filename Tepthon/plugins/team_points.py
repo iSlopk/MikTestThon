@@ -166,7 +166,7 @@ async def callback_handler(event):
             \n• الأعضاء :\
             \n    - {mentions}\n")
 
-        return await event.edit("\n===============".join(lines), buttons=team_buttons, link_preview=False)
+        return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
     if data.startswith("join_team_"):
         idx = int(data.split("_")[-1])
@@ -196,7 +196,7 @@ async def callback_handler(event):
 
             if members:
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
-                mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+                mentions = "\n".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
                 mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
             member_count = len(members)
