@@ -387,7 +387,7 @@ async def show_teams_members(event):
         \n• تـفـاصـيل :\n"
 
         if not members:
-            text += "    - ( الفريق فاضي )\n"
+            text += "    - ( الفريق فاضي )\n\n"
         else:
             entities = await asyncio.gather(*(event.client.get_entity(uid) for uid in members))
             for i, u in enumerate(entities, start=1):
