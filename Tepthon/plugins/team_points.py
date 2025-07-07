@@ -409,7 +409,7 @@ async def show_top_in_teams(event):
     if not TEAM_MODE.get(chat):
         return await safe_edit(event, "❗ وضع الفرق غير مفعل")
     
-    text = "🏅 | **أعلى اللاعبين إحرازاً للنقاط في كل فريق:**\n"
+    text = "🏅 | **أفضل اللاعبين إحرازاً للنقاط في كل فريق:**\n"
 
     for idx, name in enumerate(TEAMS[chat]['names']):
         top_members = get_team_top_members(chat, idx)
