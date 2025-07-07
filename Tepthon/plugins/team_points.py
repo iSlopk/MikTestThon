@@ -331,8 +331,8 @@ async def manage_team_points(event):
     return await safe_edit(
         event,
         f"{sign} | تـم {action} :  (**{abs(delta)}**) نقاط"
-        f"\n🎫 | الـفـريـق :  `{team_name}`"
-        f"\n🔢 | نـقـاطـهـم : (**{total}**)"
+        f"\n🎫 | Team :  `{team_name}`"
+        f"\n🔢 | Points : (**{total}**)"
     )
     
 @zedub.bot_cmd(pattern=fr"^{cmhd}tps$")
