@@ -330,8 +330,9 @@ async def manage_team_points(event):
     team_name = TEAMS[chat]['names'][team_idx]
     return await safe_edit(
         event,
-        f"{sign} تم {action} ({abs(delta)}) نقاط للفريق:\
-        \n**{team_name}**\n\n💠 نقاطهم الحالية: (**{total}**)"
+        f"{sign} | تم {action} :  (**{abs(delta)}**) نقاط\
+        \n🎮 | الـفـريـق :  `{team_name}`\
+        \n💠 نقاطهم الحالية : (**{total}**)"
     )
     
 
