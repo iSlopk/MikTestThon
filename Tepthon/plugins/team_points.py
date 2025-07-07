@@ -270,7 +270,7 @@ async def receive_names(ev):
         ]
         return await ev.reply(preview, buttons=buttons)
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}autoreg(?:\s+(.+))?$")
+@zedub.bot_cmd(pattern=fr"^{cmhd}tadd(?:\s+(.+))?$")
 async def autoreg(event):
     if not await is_user_admin(event):
         return
