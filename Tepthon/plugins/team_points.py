@@ -165,7 +165,7 @@ async def callback_handler(event):
             lines.append(f"• اسم التيم : **{name}**\
             \n• أعضاء الفريق : ({member_count} / {MAX_TEAM_MEMBERS})\
             \n• الأعضاء :\
-            \n    - {mentions}\n")
+            \n{mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
@@ -199,7 +199,7 @@ async def callback_handler(event):
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
                 mentions = "\n".join(f"    - @{u.username}" if u.username else f"    - [{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
-                mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
+                mentions = "    - مافيه ناس بالتيم "
             member_count = len(members)
             lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
 
