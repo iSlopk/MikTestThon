@@ -287,6 +287,7 @@ async def autoreg(event):
 async def manage_team_points(event):
     if not await is_user_admin(event):
         return await safe_edit(event, "❗ الأمر للمشرفين فقط")
+
     chat = event.chat_id
     if not TEAM_MODE.get(chat):
         return
@@ -294,6 +295,7 @@ async def manage_team_points(event):
     cmd = event.text.split()[0].lower().replace(cmhd, "/")
     args = event.pattern_match.group(1)
     args = args.split() if args else []
+
     uid = await get_user_id(event, args)
     if not uid:
         return await safe_edit(event, "❗ حدد مستخدم بالرد/منشن/آيدي")
@@ -313,14 +315,13 @@ async def manage_team_points(event):
             number = int(arg)
             break
 
-    delta = number if event.text.startswith(f"{cmhd}tp") else -number
+    delta = number if cmd == "/tp" else -number  # يحترم القيمة المُدخلة من المستخدم
 
     members = TEAMS[chat]['members'][team_idx]
-    delta = 1 if cmd == "/tp" else -1
-
     for member_id in members:
         current = get_points(chat, member_id)
-        new_pts = max(min(current + delta, MAX_POINTS), 0)
+        new_pts = max(min(current + delta, MAX_POINTS), 0)  # يمنع تجاوز الحد
+
         set_points(chat, member_id, new_pts)
 
     total = sum(get_points(chat, member_id) for member_id in members)
@@ -328,11 +329,12 @@ async def manage_team_points(event):
     sign = "➕" if delta > 0 else "➖"
     action = "إضـافـة" if delta > 0 else "خـصـم"
     team_name = TEAMS[chat]['names'][team_idx]
+
     return await safe_edit(
         event,
-        f"{sign} | تـم {action} :  (**{abs(delta)}**) نقاط\
-        \n🎫 | الـفـريـق :  `{team_name}`\
-        \n🔢 | نـقـاطـهـم : (**{total}**)"
+        f"{sign} | تـم {action} :  (**{abs(delta)}**) نقاط"
+        f"\n🎫 | الـفـريـق :  `{team_name}`"
+        f"\n🔢 | نـقـاطـهـم : (**{total}**)"
     )
     
 
