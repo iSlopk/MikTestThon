@@ -157,7 +157,7 @@ async def callback_handler(event):
 
             if members:
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
-                mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+                mentions = "\n".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
                 mentions = "- مافيه ناس بالتيم :("
             member_count = len(members)
@@ -369,7 +369,7 @@ async def show_teams_members(event):
             else:
                 mentions.append(f"[{e.first_name}](tg://user?id={e.id})")
 
-        joined = "، ".join(mentions)
+        joined = "\n".join(mentions)
         text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {joined}\n"
     await safe_edit(event, text)
 
@@ -392,7 +392,7 @@ async def show_top_in_teams(event):
             user = await event.client.get_entity(uid)
             mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={uid})"
             display.append(f"{mention} ({pts})")
-        text += f"\n• **{name}**: " + "\n ".join(display) + "\n"
+        text += f"\n• **{name}**: " + "\n".join(display) + "\n"
     return await safe_edit(event, text)
 
 
