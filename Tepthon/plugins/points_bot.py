@@ -28,7 +28,7 @@ def create_table():
 create_table()
 
 async def is_user_admin(event):
-    """التحقق مما إذا كان المستخدم مشرفًا في المجموعة، حتى بدون صلاحيات."""
+    """التحقق مما إذا كان المستخدم مشرفًا في المجموعة، حتى بدون صلاحيات"""
     admins = await event.client.get_participants(event.chat_id, filter=ChannelParticipantsAdmins)
     return any(admin.id == event.sender_id for admin in admins)
 
@@ -71,7 +71,7 @@ async def safe_edit_or_reply(event, text, **kwargs):
         await event.reply(text, **kwargs)
            
 async def get_user_id(event, args):
-    """جلب ID المستخدم حسب الرد أو المنشن أو الإيدي."""
+    """جلب ID المستخدم حسب الرد أو المنشن أو الإيدي"""
     if event.is_reply:
         reply = await event.get_reply_message()
         return reply.sender_id
@@ -92,10 +92,10 @@ async def get_user_id(event, args):
 async def points_manage(event):
     """إضافة أو خصم نقاط"""
     if not event.is_group:
-        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات.")
+        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات")
     
     if not await is_user_admin(event):
-        return await safe_edit_or_reply(event, "❗️الأمر متاح للمشرفين فقط.")
+        return await safe_edit_or_reply(event, "❗️الأمر متاح للمشرفين فقط")
     
     args = event.pattern_match.group(1)
     args = args.split() if args else []
@@ -120,7 +120,7 @@ async def handle_event(event, args, cmd, points):
     """تنفيذ إضافة أو خصم النقاط"""
     uid = await get_user_id(event, args)
     if uid is None:
-        return await safe_edit_or_reply(event, "❗️يرجى تحديد المستخدم بالرد أو المنشن أو الإيدي.")
+        return await safe_edit_or_reply(event, "❗️يرجى تحديد المستخدم بالرد أو المنشن أو الإيدي")
         
     try:
         user = await event.client.get_entity(uid)
@@ -150,10 +150,10 @@ async def handle_event(event, args, cmd, points):
 async def show_points(event):
     """عرض النقاط"""
     if not event.is_group:
-        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات.")
+        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات")
     
     if not await is_user_admin(event):
-        return await safe_edit_or_reply(event, "❗️الأمر متاح للمشرفين فقط.")
+        return await safe_edit_or_reply(event, "❗️الأمر متاح للمشرفين فقط")
     args = event.pattern_match.group(1)
     args = args.split() if args else []
     uid = await get_user_id(event, args)
@@ -161,7 +161,7 @@ async def show_points(event):
     if uid is None:
         
         if not ranking:
-            return await safe_edit_or_reply(event, "🍃 لا يوجد نقاط مسجلة في الشات.")
+            return await safe_edit_or_reply(event, "🍃 لا يوجد نقاط مسجلة في الشات")
         text = "**📊 | نشرة النقاط في المجموعة **:\n\n"
         for i, (user_id, pts) in enumerate(ranking, 1):
             try:
@@ -182,20 +182,20 @@ async def show_points(event):
             
         except Exception:
             name = str(uid)
-        return await safe_edit_or_reply(event, f"👤 المستخدم : [{name}](tg://user?id={uid})\n🔢 عدد النقاط : [{pts}].")
+        return await safe_edit_or_reply(event, f"👤 المستخدم : [{name}](tg://user?id={uid})\n🔢 عدد النقاط : [{pts}]")
             
 @zedub.bot_cmd(pattern=fr"^{cmhd}rstp$")
 async def reset_points(event):
     """إعادة جميع النقاط إلى صفر"""
     if not event.is_group:
-        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات.")
+        return await safe_edit_or_reply(event, "❗️يعمل فقط في المجموعات")
     if not await is_user_admin(event):
-        return await safe_edit_or_reply(event, "❗️الأمر متاح للمشرفين فقط.")
+        return await safe_edit_or_reply(event, "❗️الأمر متاح للمشرفين فقط")
     ranking = get_all_points(event.chat_id)
     if ranking:
         reset_all_points(event.chat_id)
-        return await safe_edit_or_reply(event, "✅ تم ترسيت نقاط الشات.")
+        return await safe_edit_or_reply(event, "✅ تم ترسيت نقاط الشات")
     else:
-        return await safe_edit_or_reply(event, "🍃 لا يوجد نقاط مسجلة حالياً.")
+        return await safe_edit_or_reply(event, "🍃 لا يوجد نقاط مسجلة حالياً")
         
         
