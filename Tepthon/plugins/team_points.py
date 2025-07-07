@@ -77,7 +77,7 @@ def build_team_display(chat, client):
             else:
                 mentions = "    - مافيه ناس بالتيم :("
             member_count = len(members)
-            lines.append(f"• اسـم الـفـريـق : `{name}`\n• الأعـضـاء : `({member_count} / {MAX_TEAM_MEMBERS})`\n• تـفـاصـيـل :\n{mentions}\n\n================\n")
+            lines.append(f"• Team : `{name}`\n• Members : `({member_count} / {MAX_TEAM_MEMBERS})`\n• Details :\n{mentions}\n\n================\n")
         return "\n".join(lines)
     return inner
 
@@ -351,8 +351,8 @@ async def team_points_summary(event):
         total = sum(get_points(chat, uid) for uid in members)
         member_count = len(members)
 
-        text += f"\n• اسـم الـفـريـق : `{name}`"
-        text += f"\n• الأعـضـاء : `({member_count} / {MAX_TEAM_MEMBERS})`"
+        text += f"\n• Team : `{name}`"
+        text += f"\n• Members : `({member_count} / {MAX_TEAM_MEMBERS})`"
         text += f"\n• الــنــقــاط : (**{total}**)"
         text += "\n\n================\n"
 
