@@ -20,7 +20,8 @@ from ..utils.points_helpers import (
 
 plugin_category = "بوت النقاط"
 cmhd = Config.COMMAND_HAND_LER
-DB_PATH = "points_db.sqlite"
+DB_PATH = "teampoints_db.sqlite"
+#DB_PATH = "points_db.sqlite"
 
 AWAITING_NAMES = set()
 TEAM_MODE = {}
@@ -157,7 +158,7 @@ async def callback_handler(event):
 
             if members:
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
-                mentions = "\n".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+                mentions = "\n".join(f"    - @{u.username}" if u.username else f"    - [{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
                 mentions = "- مافيه ناس بالتيم :("
             member_count = len(members)
@@ -196,7 +197,7 @@ async def callback_handler(event):
 
             if members:
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
-                mentions = "\n".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
+                mentions = "\n".join(f"    - @{u.username}" if u.username else f"    - [{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
                 mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
             member_count = len(members)
@@ -365,9 +366,9 @@ async def show_teams_members(event):
         entities = await asyncio.gather(*(event.client.get_entity(uid) for uid in members))
         for e in entities:
             if e.username:
-                mentions.append(f"@{e.username}")
+                mentions.append(f"    - @{e.username}")
             else:
-                mentions.append(f"[{e.first_name}](tg://user?id={e.id})")
+                mentions.append(f"    - [{e.first_name}](tg://user?id={e.id})")
 
         joined = "\n".join(mentions)
         text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {joined}\n"
@@ -390,7 +391,7 @@ async def show_top_in_teams(event):
         display = []
         for uid, pts in top_members[:3]:
             user = await event.client.get_entity(uid)
-            mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={uid})"
+            mention = f"    - @{user.username}" if user.username else f"    - [{user.first_name}](tg://user?id={uid})"
             display.append(f"{mention} ({pts})")
         text += f"\n• **{name}**: " + "\n".join(display) + "\n"
     return await safe_edit(event, text)
