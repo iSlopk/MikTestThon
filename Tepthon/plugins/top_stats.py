@@ -13,7 +13,7 @@ from ..Config import Config
 cmhd = Config.COMMAND_HAND_LER
 
 async def fetch_top_senders(chat_id, limit):
-    stats = await zedub(GetBroadcastStatsRequest(channel=chat_id))
+    stats = await zedub(GetBroadcastStatsRequest(group=chat_id))
     return stats.top_senders[:limit]
 
 async def fetch_user_details(uid):
