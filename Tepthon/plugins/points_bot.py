@@ -64,7 +64,7 @@ def reset_all_points(chat_id):
         )
 
 async def safe_edit_or_reply(event, text, **kwargs):
-    """دالة للرد أو التعديل بأمان (تعالج خطأ MessageAuthorRequiredError تلقائياً)."""
+    """دالة للرد أو التعديل بأمان (تعالج خطأ MessageAuthorRequiredError تلقائياً)"""
     try:
         await edit_or_reply(event, text, **kwargs)
     except MessageAuthorRequiredError:
@@ -108,24 +108,20 @@ async def points_manage(event):
             points = abs(int(args[1]))
         except Exception:
             pass
-    
+            
     elif event.is_reply and args:
         try:
             points = abs(int(args[0]))
         except Exception:
             pass
-
-    # استدعاء دالة handle_event دائماً
     return await handle_event(event, args, cmd, points)
            
 async def handle_event(event, args, cmd, points):
     """تنفيذ إضافة أو خصم النقاط"""
-    # الحصول على ID المستخدم المستهدف
     uid = await get_user_id(event, args)
     if uid is None:
         return await safe_edit_or_reply(event, "❗️يرجى تحديد المستخدم بالرد أو المنشن أو الإيدي.")
         
-    # محاولة الحصول على معلومات المستخدم
     try:
         user = await event.client.get_entity(uid)
         name = f"@{user.username}" if user.username else  f"[{user.first_name}](tg://user?id={user.id})"
@@ -133,10 +129,8 @@ async def handle_event(event, args, cmd, points):
         name = str(uid)
     user_id = uid
    
-    # الحصول على عدد النقاط الحالي
     old = get_points(event.chat_id, uid)
    
-    # إذا كان الأمر هو /p يتم إضافة النقاط
     if cmd == "/p":
         new_points = old + points
         set_points(event.chat_id, uid, new_points)
@@ -144,9 +138,9 @@ async def handle_event(event, args, cmd, points):
             event,
             f"➕ تم إضافة {points} نقطة.\n👤 المستخدم : {name}\n🔢 عدد نقاطه : [{new_points}]"
         )
-    # إذا كان الأمر هو /dp يتم خصم النقاط
+        
     else:
-        new_points = max(old - points, 0)  # التأكد من أن النقاط لا تصبح أقل من صفر
+        new_points = max(old - points, 0)
         set_points(event.chat_id, uid, new_points)
         return await safe_edit_or_reply(
             event,
