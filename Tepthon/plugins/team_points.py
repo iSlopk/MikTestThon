@@ -339,17 +339,24 @@ async def manage_team_points(event):
 async def team_points_summary(event):
     if not await is_user_admin(event):
         return await safe_edit(event, "❗ الأمر للمشرفين فقط")
+
     chat = event.chat_id
     if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
         return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
 
     text = "📊 **نقاط الفرق:**\n"
+
     for idx, name in enumerate(TEAMS[chat]['names']):
         members = TEAMS[chat]['members'].get(idx, [])
         total = sum(get_points(chat, uid) for uid in members)
         member_count = len(members)
-        text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - (**{total}**)\n"
-    await safe_edit(event, text)
+
+        text += f"\n• اسـم الـفـريـق : `{name}`"
+        text += f"\n• الأعـضـاء : `({member_count} / {MAX_TEAM_MEMBERS})`"
+        text += f"\n• الــنــقــاط : (**{total}**)"
+        text += "\n\n================\n"
+
+    await safe_edit(event, text.strip())
 
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}tpoints$")
