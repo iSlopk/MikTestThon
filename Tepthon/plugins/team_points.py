@@ -314,14 +314,11 @@ async def manage_team_points(event):
         if arg.isdigit():
             number = int(arg)
             break
-
-    delta = number if cmd == "/tp" else -number  # يحترم القيمة المُدخلة من المستخدم
-
+    delta = number if cmd == "/tp" else -number
     members = TEAMS[chat]['members'][team_idx]
     for member_id in members:
         current = get_points(chat, member_id)
-        new_pts = max(min(current + delta, MAX_POINTS), 0)  # يمنع تجاوز الحد
-
+        new_pts = max(min(current + delta, MAX_POINTS), 0)
         set_points(chat, member_id, new_pts)
 
     total = sum(get_points(chat, member_id) for member_id in members)
