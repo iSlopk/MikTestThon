@@ -102,7 +102,7 @@ async def callback_handler(event):
     chat = event.chat_id
     data = event.data.decode()
 
-    if not data.startswith("join_team_") and not await is_user_admin(event):
+    if not data.startswith("join_team_") and not data.startswith("leave_team_") and not await is_user_admin(event):
         return await event.answer("❗ للمشرفين فقط", alert=True)
 
     if data == "setup_teams":
