@@ -154,7 +154,7 @@ async def callback_handler(event):
     if data == "team_names":
         AWAITING_NAMES.add(chat)
         return await event.reply(
-            "📩 أرسل أسماء الفرق مثل:\n`( 🟢 MikTeam | 🔴 SaTeam )`\n\nالفواصل المدعومة:\n( `،` `,` `*` `\\` `-` `|` `/` )"
+            "📩 أرسل أسماء الفرق مثل:\n`( 🟢 MikTeam | 🔴 SaTeam )`\n\nالفواصل المدعومة:\n( `،` `,` `*` `\` `-` `|` `/` )"
         )
 
     if data == "confirm_names":
