@@ -187,7 +187,7 @@ async def callback_handler(event):
 
         leaves = TEAMS[chat].setdefault("leaves", {})
         if leaves.get(uid, 0) >= 2:
-            return await event.answer("🚫 لقد غادرت الفرق مرتين بالفعل ولا يمكنك الانضمام مجددًا.", alert=True)
+            return await event.answer("🚫 لقد غادرت الفرق مرتين بالفعل ولا يمكنك الانضمام مجددًا", alert=True)
 
         for members in TEAMS[chat]['members'].values():
             if uid in members:
