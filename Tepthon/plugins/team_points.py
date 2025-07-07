@@ -381,12 +381,12 @@ async def show_teams_members(event):
         members = TEAMS[chat]['members'].get(idx, [])
         member_count = len(members)
 
-        text += f"\n• اسم التيم : `{name}`"
-        text += f"\n• الأعـضـاء : `({member_count} / {MAX_TEAM_MEMBERS})`\
-        \n• تـفـاصـيل :\n"
+        text += f"\n• Team : `{name}`"
+        text += f"\n• Members : `({member_count} / {MAX_TEAM_MEMBERS})`\
+        \n• Details  :\n"
 
         if not members:
-            text += "    - ( الفريق فاضي )\n\n"
+            text += "ㅤ- ( الفريق فاضي )\n\n"
         else:
             entities = await asyncio.gather(*(event.client.get_entity(uid) for uid in members))
             for i, u in enumerate(entities, start=1):
@@ -413,11 +413,11 @@ async def show_top_in_teams(event):
     for idx, name in enumerate(TEAMS[chat]['names']):
         top_members = get_team_top_members(chat, idx)
 
-        text += f"\n• اسم الفريق : `{name}`\n"
-        text += f"• أفضل الأعضاء:\n"
+        text += f"\n• Team : `{name}`\n"
+        text += f"• Top 3 :\n"
 
         if not top_members:
-            text += "    - ( لا يوجد أعضاء )\n"
+            text += "- ( لا يوجد أعضاء )\n"
         else:
             for i, (uid, pts) in enumerate(top_members[:3], start=1):
                 user = await event.client.get_entity(uid)
