@@ -299,14 +299,13 @@ async def tadd(event):
 
     target_idx = None
     if team_name:
-        # إذا تم تحديد اسم فريق
+        
         for i, name in enumerate(TEAMS[chat]['names']):
             if name.lower() == team_name:
                 if len(TEAMS[chat]['members'][i]) < MAX_TEAM_MEMBERS:
                     target_idx = i
                     break
-
-    # إذا ما وجد تيم بالاسم أو ممتلئ، يضيفه لأقل فريق عددًا
+                    
     if target_idx is None:
         sorted_teams = sorted(TEAMS[chat]['members'].items(), key=lambda x: len(x[1]))
         for i, members in sorted_teams:
