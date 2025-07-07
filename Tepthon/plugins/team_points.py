@@ -187,7 +187,7 @@ async def callback_handler(event):
             
         TEAMS[chat]['members'].setdefault(idx, []).append(uid)
         team_name = TEAMS[chat]['names'][idx]
-        await event.answer(f"✅ تم تسجيلك بفريق {team_name}", alert=True)
+        await event.answer(f"✅ انضممت إلى {team_name}", alert=True)
 
         team_buttons = [
             [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
