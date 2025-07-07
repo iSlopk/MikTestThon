@@ -352,8 +352,7 @@ async def team_points_summary(event):
         member_count = len(members)
 
         text += f"\n• Team : `{name}`"
-        text += f"\n• Members : `({member_count} / {MAX_TEAM_MEMBERS})`"
-        text += f"\n• الــنــقــاط : (**{total}**)"
+        text += f"\n\n• Points : (**{total}**)"
         text += "\n\n================\n"
 
     await safe_edit(event, text.strip())
