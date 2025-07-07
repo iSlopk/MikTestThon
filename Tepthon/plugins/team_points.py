@@ -406,7 +406,7 @@ async def reset_points(event):
     ranking = get_all_points(event.chat_id)
     if ranking:
         reset_all_points(event.chat_id)
-        return await safe_edit_or_reply(event, "✅ تم ترسيت نقاط الأفرقة.")
+        return await safe_edit(event, "✅ تم ترسيت نقاط الأفرقة.")
     else:
         return await safe_edit_or_reply(event, "🍃 لا يوجد نقاط مسجلة حالياً.")
 
