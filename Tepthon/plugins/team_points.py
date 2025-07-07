@@ -28,7 +28,7 @@ TEAM_MODE = {}
 TEAMS = {}
 
 MAX_POINTS = 99
-MAX_TEAM_MEMBERS = 8
+MAX_TEAM_MEMBERS = 10
 
 def get_db():
     return sqlite3.connect(DB_PATH)
@@ -165,7 +165,9 @@ async def callback_handler(event):
             else:
                 mentions = "    - مافيه ناس بالتيم :("
             member_count = len(members)
-            lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n{mentions}\n")
+            lines.append(f"• اسم التيم : `{name}`\
+            \n• عدد الأعضاء : `({member_count} / {MAX_TEAM_MEMBERS})`\
+            \n{mentions}\n")
 
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
 
@@ -181,11 +183,11 @@ async def callback_handler(event):
                 return await event.answer("❗انت موجود بفريق من اول", alert=False)
 
         if len(TEAMS[chat]['members'].get(idx, [])) >= MAX_TEAM_MEMBERS:
-            return await event.answer("⚠️ عدد أعضاء الفريق وصل للحد الأقصى (8 أعضاء)", alert=True)
+            return await event.answer("⚠️ عدد أعضاء الفريق وصل للحد الأقصى (١٠ أعضاء)", alert=True)
             
         TEAMS[chat]['members'].setdefault(idx, []).append(uid)
         team_name = TEAMS[chat]['names'][idx]
-        await event.answer(f"✅ تم تسجيلك بفريق {team_name}", alert=False)
+        await event.answer(f"✅ تم تسجيلك بفريق {team_name}", alert=True)
 
         team_buttons = [
             [Button.inline(f"➕ انضم لـ {name}", f"join_team_{i}")]
