@@ -204,7 +204,9 @@ async def callback_handler(event):
             else:
                 mentions = "    - مافيه ناس بالتيم "
             member_count = len(members)
-            lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
+            lines.append(f"• اسم التيم : `{name}`\
+            \n• عدد الأعضاء : `({member_count} / {MAX_TEAM_MEMBERS})`\
+            \n{mentions}\n")
         
         return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
         
