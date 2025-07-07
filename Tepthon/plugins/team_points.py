@@ -417,7 +417,7 @@ async def show_top_in_teams(event):
         text += f"• Top 3 :\n"
 
         if not top_members:
-            text += "- ( لا يوجد أعضاء )\n"
+            text += "ㅤ- ( لا يوجد أعضاء )\n"
         else:
             for i, (uid, pts) in enumerate(top_members[:3], start=1):
                 user = await event.client.get_entity(uid)
