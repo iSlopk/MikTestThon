@@ -166,7 +166,7 @@ async def callback_handler(event):
             \n• الأعضاء :\
             \n    - {mentions}\n")
 
-        return await event.edit("\n".join(lines), buttons=team_buttons, link_preview=False)
+        return await event.edit("\n===============".join(lines), buttons=team_buttons, link_preview=False)
 
     if data.startswith("join_team_"):
         idx = int(data.split("_")[-1])
