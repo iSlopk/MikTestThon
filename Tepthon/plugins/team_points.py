@@ -332,7 +332,7 @@ async def manage_team_points(event):
         event,
         f"{sign} | تـم {action} :  (**{abs(delta)}**) نقاط"
         f"\n🎫 | Team :  `{team_name}`"
-        f"\n🔢 | Points : (**{total}**)"
+        f"\n\n🔢 | Points : (**{total}**)"
     )
     
 @zedub.bot_cmd(pattern=fr"^{cmhd}tps$")
