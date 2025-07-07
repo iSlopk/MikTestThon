@@ -208,7 +208,7 @@ async def callback_handler(event):
 @zedub.tgbot.on(events.NewMessage)
 async def receive_names(ev):
     if not await is_user_admin(ev):
-        return await ev.reply("❗ للمشرفين فقط")
+        return
     chat = ev.chat_id
     if not ev.is_group or chat not in AWAITING_NAMES:
         return
