@@ -2,7 +2,8 @@ import sqlite3
 from telethon.errors.rpcerrorlist import MessageAuthorRequiredError
 from ..core.managers import edit_or_reply
 
-DB_PATH = "points_db.sqlite"
+DB_PATH = "teampoints_db.sqlite"
+#DB_PATH = "points_db.sqlite"
 
 def get_db():
     return sqlite3.connect(DB_PATH)
