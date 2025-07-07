@@ -24,9 +24,10 @@ DB_PATH = "teampoints_db.sqlite"
 #DB_PATH = "points_db.sqlite"
 
 AWAITING_NAMES = set()
-LEFT_TEAMS = {}
 TEAM_MODE = {}
 TEAMS = {}
+LEFT_TEAMS = {}
+LEFT_COUNTS = {}
 
 MAX_POINTS = 99
 MAX_TEAM_MEMBERS = 10
