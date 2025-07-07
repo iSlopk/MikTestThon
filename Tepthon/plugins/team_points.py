@@ -314,7 +314,9 @@ async def manage_team_points(event):
         if arg.isdigit():
             number = int(arg)
             break
+   
     delta = number if cmd == "/tp" else -number
+    
     members = TEAMS[chat]['members'][team_idx]
     for member_id in members:
         current = get_points(chat, member_id)
