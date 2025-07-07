@@ -387,38 +387,34 @@ async def show_teams_members(event):
         text += f"\n• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {joined}\n"
     await safe_edit(event, text)
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}showt$")
-async def show_teams_members(event):
+@zedub.bot_cmd(pattern=fr"^{cmhd}topt$")
+async def show_top_in_teams(event):
     if not await is_user_admin(event):
         return await safe_edit(event, "❗ الأمر للمشرفين فقط")
-
+        
     chat = event.chat_id
-    if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
-        return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
-
-    text = "🗂️ **تفاصيل الفرق وأعضائها:**\n"
+    if not TEAM_MODE.get(chat):
+        return await safe_edit(event, "❗ وضع الفرق غير مفعل")
+    
+    text = "🏅 **أعلى اللاعبين حسب النقاط في كل فريق:**\n"
 
     for idx, name in enumerate(TEAMS[chat]['names']):
-        members = TEAMS[chat]['members'].get(idx, [])
-        member_count = len(members)
+        top_members = get_team_top_members(chat, idx)
 
-        text += f"\n• اسم الفريق: `{name}`\n" \
-                f"• عدد الأعضاء: `({member_count} / {MAX_TEAM_MEMBERS})`\n"
+        text += f"\n• اسم الفريق : `{name}`\n"
+        text += f"• أعلى الأعضاء:\n"
 
-        if not members:
-            text += "    - لا يوجد أعضاء في الفريق.\n"
-            continue
+        if not top_members:
+            text += "    - لا يوجد أعضاء.\n"
+        else:
+            for i, (uid, pts) in enumerate(top_members[:3], start=1):
+                user = await event.client.get_entity(uid)
+                mention = f"@{user.username}" if user.username else f"[{user.first_name}](tg://user?id={uid})"
+                text += f"    {i}- {mention} ({pts})\n"
 
-        entities = await asyncio.gather(*(event.client.get_entity(uid) for uid in members))
+        text += "\n================"
 
-        for i, user in enumerate(entities, start=1):
-            if user.username:
-                mention = f"@{user.username}"
-            else:
-                mention = f"[{user.first_name}](tg://user?id={user.id})"
-            text += f"    {i}- {mention}\n"
-
-    await safe_edit(event, text)
+    await safe_edit(event, text.strip())
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}trstp$")
 async def reset_points(event):
