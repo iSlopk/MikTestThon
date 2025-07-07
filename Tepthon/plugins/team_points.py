@@ -294,7 +294,7 @@ async def autoreg(event):
     team_name = TEAMS[chat]['names'][idx]
     return await safe_edit(event, f"✅ انضم إلى فريق: {team_name}")
 
-@zedub.bot_cmd(pattern=fr"^(?:{cmhd}tp|{cmhd}tdp)(?:\s+(.+))?$")
+@zedub.bot_cmd(pattern=fr"^{re.escape(cmhd)}(?:tp|tdp)(?:\s+(.+))?$")
 async def manage_team_points(event):
     if not await is_user_admin(event):
         return await safe_edit(event, "❗ الأمر للمشرفين فقط")
