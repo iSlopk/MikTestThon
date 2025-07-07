@@ -285,13 +285,12 @@ async def tadd(event):
     uid = await get_user_id(event, args)
     if not uid:
         return await safe_edit(event, "❗ حدد مستخدم بالرد أو منشن أو آيدي")
-
-    # تحقق إذا المستخدم داخل فريق
+   
+    
     for members in TEAMS[chat]['members'].values():
         if uid in members:
             return await safe_edit(event, "❗ المستخدم مسجل بالفعل في فريق")
-
-    # اسم الفريق إن وجد
+   
     team_name = None
     for arg in args:
         if arg and not arg.isdigit():
