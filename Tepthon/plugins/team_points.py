@@ -344,7 +344,7 @@ async def team_points_summary(event):
     if not TEAM_MODE.get(chat) or not TEAMS.get(chat):
         return await safe_edit(event, "❗ لا يوجد فرق أو لم يتم التفعيل")
 
-    text = "📊 **نقاط الفرق:**\n"
+    text = "🔢 **نقاط الفرق:**\n"
 
     for idx, name in enumerate(TEAMS[chat]['names']):
         members = TEAMS[chat]['members'].get(idx, [])
