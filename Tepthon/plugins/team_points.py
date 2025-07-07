@@ -316,7 +316,7 @@ async def manage_team_points(event):
     delta = number if event.text.startswith(f"{cmhd}tp") else -number
 
     members = TEAMS[chat]['members'][team_idx]
-    #delta = 1 if cmd == "/tp" else -1
+    delta = 1 if cmd == "/tp" else -1
 
     for member_id in members:
         current = get_points(chat, member_id)
