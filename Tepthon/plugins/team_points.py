@@ -75,7 +75,7 @@ def build_team_display(chat, client):
                     for u in entities
                 )
             else:
-                mentions = "    - مافيه ناس بالتيم :("
+                mentions = "ㅤ- مافيه ناس بالتيم :("
             member_count = len(members)
             lines.append(f"• Team : `{name}`\n• Members : `({member_count} / {MAX_TEAM_MEMBERS})`\n• Details :\n{mentions}\n\n================\n")
         return "\n".join(lines)
