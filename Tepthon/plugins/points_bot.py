@@ -88,7 +88,7 @@ async def get_user_id(event, args):
             pass
     return None
                
-@zedub.bot_cmd(pattern=fr"^(?:{cmhd}p|{cmhd}delp)(?:\s+(.+))?$")
+@zedub.bot_cmd(pattern=fr"^(?:{cmhd}p|{cmhd}dp)(?:\s+(.+))?$")
 async def points_manage(event):
     """إضافة أو خصم نقاط"""
     if not event.is_group:
@@ -144,7 +144,7 @@ async def handle_event(event, args, cmd, points):
             event,
             f"➕ تم إضافة {points} نقطة.\n👤 المستخدم : {name}\n🔢 عدد نقاطه : [{new_points}]"
         )
-    # إذا كان الأمر هو /delp يتم خصم النقاط
+    # إذا كان الأمر هو /dp يتم خصم النقاط
     else:
         new_points = max(old - points, 0)  # التأكد من أن النقاط لا تصبح أقل من صفر
         set_points(event.chat_id, uid, new_points)
