@@ -151,7 +151,7 @@ async def callback_handler(event):
             for i, name in enumerate(TEAMS[chat]['names'])
         ]
 
-        lines = ["🔔 | **التسجيل مفتوح الآن**\n\n🛗 | **الأفــرقــة**:", ""]
+        lines = ["🧩 | **التسجيل مفتوح الآن**\n\n🎮 | **الأفــرقــة**:", ""]
         for idx, name in enumerate(TEAMS[chat]['names']):
             members = TEAMS[chat]['members'].get(idx) or []
 
@@ -159,7 +159,7 @@ async def callback_handler(event):
                 entities = await asyncio.gather(*(event.client.get_entity(m) for m in members))
                 mentions = "، ".join(f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})" for u in entities)
             else:
-                mentions = "اُبوك يالطفش مافيه ناس بالتيم :("
+                mentions = "- مافيه ناس بالتيم :("
             member_count = len(members)
             lines.append(f"• **{name}** ({member_count} / {MAX_TEAM_MEMBERS}):\n    - {mentions}\n")
 
