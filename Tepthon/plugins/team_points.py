@@ -267,7 +267,11 @@ async def receive_names(ev):
                     f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
                 )
 
+
         TEAMS[chat]['_preview_names'] = cleaned
+        if manual:
+            TEAMS[chat]['count'] = len(cleaned)
+
 
         preview = "**📋 المعاينة قبل الحفظ:**\n\n"
         for i, name in enumerate(cleaned, 1):
