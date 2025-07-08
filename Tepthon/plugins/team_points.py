@@ -258,11 +258,11 @@ async def receive_names(ev):
 
         if TEAMS[chat].get('count', 0) == 0:
             TEAMS[chat]['count'] = len(cleaned)
-
-        if len(cleaned) != TEAMS[chat]['count']:
-            return await ev.reply(
-                f"⚠️ عدد الأسماء: ({len(cleaned)})\nلا يطابق عدد الفرق المحدد: ({TEAMS[chat]['count']}), حاول مجددًا"
-            )
+        else:
+            if len(cleaned) != TEAMS[chat]['count']:
+                return await ev.reply(
+                    f"⚠️ عدد الأسماء: ({len(cleaned)})\nلا يطابق عدد الفرق المحدد: ({TEAMS[chat]['count']}), حاول مجددًا"
+                )
 
         TEAMS[chat]['_preview_names'] = cleaned
 
