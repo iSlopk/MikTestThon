@@ -93,7 +93,7 @@ async def mlist_handler(event):
 async def msetlog(event):
     key = get_key(event)
     addgvar("MLIST_LOG_CHAT", f"{key[0]}|{key[1]}")
-    return await edit_or_reply(event, f"✅ تم تعيين هذا الموضوع كروم اللوق")
+    await event.reply(f"✅ تم تعيين هذا الموضوع كروم اللوق\n`Chat: {key[0]}`\n`Topic: {key[1]}`")
 
 @zedub.bot_cmd(pattern=r"^/mlink\s+(https?://t\.me/c/\d+/\d+)$")
 async def mlink_threaded(event):
