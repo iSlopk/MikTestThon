@@ -122,5 +122,3 @@ async def mlogout_handler(event):
             await event.client.send_message(int(logid), f"📤 [{e.first_name}](tg://user?id={uid}) خرج `{chat_id}`")
     else:
         await event.answer("⚠️ لم تكن مسجّل دخول")
-
-# تأكد من أنك ملف globals.py يحتوي على addgvar و gvarstatus بشكل صحيح
