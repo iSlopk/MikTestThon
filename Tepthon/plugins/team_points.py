@@ -481,7 +481,7 @@ async def show_top_in_teams(event):
         top_members = get_team_top_members(chat, idx)
 
         text += f"\n• Team : `{name}`\n"
-        text += f"• Top 3 :\n"
+        text += f"\n• Top 3 :\n"
 
         if not top_members:
             text += "ㅤ- ( لا يوجد أعضاء )\n"
