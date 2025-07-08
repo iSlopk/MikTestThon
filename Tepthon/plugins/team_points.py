@@ -460,7 +460,7 @@ async def show_teams_members(event):
                 if u.username:
                     text += f"    {i}- @{u.username}\n\n"
                 else:
-                    text += f"    {i}- [{u.first_name}](tg://user?id={u.id})\n\n"
+                    text += f"ㅤ{i}- [{u.first_name}](tg://user?id={u.id})\n\n"
 
         text += "================\n"
 
