@@ -251,8 +251,8 @@ async def receive_names(ev):
             if len(name) > 15:
                 return await ev.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٥ حرف`)")
             cleaned.append(name)
-
-        # ✅ حالة تحديد العدد تلقائيًا حسب الأسماء
+       
+        
         if TEAMS[chat]['count'] == 0:
             if len(cleaned) > MAX_TEAM_COUNT:
                 return await ev.reply(
