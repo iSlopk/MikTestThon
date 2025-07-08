@@ -458,7 +458,7 @@ async def show_teams_members(event):
             entities = await asyncio.gather(*(event.client.get_entity(uid) for uid in members))
             for i, u in enumerate(entities, start=1):
                 if u.username:
-                    text += f"    {i}- @{u.username}\n\n"
+                    text += f"ㅤ{i}- @{u.username}\n\n"
                 else:
                     text += f"ㅤ{i}- [{u.first_name}](tg://user?id={u.id})\n\n"
 
