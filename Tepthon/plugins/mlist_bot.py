@@ -9,6 +9,7 @@ from ..core.session import zedub
 from ..core.managers import edit_or_reply
 from ..sql_helper.globals import addgvar, gvarstatus
 from ..core.logger import logging
+from ..Config import Config
 
 MLIST_DATA = {}
 MLIST_MSGS = {}
