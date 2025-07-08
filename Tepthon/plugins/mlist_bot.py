@@ -86,7 +86,7 @@ async def mlist_handler(event):
         MLIST_DATA.setdefault(key, set())
         MLIST_MSGS[key] = msg_id
         await update_mlist_message(event.client, chat_id, msg_id, key)
-        return await edit_or_reply(event, "✅ تم تحديث القائمة في الموضوع المحدد")
+        return await event.reply("✅ تم تحديث القائمة في الموضوع المحدد")
     else:
         key = (event.chat_id, event.id)
         MLIST_DATA.setdefault(key, set())
@@ -109,8 +109,8 @@ async def msetlog(event):
         chat_id = event.chat_id
         msg_id = event.reply_to_msg_id or event.id
     addgvar("MLIST_LOG_CHAT", f"{chat_id}:{msg_id}")
-    return await edit_or_reply(event, "✅ تم تعيين هذا الموضوع كروم اللوق")
-
+    return await event.reply("✅ تم تحديث القائمة في الموضوع المحدد")
+   
 @zedub.bot_cmd(pattern=r"^/mlink\s+(https?://t\.me/c/\d+/\d+)$")
 async def mlink(event):
     link = event.pattern_match.group(1)
