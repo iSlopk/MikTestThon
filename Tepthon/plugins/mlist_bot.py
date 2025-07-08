@@ -55,7 +55,7 @@ async def update(key):
 async def cmd_mlist(e):
     key = (e.chat_id, e.reply_to_msg_id or e.id)
     MLIST_DATA.setdefault(key, {})
-    msg = await e.reply("... جارٍ إنشاء القائمة", buttons=[])
+    msg = await e.reply("... جارٍ إنشاء القائمة")
     text = "**قائمة حضور المشرفين:**\n\n" + await get_names(zedub, {})
     msg2 = await e.reply(text, buttons=[[
         Button.inline("🟢 in", data=f"in|{key[0]}|{key[1]}"),
