@@ -11,7 +11,7 @@ from ..sql_helper.globals import addgvar, gvarstatus
 from ..core.session import session_client
 from ..core.logger import logging
 
-MLIST_DATA = {}    # { (chat, msg_id): set(user_id) }
+MLIST_DATA = {}
 MLIST_MSGS = {}
 
 plugin_category = "البوت"
