@@ -8,7 +8,7 @@ from telethon.events import CallbackQuery
 from . import zedub
 from ..core.managers import edit_or_reply
 from ..sql_helper.globals import addgvar, gvarstatus
-from ..core.session import session_client  # assuming exists
+from ..core.session import session_client
 from ..core.logger import logging
 
 MLIST_DATA = {}    # { (chat, msg_id): set(user_id) }
