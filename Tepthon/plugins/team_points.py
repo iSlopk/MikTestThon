@@ -156,7 +156,6 @@ async def callback_handler(event):
 
     if data == "team_names":
         AWAITING_NAMES.add(chat)
-        TEAMS[chat]['manual_count'] = True
         return await event.reply(
             "📩 أرسل أسماء الفرق مثل:\n`( 🟢 MikTeam | 🔴 SaTeam )`\n\nالفواصل المدعومة:\n( `،` `,` `*` `\` `-` `|` `/` )"
         )
