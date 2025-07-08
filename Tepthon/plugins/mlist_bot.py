@@ -11,10 +11,11 @@ from ..Config import Config
 plugin_category = "البوت"
 
 MLIST_DATA_FILE = "mlist_data.json"
-MLIST_DATA = {}       # key = (main_chat_id, list_msg_id) -> set(user_ids)
-MLIST_MSGS = {}       # same key -> message_id
-LINKED_GROUPS = {}    # secondary_chat_id -> (main_chat_id, list_msg_id)
+MLIST_DATA = {}       # (chat_id, msg_id): set(user_ids)
+MLIST_MSGS = {}       # (chat_id, msg_id): msg_id
+LINKED_GROUPS = {}    # group_id: (chat_id, msg_id)
 
+# ========== التخزين ==========
 def load_data():
     global MLIST_DATA, MLIST_MSGS, LINKED_GROUPS
     if os.path.exists(MLIST_DATA_FILE):
@@ -34,153 +35,145 @@ def save_data():
 
 load_data()
 
+# ========== المساعدات ==========
 async def get_names(client, user_ids):
-    lst = []
+    names = []
     for uid in user_ids:
         try:
             u = await client.get_entity(uid)
-            if u.username:
-                lst.append(f"- @{u.username} [`{u.id}`]")
-            else:
-                lst.append(f"- [{u.first_name}](tg://user?id={u.id}) [`{u.id}`]")
+            name = f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})"
+            names.append(f"- {name} [`{u.id}`]")
         except:
             continue
-    return lst
+    return names
+
+async def delete_after(msg, delay=5):
+    await asyncio.sleep(delay)
+    try:
+        await msg.delete()
+    except:
+        pass
 
 async def update_mlist_message(client, chat_id, msg_id, key):
     users = MLIST_DATA.get(key, set())
-    names = await get_names(client, list(users))
-    text = "**قائمة حضور المشرفين:**\n\n" + ("\n".join(names) if names else "👀 لا يوجد مشرف حاضر")
+    text = "**قائمة حضور المشرفين:**\n\n"
+    text += "\n".join(await get_names(client, users)) if users else "👀 لا يوجد مشرف حاضر"
     buttons = [
-        [Button.inline("Log In", data=f"mlogin|{chat_id}|{msg_id}"),
-         Button.inline("Log Out", data=f"mlogout|{chat_id}|{msg_id}")],
+        [Button.inline("Log In 🟢", data=f"mlogin|{chat_id}|{msg_id}"),
+         Button.inline("Log Out 🔴", data=f"mlogout|{chat_id}|{msg_id}")],
         [Button.inline("🔄 تحديث", data=f"mrefresh|{chat_id}|{msg_id}")]
     ]
     try:
-        client_id = MLIST_MSGS.get(key)
-        if client_id:
-            await client.edit_message(chat_id, client_id, text, buttons=buttons, link_preview=False)
+        await client.edit_message(chat_id, msg_id, text, buttons=buttons)
     except:
         pass
     save_data()
 
-async def delete_after(msg, delay=5):
-    await asyncio.sleep(delay)
-    try: await msg.delete()
-    except: pass
+def extract_link_ids(link):
+    match = re.search(r"t\.me/c/(-?\d+)/(\d+)", link)
+    if match:
+        return int("-100" + match.group(1)), int(match.group(2))
+    return None, None
 
-def get_key(event):
-    reply = event.reply_to_msg_id or event.id
-    return (event.chat_id, reply)
-
-@zedub.bot_cmd(pattern="^/mlist$")
+# ========== الأوامر ==========
+@zedub.bot_cmd(pattern=r"^/mlist(?:\s+(https?://t\.me/c/\d+/\d+))?$")
 async def mlist_handler(event):
-    key = get_key(event)
-    MLIST_DATA.setdefault(key, set())
-    chat, msg_id = key
-    names = await get_names(event.client, list(MLIST_DATA[key]))
-    text = "**قائمة حضور المشرفين:**\n\n" + ("\n".join(names) if names else "👀 لا يوجد مشرف حاضر")
-    buttons = [
-        [Button.inline("Log In", data=f"mlogin|{chat}|{msg_id}"),
-         Button.inline("Log Out", data=f"mlogout|{chat}|{msg_id}")],
-        [Button.inline("🔄 تحديث", data=f"mrefresh|{chat}|{msg_id}")]
-    ]
-    message = await event.reply(text, buttons=buttons, link_preview=False)
-    MLIST_MSGS[key] = message.id
-    save_data()
-
-@zedub.bot_cmd(pattern=r"^/msetlog$")
-async def msetlog(event):
-    key = get_key(event)
-    addgvar("MLIST_LOG_CHAT", f"{key[0]}|{key[1]}")
-    await event.reply(f"✅ تم تعيين هذا الموضوع كروم اللوق\n`Chat: {key[0]}`\n`Topic: {key[1]}`")
-
-@zedub.bot_cmd(pattern=r"^/mlink\s+(https?://t\.me/c/\d+/\d+)$")
-async def mlink_threaded(event):
-    url = event.pattern_match.group(1)
-    sec_chat = event.chat_id
-
-    match = re.match(r"https?://t\.me/c/(\d+)/(\d+)", url)
-    if not match:
-        return await event.reply("❌ لم أتمكن من تحليل الرابط.")
-
-    internal_id = match.group(1)
-    msg_id = int(match.group(2))
-    chat_id = int("-100" + internal_id)
-
-    try:
-        msg = await event.client.get_messages(chat_id, ids=msg_id)
-        if not msg:
-            return await event.reply("❗ لم أتمكن من إيجاد الرسالة.")
-
-        top_id = getattr(msg.reply_to, "top_msg_id", None)
-        if not top_id:
-            return await event.reply("❗ تأكد أن الرسالة داخل موضوع.")
-
-        LINKED_GROUPS[sec_chat] = (chat_id, top_id)
+    if event.pattern_match.group(1):
+        chat_id, msg_id = extract_link_ids(event.pattern_match.group(1))
+        if not chat_id or not msg_id:
+            return await edit_or_reply(event, "❗ تأكد من رابط الرسالة داخل موضوع")
+        key = (chat_id, msg_id)
+        MLIST_DATA.setdefault(key, set())
+        MLIST_MSGS[key] = msg_id
+        await update_mlist_message(event.client, chat_id, msg_id, key)
+        return await edit_or_reply(event, "✅ تم تحديث القائمة في الموضوع المحدد")
+    else:
+        key = (event.chat_id, event.id)
+        MLIST_DATA.setdefault(key, set())
+        text = "**قائمة حضور المشرفين:**\n\n"
+        text += "👀 لا يوجد مشرف حاضر"
+        buttons = [
+            [Button.inline("Log In 🟢", data=f"mlogin|{event.chat_id}|{event.id}"),
+             Button.inline("Log Out 🔴", data=f"mlogout|{event.chat_id}|{event.id}")],
+            [Button.inline("🔄 تحديث", data=f"mrefresh|{event.chat_id}|{event.id}")]
+        ]
+        msg = await event.reply(text, buttons=buttons)
+        MLIST_MSGS[key] = msg.id
         save_data()
 
-        return await event.reply(
-            f"✅ تم ربط هذا القروب بموضوع الحضور:\n`Chat: {chat_id}`\n`Topic (top_msg_id): {top_id}`"
-        )
+@zedub.bot_cmd(pattern=r"^/setlog(?:\s+(https?://t\.me/c/\d+/\d+))?$")
+async def msetlog(event):
+    if event.pattern_match.group(1):
+        chat_id, msg_id = extract_link_ids(event.pattern_match.group(1))
+    else:
+        chat_id = event.chat_id
+        msg_id = event.reply_to_msg_id or event.id
+    addgvar("MLIST_LOG_CHAT", f"{chat_id}:{msg_id}")
+    return await edit_or_reply(event, "✅ تم تعيين هذا الموضوع كروم اللوق")
 
-    except Exception as e:
-        return await event.reply(f"❌ حدث خطأ:\n{str(e)}")
+@zedub.bot_cmd(pattern=r"^/mlink\s+(https?://t\.me/c/\d+/\d+)$")
+async def mlink(event):
+    link = event.pattern_match.group(1)
+    chat_id, msg_id = extract_link_ids(link)
+    if not chat_id or not msg_id:
+        return await edit_or_reply(event, "❗ تأكد أن الرابط صالح")
+    LINKED_GROUPS[event.chat_id] = (chat_id, msg_id)
+    save_data()
+    return await edit_or_reply(event, "✅ تم ربط هذا القروب بالقائمة في الموضوع المحدد")
 
+@zedub.bot_cmd(pattern=r"^/(in|out)$")
+async def alt_in_out(event):
+    cmd = event.pattern_match.group(1)
+    user = event.sender_id
+    chat_id = event.chat_id
+
+    if chat_id not in LINKED_GROUPS:
+        return await event.reply("❗ هذا القروب غير مرتبط بقائمة رئيسية", link_preview=False)
+
+    target_chat, msg_id = LINKED_GROUPS[chat_id]
+    key = (target_chat, msg_id)
+    MLIST_DATA.setdefault(key, set())
+
+    if cmd == "in":
+        MLIST_DATA[key].add(user)
+        status = "الدخول"
+    else:
+        MLIST_DATA[key].discard(user)
+        status = "الخروج"
+
+    await update_mlist_message(event.client, target_chat, msg_id, key)
+
+    # log
+    raw_log = gvarstatus("MLIST_LOG_CHAT")
+    if raw_log:
+        log_chat, log_msg = map(int, raw_log.split(":"))
+        u = await event.client.get_entity(user)
+        name = f"@{u.username}" if u.username else f"[{u.first_name}](tg://user?id={u.id})"
+        await event.client.send_message(log_chat, f"📢 {name} قام بـ{status}")
+
+    done = await event.reply(f"✅ تم تسجيل {status}")
+    asyncio.create_task(delete_after(done))
+
+# ========== الأزرار ==========
 @zedub.tgbot.on(events.CallbackQuery(pattern=r"mlogin\|(-?\d+)\|(\d+)"))
-async def mlogin_cb(event):
-    chat, msg_id = map(int, event.pattern_match.group(1,2))
-    key = (chat, msg_id)
+async def cb_login(event):
+    chat_id, msg_id = map(int, event.pattern_match.groups())
+    key = (chat_id, msg_id)
     MLIST_DATA.setdefault(key, set()).add(event.sender_id)
-    await update_mlist_message(event.client, chat, msg_id, key)
+    await update_mlist_message(event.client, chat_id, msg_id, key)
     await event.answer("✅ تم تسجيل حضورك", alert=False)
 
 @zedub.tgbot.on(events.CallbackQuery(pattern=r"mlogout\|(-?\d+)\|(\d+)"))
-async def mlogout_cb(event):
-    chat, msg_id = map(int, event.pattern_match.group(1,2))
-    key = (chat, msg_id)
+async def cb_logout(event):
+    chat_id, msg_id = map(int, event.pattern_match.groups())
+    key = (chat_id, msg_id)
     MLIST_DATA.setdefault(key, set()).discard(event.sender_id)
-    await update_mlist_message(event.client, chat, msg_id, key)
+    await update_mlist_message(event.client, chat_id, msg_id, key)
     await event.answer("✅ تم تسجيل خروجك", alert=False)
 
 @zedub.tgbot.on(events.CallbackQuery(pattern=r"mrefresh\|(-?\d+)\|(\d+)"))
-async def mrefresh_cb(event):
-    chat, msg_id = map(int, event.pattern_match.group(1,2))
-    key = (chat, msg_id)
-    await update_mlist_message(event.client, chat, msg_id, key)
-    await event.answer("🔄 تم التحديث", alert=False)
-
-@zedub.bot_cmd(pattern="^/(in|out)$")
-async def alt_in_out(event):
-    cmd = event.pattern_match.group(1)
-    sec_chat = event.chat_id
-    user = event.sender_id
-
-    if sec_chat not in LINKED_GROUPS:
-        return await event.reply("❗ هذا القروب غير مرتبط بموضوع رئيسي")
-
-    main_chat, list_msg_id = LINKED_GROUPS[sec_chat]
-    key = (main_chat, list_msg_id)
-
-    if cmd == "in":
-        MLIST_DATA.setdefault(key, set()).add(user)
-        action = "الدخول"
-    else:
-        MLIST_DATA.setdefault(key, set()).discard(user)
-        action = "الخروج"
-
-    await update_mlist_message(event.client, main_chat, list_msg_id, key)
-
-    # إشعار اللوق
-    log_data = gvarstatus("MLIST_LOG_CHAT")
-    if log_data:
-        try:
-            log_chat, log_msg_id = map(int, log_data.split("|"))
-            ent = await event.client.get_entity(user)
-            name = f"@{ent.username}" if ent.username else f"[{ent.first_name}](tg://user?id={ent.id})"
-            await event.client.send_message(log_chat, f"✅ {name} قام بـ{action}", reply_to=log_msg_id)
-        except:
-            pass
-
-    msg = await event.reply(f"✅ تم تسجيل {action}")
-    asyncio.create_task(delete_after(msg, 5))
+async def cb_refresh(event):
+    chat_id, msg_id = map(int, event.pattern_match.groups())
+    key = (chat_id, msg_id)
+    await update_mlist_message(event.client, chat_id, msg_id, key)
+    await event.answer("✅ تم التحديث", alert=False)
