@@ -256,7 +256,6 @@ async def receive_names(ev):
 
             cleaned.append(name)
 
-        # ✅ إذا لم يتم تحديد عدد الفرق مسبقًا، نحتسبه من الأسماء
         if TEAMS[chat].get('count', 0) == 0:
             TEAMS[chat]['count'] = len(cleaned)
 
