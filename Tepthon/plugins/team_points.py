@@ -79,7 +79,7 @@ def build_team_display(chat, client):
             else:
                 mentions = "ㅤ- مافيه ناس بالتيم :("
             member_count = len(members)
-            lines.append(f"• Team : `{name}`\n• Members : `({member_count} / {MAX_TEAM_MEMBERS})`\n• Details :\n{mentions}\n\n================\n")
+            lines.append(f"• Team : `{name}`\n• Members : `({member_count} / {MAX_TEAM_MEMBERS})`\n\n• Details :\n{mentions}\n\n================\n")
         return "\n".join(lines)
     return inner
 
@@ -450,7 +450,7 @@ async def show_teams_members(event):
 
         text += f"\n• Team : `{name}`"
         text += f"\n• Members : `({member_count} / {MAX_TEAM_MEMBERS})`\
-        \n• Details  :\n"
+        \n\n• Details  :\n"
 
         if not members:
             text += "ㅤ- ( الفريق فاضي )\n\n"
