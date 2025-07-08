@@ -146,6 +146,7 @@ async def callback_handler(event):
         try:
             n = int(data.split("_")[-1])
             TEAMS[chat]['count'] = n
+            TEAMS[chat]['manual_count'] = False
             return await event.edit(
                 f"✅ اخترت عدد الفرق : [{n}]\nاضغط لتعيين أسماء الفرق",
                 buttons=[[Button.inline("📝 تسمية الفرق", b"team_names")]]
