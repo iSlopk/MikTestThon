@@ -221,10 +221,12 @@ async def callback_handler(event):
         buttons = build_team_buttons(chat)
         return await event.edit(text, buttons=buttons, link_preview=False)
         
+       
 @zedub.tgbot.on(events.NewMessage)
 async def receive_names(ev):
     if not await is_user_admin(ev):
         return
+
     chat = ev.chat_id
     if not ev.is_group or chat not in AWAITING_NAMES:
         return
@@ -233,10 +235,9 @@ async def receive_names(ev):
         text = ev.text.strip()
         text = re.sub(r"\s+", " ", text)
 
-        
         if not (text.startswith("(") and text.endswith(")")):
             return
-           
+
         if not re.search(r"[،,|/\-*\\]", text):
             return
 
@@ -245,26 +246,32 @@ async def receive_names(ev):
 
         for name in raw_names:
             name = name.strip()
-
             if not name or name in cleaned:
                 continue
-
             if len(name) > 15:
                 return await ev.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٥ حرف`)")
-
             cleaned.append(name)
 
-        if len(cleaned) != TEAMS[chat]['count']:
-            return await ev.reply(
-                f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
-            )
-           
+        # ✅ حالة تحديد العدد تلقائيًا حسب الأسماء
+        if TEAMS[chat]['count'] == 0:
+            if len(cleaned) > MAX_TEAM_COUNT:
+                return await ev.reply(
+                    f"🚫 عدد الفرق كبير جدًا: ({len(cleaned)})\nالحد الأقصى المسموح: ({MAX_TEAM_COUNT})"
+                )
+            TEAMS[chat]['count'] = len(cleaned)
+
+        else:
+            if len(cleaned) != TEAMS[chat]['count']:
+                return await ev.reply(
+                    f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
+                )
+
         TEAMS[chat]['_preview_names'] = cleaned
-           
+
         preview = "**📋 المعاينة قبل الحفظ:**\n\n"
         for i, name in enumerate(cleaned, 1):
             preview += f"{i}. {name}\n"
-            
+
         buttons = [
             [Button.inline("✅ تأكيد الأسماء", b"confirm_names")],
             [Button.inline("🔄 تعديل", b"team_names")]
