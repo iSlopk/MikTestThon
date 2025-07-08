@@ -142,11 +142,15 @@ async def send_log(client, user_id, action):
     if log_chat and log_topic:
         try:
             user = await client.get_entity(user_id)
-            mention = f"[{user.first_name}](tg://user?id={user.id})"
+            if user.username:
+                mention = f"@{user.username} [`{user.id}`]"
+            else:
+                mention = f"[{user.first_name}](tg://user?id={user.id}) [`{user.id}`]"
+
             await client.send_message(
                 int(log_chat),
                 f"{action}: {mention}",
                 reply_to=int(log_topic)
             )
-        except Exception:
-            pass
+        except Exception as e:
+            print("log error:", e)
