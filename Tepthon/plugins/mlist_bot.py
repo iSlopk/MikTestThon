@@ -5,7 +5,7 @@
 import asyncio
 from telethon import events, Button
 from telethon.events import CallbackQuery
-from . import zedub
+from ..core.session import zedub
 from ..core.managers import edit_or_reply
 from ..sql_helper.globals import addgvar, gvarstatus
 from ..core.logger import logging
