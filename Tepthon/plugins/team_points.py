@@ -245,31 +245,27 @@ async def receive_names(ev):
 
         for name in raw_names:
             name = name.strip()
+
             if not name or name in cleaned:
                 continue
+
             if len(name) > 15:
-                return await ev.reply(f"⚠️ **يابوي اسم التيم `{name}` مره طويل والحد المسموح هو** (`١٥ حرف`)")
-            cleaned.append(name)
-       
-        
-        if TEAMS[chat]['count'] == 0:
-            if len(cleaned) > MAX_TEAM_COUNT:
                 return await ev.reply(
-                    f"🚫 عدد الفرق كبير جدًا: ({len(cleaned)})\nالحد الأقصى المسموح: ({MAX_TEAM_COUNT})"
+                    f"⚠️ **اسم التيم `{name}` طويل جدًا. الحد الأقصى هو** (`15 حرف`)"
                 )
+
+            cleaned.append(name)
+
+        # ✅ إذا لم يتم تحديد عدد الفرق مسبقًا، نحتسبه من الأسماء
+        if TEAMS[chat].get('count', 0) == 0:
             TEAMS[chat]['count'] = len(cleaned)
 
-        else:
-            if len(cleaned) != TEAMS[chat]['count']:
-                return await ev.reply(
-                    f"⚠️ عدد الأسماء: ({len(cleaned)})\n لا يطابق عدد الفرق المحددة: ({TEAMS[chat]['count']}), حاول مجددًا"
-                )
-
+        if len(cleaned) != TEAMS[chat]['count']:
+            return await ev.reply(
+                f"⚠️ عدد الأسماء: ({len(cleaned)})\nلا يطابق عدد الفرق المحدد: ({TEAMS[chat]['count']}), حاول مجددًا"
+            )
 
         TEAMS[chat]['_preview_names'] = cleaned
-        if manual:
-            TEAMS[chat]['count'] = len(cleaned)
-
 
         preview = "**📋 المعاينة قبل الحفظ:**\n\n"
         for i, name in enumerate(cleaned, 1):
