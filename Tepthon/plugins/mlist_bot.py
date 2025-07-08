@@ -13,7 +13,7 @@ from ..Config import Config
 plugin_category = "البوت"
 
 MLIST_DATA_FILE = "mlist_data.json"
-MLIST_DATA = {}  # (chat_id, msg_id): [user_ids]
+MLIST_DATA = {}  # (chat_asyncio, msg_id): [user_ids]
 MLIST_MSGS = {}  # (chat_id, msg_id): message_id
 LINKED_GROUPS = {}  # secondary_chat_id: (main_chat_id, msg_id)
 
