@@ -10,12 +10,19 @@ from ..core.managers import edit_delete, edit_or_reply
 from ..sql_helper.globals import addgvar, delgvar, gvarstatus
 from pySmartDL import SmartDL
               
+              
 MLIST_DATA = {}  
+              
 MLIST_MSGS = {}  
               
+              
+              
 plugin_category = "البوت"
+             
 botusername = Config.TG_BOT_USERNAME
+             
 cmhd = Config.COMMAND_HAND_LER
+             
              
              
 async def get_names(client, user_ids):
