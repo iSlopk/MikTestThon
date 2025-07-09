@@ -114,7 +114,7 @@ async def mlogin_handler(event):
         MLIST_DATA[key] = set()
     MLIST_DATA[key].add(user_id)
     await update_mlist_message(event.client, chat_id, reply_to, key)
-    await event.answer("تم تسجيل حضورك ✅", alert=False)
+    await event.answer("تم تسجيل حضورك ✅", alert=True)
 
     if chat_id in LOG_CHANNELS:
         log_chat_id, topic_id = LOG_CHANNELS[chat_id]
@@ -148,7 +148,7 @@ async def mlogout_handler(event):
     if user_id in MLIST_DATA[key]:
         MLIST_DATA[key].remove(user_id)
         await update_mlist_message(event.client, chat_id, reply_to, key)
-        await event.answer("تم تسجيل خروجك ❌", alert=False)
+        await event.answer("تم تسجيل خروجك ❌", alert=True)
 
         if chat_id in LOG_CHANNELS:
             log_chat_id, topic_id = LOG_CHANNELS[chat_id]
@@ -169,7 +169,7 @@ async def mlogout_handler(event):
             except Exception:
                 pass
     else:
-        await event.answer("أنت لست ضمن القائمة!", alert=False)
+        await event.answer("أنت لست ضمن القائمة!", alert=True)
 
 @zedub.bot_cmd(pattern="^/msetlog(?: (.+))?")
 async def set_log_topic(event):
