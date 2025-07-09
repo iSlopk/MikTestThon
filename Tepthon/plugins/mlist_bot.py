@@ -113,4 +113,24 @@ async def cb_handler(event):
                   (chat_id, msg_id, uid, now))
         conn.commit()
         txt = "✅ تم تسجيل دخولك"
-    elif action == "
+    elif action == "out":
+        c.execute("SELECT join_time FROM presence WHERE chat_id=? AND msg_id=? AND user_id=?",
+                  (chat_id, msg_id, uid))
+        row = c.fetchone()
+        if row:
+            delta = int((time.time() - row[0]) // 60)
+            c.execute("DELETE FROM presence WHERE chat_id=? AND msg_id=? AND user_id=?",
+                      (chat_id, msg_id, uid))
+            conn.commit()
+            txt = f"❌ تم تسجيل خروجك بعد {delta} دقيقة"
+        else:
+            txt = "⚠️ لم تكن ضمن القائمة"
+    elif action == "up":
+        await update_message(chat_id, msg_id)
+        await event.answer("🔄 تم التحديث", alert=True)
+        conn.close()
+        return
+
+    conn.close()
+    await update_message(chat_id, msg_id)
+    await event.answer(txt, alert=False)
