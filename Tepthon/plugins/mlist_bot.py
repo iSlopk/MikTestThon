@@ -53,7 +53,7 @@ async def update_mlist_message(client, chat_id, reply_to, key):
     except Exception:
         pass
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}mlist$")
+@zedub.bot_cmd(pattern=fr"^{cmhd}الحضور$")
 async def mlist_handler(event):
     key = get_key(event)
     if key not in MLIST_DATA:
