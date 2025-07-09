@@ -171,7 +171,7 @@ async def mlogout_handler(event):
     else:
         await event.answer("أنت لست ضمن القائمة!", alert=True)
 
-@zedub.bot_cmd(pattern="^/msetlog(?: (.+))?")
+@zedub.bot_cmd(pattern=fr"^{cmhd}msl(?: (.+))?")
 async def set_log_topic(event):
     arg = event.pattern_match.group(1)
     chat_id = event.chat_id
@@ -186,4 +186,4 @@ async def set_log_topic(event):
         LOG_CHANNELS[chat_id] = (log_chat_id, topic_id)
         await event.reply("✅ تم تعيين سجل الحضور بنجاح.")
     else:
-        await event.reply("❌ يرجى إرسال رابط الموضوع.\nمثال:\n/msetlog https://t.me/c/123456789/55")
+        await event.reply("❌ يرجى إرسال رابط الموضوع.\nمثال:\n`/msl https://t.me/c/123456789/55`")
