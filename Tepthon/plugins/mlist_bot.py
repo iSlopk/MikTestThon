@@ -124,8 +124,7 @@ async def mlogin_handler(event):
             name_display = f"[@{user.username}](tg://user?id={user.id})" if getattr(user, "username", None) else f"[{user.first_name}](tg://user?id={user.id})"
             msg = (
                 f"👤 **المستخدم** : {name_display}\n"
-                f"📣 **الحالة** : [ `🟢 تسجيل دخول` ]\n"
-                f"⏰ **الحضور** : [ `{now}` ]"
+                f"📣 **الــحــالــة** : [ `🟢 تسجيل دخول` ]\n"
             )
             await event.client.send_message(
                 entity=log_chat_id,
@@ -159,8 +158,7 @@ async def mlogout_handler(event):
                 name_display = f"[@{user.username}](tg://user?id={user.id})" if getattr(user, "username", None) else f"[{user.first_name}](tg://user?id={user.id})"
                 msg = (
                     f"👤 **المستخدم** : {name_display}\n"
-                    f"📣 **الحالة** : [ `🔴 تسجيل خروج` ]\n"
-                    f"⏰ **الخروج** : [ `{now}` ]"
+                    f"📣 **الــحــالــة** : [ `🔴 تسجيل خروج` ]\n"
                 )
                 await event.client.send_message(
                     entity=log_chat_id,
