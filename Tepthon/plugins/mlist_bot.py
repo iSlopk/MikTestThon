@@ -70,7 +70,7 @@ async def mlist_handler(event):
     msg = await event.reply(text, buttons=btns, link_preview=False)
     MLIST_MSGS[key] = msg.id
 
-@zedub.bot_cmd(pattern="^/in$")
+@zedub.bot_cmd(pattern=fr"^{cmhd}دخول$")
 async def mlist_in(event):
     key = get_key(event)
     user_id = event.sender_id
@@ -81,7 +81,7 @@ async def mlist_in(event):
     msg = await event.reply("تم تسجيل حضورك ✅")
     asyncio.create_task(delete_later(msg))
 
-@zedub.bot_cmd(pattern="^/out$")
+@zedub.bot_cmd(pattern=fr"^{cmhd}خروج$")
 async def mlist_out(event):
     key = get_key(event)
     user_id = event.sender_id
