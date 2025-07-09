@@ -1,136 +1,140 @@
-# © هذا السكربت كتبه Mik
+# © This program was written by Mik
 # @ASX16 , @SLOPK , AHMD
-
-import os
-import sqlite3
-import time
+# I authorize everyone to use it. 
 import asyncio
-from telethon import events, Button
-from ..core.session import zedub
-from ..core.managers import edit_or_reply
-from ..Config import Config
-
+from telethon import events, Button, functions
+from telethon.events import CallbackQuery, InlineQuery
+from . import zedub
+from ..core.logger import logging
+from ..core.managers import edit_delete, edit_or_reply
+from ..sql_helper.globals import addgvar, delgvar, gvarstatus
+from pySmartDL import SmartDL
+              
+MLIST_DATA = {}  
+MLIST_MSGS = {}  
+              
 plugin_category = "البوت"
+botusername = Config.TG_BOT_USERNAME
 cmhd = Config.COMMAND_HAND_LER
-DB_PATH = "mlist_data.sqlite"
-
-# ✅ إنشاء قاعدة البيانات إذا لم تكن موجودة
-def init_db():
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS presence (
-                chat_id INTEGER,
-                msg_id INTEGER,
-                user_id INTEGER,
-                join_time INTEGER,
-                PRIMARY KEY (chat_id, msg_id, user_id)
-            )
-        ''')
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS messages (
-                chat_id INTEGER,
-                msg_id INTEGER,
-                message_id INTEGER,
-                PRIMARY KEY (chat_id, msg_id)
-            )
-        ''')
-
-init_db()
-
-
-async def get_names(client, data):
-    out = []
-    for uid, ts in data:
+             
+             
+async def get_names(client, user_ids):
+    names = []
+    for uid in user_ids:
         try:
-            ent = await client.get_entity(uid)
-            if ent.username:
-                name = f"@{ent.username} [`{uid}`]"
-            else:
-                name = f"[{ent.first_name}](tg://user?id={uid}) [`{uid}`]"
-            delta = int((time.time() - ts) // 60)
-            out.append(f"- {name} – {delta} دقيقة")
+            entity = await client.get_entity(uid)
+            names.append(f"- [{entity.first_name}](tg://user?id={uid})")
         except Exception:
             continue
-    return "\n".join(out) or "👀 لا يوجد مشرف حاضر"
-
-
-async def update_message(chat_id, msg_id):
-    with sqlite3.connect(DB_PATH) as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT user_id, join_time FROM presence WHERE chat_id=? AND msg_id=?", (chat_id, msg_id))
-        rows = cur.fetchall()
-
-        cur.execute("SELECT message_id FROM messages WHERE chat_id=? AND msg_id=?", (chat_id, msg_id))
-        res = cur.fetchone()
-        if not res:
-            return
-        message_id = res[0]
-
-    text = "**قائمة حضور المشرفين:**\n\n" + await get_names(zedub, rows)
+    return names
+             
+def get_key(event):
+    reply_to = event.reply_to_msg_id if getattr(event, "reply_to_msg_id", None) else event.id
+    return (event.chat_id, reply_to)
+             
+async def update_mlist_message(client, chat_id, reply_to, key):
+    user_ids = MLIST_DATA.get(key, set())
+    names = await get_names(client, list(user_ids))
+    text = "**قـائـمـة الـمـشـرفـيـن الـحـضـور:**\n\n" + ("\n".join(names) if names else "👀 ليس هناك مشرف موجود")
     btns = [
-        [Button.inline("🟢 in", data=f"in|{chat_id}|{msg_id}"),
-         Button.inline("🔴 out", data=f"out|{chat_id}|{msg_id}")],
-        [Button.inline("🔄 تحديث", data=f"up|{chat_id}|{msg_id}")]
-    ]
+           [
+            Button.inline("Log In 🟢", data=f"mlogin|{chat_id}|{reply_to}"),
+            Button.inline("Log Out 🔴", data=f"mlogout|{chat_id}|{reply_to}")
+            ]
+            ]
     try:
-        await zedub.edit_message(chat_id, message_id, text, buttons=btns)
+        msg_id = MLIST_MSGS.get(key)
+        if msg_id:
+            await client.edit_message(chat_id, msg_id, text, buttons=btns, link_preview=False)
     except Exception:
         pass
-
-
-@zedub.bot_cmd(pattern=fr"^{cmhd}mlist$")
-async def cmd_mlist(e):
-    key = (e.chat_id, e.reply_to_msg_id or e.id)
-    msg = await e.reply("... جارٍ إنشاء القائمة")
-    text = "**قائمة حضور المشرفين:**\n\n👀 لا يوجد مشرف حاضر"
+             
+@zedub.bot_cmd(pattern="^/mlist$")
+async def mlist_handler(event):
+    key = get_key(event)
+    if key not in MLIST_DATA:
+        MLIST_DATA[key] = set()
+    chat_id, reply_to = key
+    names = await get_names(event.client, list(MLIST_DATA[key]))
+    text = "**قـائـمـة الـمـشـرفـيـن الـحـضـور:**\n" + ("\n".join(names) if names else "ليس هناك مشرف موجود 👀")
     btns = [
-        [Button.inline("🟢 in", data=f"in|{key[0]}|{key[1]}"),
-         Button.inline("🔴 out", data=f"out|{key[0]}|{key[1]}")],
-        [Button.inline("🔄 تحديث", data=f"up|{key[0]}|{key[1]}")]
-    ]
-    msg2 = await e.reply(text, buttons=btns)
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("REPLACE INTO messages (chat_id, msg_id, message_id) VALUES (?, ?, ?)",
-                     (key[0], key[1], msg2.id))
-    await msg.delete()
-
-
-@zedub.tgbot.on(events.CallbackQuery(pattern=r"(in|out|up)\|(-?\d+)\|(\d+)"))
-async def cb_handler(event):
-    action, chat_id, msg_id = event.pattern_match.groups()
-    chat_id = int(chat_id)
-    msg_id = int(msg_id)
-    uid = event.sender_id
-    txt = "⚠️ حدث غير معروف"
-    delta = 0
-
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-
-    if action == "in":
-        now = int(time.time())
-        c.execute("REPLACE INTO presence (chat_id, msg_id, user_id, join_time) VALUES (?, ?, ?, ?)",
-                  (chat_id, msg_id, uid, now))
-        conn.commit()
-        txt = "✅ تم تسجيل دخولك"
-    elif action == "out":
-        c.execute("SELECT join_time FROM presence WHERE chat_id=? AND msg_id=? AND user_id=?",
-                  (chat_id, msg_id, uid))
-        row = c.fetchone()
-        if row:
-            delta = int((time.time() - row[0]) // 60)
-            c.execute("DELETE FROM presence WHERE chat_id=? AND msg_id=? AND user_id=?",
-                      (chat_id, msg_id, uid))
-            conn.commit()
-            txt = f"❌ تم تسجيل خروجك بعد {delta} دقيقة"
-        else:
-            txt = "⚠️ لم تكن ضمن القائمة"
-    elif action == "up":
-        await update_message(chat_id, msg_id)
-        await event.answer("🔄 تم التحديث", alert=True)
-        conn.close()
-        return
-
-    conn.close()
-    await update_message(chat_id, msg_id)
-    await event.answer(txt, alert=False)
+           [
+            Button.inline("Log In 🟢", data=f"mlogin|{chat_id}|{reply_to}"),
+            Button.inline("Log Out 🔴", data=f"mlogout|{chat_id}|{reply_to}")
+           ]
+           ]
+    msg = await event.reply(text, buttons=btns, link_preview=False)
+    MLIST_MSGS[key] = msg.id
+             
+@zedub.bot_cmd(pattern="^/in$")
+async def mlist_in(event):
+    key = get_key(event)
+    user_id = event.sender_id
+    if key not in MLIST_DATA:
+        MLIST_DATA[key] = set()
+    MLIST_DATA[key].add(user_id)
+    await update_mlist_message(event.client, key[0], key[1], key)
+    msg = await event.reply("تم تسجيل حضورك ✅")
+    asyncio.create_task(delete_later(msg))
+    user = await event.client.get_entity(user_id)
+             
+@zedub.bot_cmd(pattern="^/out$")
+async def mlist_out(event):
+    key = get_key(event)
+    user_id = event.sender_id
+    if key not in MLIST_DATA:
+        MLIST_DATA[key] = set()
+    if user_id in MLIST_DATA[key]:
+        MLIST_DATA[key].remove(user_id)
+        await update_mlist_message(event.client, key[0], key[1], key)
+        msg = await event.reply("تم تسجيل خروجك ❌")
+        asyncio.create_task(delete_later(msg))
+        user = await event.client.get_entity(user_id)
+             
+    else:
+        msg = await event.reply("أنت لست ضمن القائمة!")
+        asyncio.create_task(delete_later(msg))
+             
+async def delete_later(msg):
+    await asyncio.sleep(4)
+    try:
+        await msg.delete()
+    except Exception:
+        pass
+             
+@zedub.tgbot.on(events.CallbackQuery(pattern=r"mlogin\|(-?\d+)\|(\d+)"))
+async def mlogin_handler(event):
+    chat_id = int(event.pattern_match.group(1))
+    reply_to = int(event.pattern_match.group(2))
+    key = (chat_id, reply_to)
+    user_id = event.sender_id
+    if key not in MLIST_DATA:
+        MLIST_DATA[key] = set()
+    MLIST_DATA[key].add(user_id)
+    await update_mlist_message(event.client, chat_id, reply_to, key)
+    await event.answer("تم تسجيل حضورك ✅", alert=False)
+    user = await event.client.get_entity(user_id)
+             
+             
+@zedub.tgbot.on(events.CallbackQuery(pattern=r"mlogout\|(-?\d+)\|(\d+)"))
+async def mlogout_handler(event):
+    chat_id = int(event.pattern_match.group(1))
+    reply_to = int(event.pattern_match.group(2))
+    key = (chat_id, reply_to)
+    user_id = event.sender_id
+    if key not in MLIST_DATA:
+        MLIST_DATA[key] = set()
+    if user_id in MLIST_DATA[key]:
+        MLIST_DATA[key].remove(user_id)
+        await update_mlist_message(event.client, chat_id, reply_to, key)
+        await event.answer("تم تسجيل خروجك ❌", alert=False)
+        user = await event.client.get_entity(user_id)
+    else:
+        await event.answer("أنت لست ضمن القائمة!", alert=False)
+             
+             
+             
+             
+             
+             
+# @SLOPK
