@@ -31,7 +31,7 @@ async def get_names(client, user_ids):
         try:
             entity = await client.get_entity(uid)
             name = f"[@{entity.username}](tg://user?id={uid})" if getattr(entity, "username", None) else f"[{entity.first_name}](tg://user?id={uid})"
-            names.append(f"- {name}")
+            names.append(f"» {name}")
         except Exception:
             continue
     return names
