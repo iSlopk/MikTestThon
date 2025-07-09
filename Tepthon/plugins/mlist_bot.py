@@ -63,8 +63,8 @@ async def mlist_handler(event):
     text = "**قـائـمـة الـمـشـرفـيـن الـحـضـور:**\n" + ("\n".join(names) if names else "ليس هناك مشرف موجود 👀")
     btns = [
         [
-            Button.inline("Log In 🟢", data=f"mlogin|{chat_id}|{reply_to}"),
-            Button.inline("Log Out 🔴", data=f"mlogout|{chat_id}|{reply_to}")
+            Button.inline("تسجيل دخول 🟢", data=f"mlogin|{chat_id}|{reply_to}"),
+            Button.inline("تسجيل خروج 🔴", data=f"mlogout|{chat_id}|{reply_to}")
         ]
     ]
     msg = await event.reply(text, buttons=btns, link_preview=False)
