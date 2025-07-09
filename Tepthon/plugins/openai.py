@@ -4,7 +4,6 @@ from ..sql_helper.globals import gvarstatus, addgvar, delgvar
 from telethon.tl.functions.channels import GetParticipantRequest
 import openai
 
-# استخدم API مفتوح أو مجاني مؤقتاً (استبدله بمفتاحك إن كنت تستخدم GPT فعلياً)
 openai.api_key = "hhhh"
 
 async def is_admin(chat, user, client):
