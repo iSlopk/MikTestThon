@@ -2,7 +2,8 @@
 # @ASX16 , @SLOPK , AHMD
 # I authorize everyone to use it.
 import asyncio
-from telethon import events, Button, functions
+import re
+from telethon import events, Button, functions, types
 from telethon.events import CallbackQuery, InlineQuery
 from . import zedub
 from ..core.logger import logging
@@ -18,6 +19,9 @@ plugin_category = "البوت"
 botusername = Config.TG_BOT_USERNAME
 cmhd = Config.COMMAND_HAND_LER
 
+def get_key(event):
+    reply_to = event.reply_to_msg_id if getattr(event, "reply_to_msg_id", None) else event.id
+    return (event.chat_id, reply_to)
 
 async def get_names(client, user_ids):
     names = []
@@ -28,12 +32,6 @@ async def get_names(client, user_ids):
         except Exception:
             continue
     return names
-
-
-def get_key(event):
-    reply_to = event.reply_to_msg_id if getattr(event, "reply_to_msg_id", None) else event.id
-    return (event.chat_id, reply_to)
-
 
 async def update_mlist_message(client, chat_id, reply_to, key):
     user_ids = MLIST_DATA.get(key, set())
@@ -52,7 +50,6 @@ async def update_mlist_message(client, chat_id, reply_to, key):
     except Exception:
         pass
 
-
 @zedub.bot_cmd(pattern="^/mlist$")
 async def mlist_handler(event):
     key = get_key(event)
@@ -70,7 +67,6 @@ async def mlist_handler(event):
     msg = await event.reply(text, buttons=btns, link_preview=False)
     MLIST_MSGS[key] = msg.id
 
-
 @zedub.bot_cmd(pattern="^/in$")
 async def mlist_in(event):
     key = get_key(event)
@@ -81,15 +77,6 @@ async def mlist_in(event):
     await update_mlist_message(event.client, key[0], key[1], key)
     msg = await event.reply("تم تسجيل حضورك ✅")
     asyncio.create_task(delete_later(msg))
-    user = await event.client.get_entity(user_id)
-
-    # سجل السجل إذا تم تعيينه
-    if key[0] in LOG_CHANNELS:
-        await event.client.send_message(
-            LOG_CHANNELS[key[0]],
-            f"🟢 [{user.first_name}](tg://user?id={user.id}) دخل في الحضور."
-        )
-
 
 @zedub.bot_cmd(pattern="^/out$")
 async def mlist_out(event):
@@ -102,18 +89,9 @@ async def mlist_out(event):
         await update_mlist_message(event.client, key[0], key[1], key)
         msg = await event.reply("تم تسجيل خروجك ❌")
         asyncio.create_task(delete_later(msg))
-        user = await event.client.get_entity(user_id)
-
-        if key[0] in LOG_CHANNELS:
-            await event.client.send_message(
-                LOG_CHANNELS[key[0]],
-                f"🔴 [{user.first_name}](tg://user?id={user.id}) خرج من الحضور."
-            )
-
     else:
         msg = await event.reply("أنت لست ضمن القائمة!")
         asyncio.create_task(delete_later(msg))
-
 
 async def delete_later(msg):
     await asyncio.sleep(4)
@@ -121,7 +99,6 @@ async def delete_later(msg):
         await msg.delete()
     except Exception:
         pass
-
 
 @zedub.tgbot.on(events.CallbackQuery(pattern=r"mlogin\|(-?\d+)\|(\d+)"))
 async def mlogin_handler(event):
@@ -134,14 +111,19 @@ async def mlogin_handler(event):
     MLIST_DATA[key].add(user_id)
     await update_mlist_message(event.client, chat_id, reply_to, key)
     await event.answer("تم تسجيل حضورك ✅", alert=False)
-    user = await event.client.get_entity(user_id)
 
     if chat_id in LOG_CHANNELS:
-        await event.client.send_message(
-            LOG_CHANNELS[chat_id],
-            f"🟢 [{user.first_name}](tg://user?id={user.id}) دخل في الحضور (زر)."
-        )
-
+        log_chat_id, topic_id = LOG_CHANNELS[chat_id]
+        try:
+            user = await event.client.get_entity(user_id)
+            await event.client.send_message(
+                entity=log_chat_id,
+                message=f"🟢 [{user.first_name}](tg://user?id={user.id}) حضر.",
+                reply_to=topic_id,
+                parse_mode="md"
+            )
+        except Exception:
+            pass
 
 @zedub.tgbot.on(events.CallbackQuery(pattern=r"mlogout\|(-?\d+)\|(\d+)"))
 async def mlogout_handler(event):
@@ -155,23 +137,41 @@ async def mlogout_handler(event):
         MLIST_DATA[key].remove(user_id)
         await update_mlist_message(event.client, chat_id, reply_to, key)
         await event.answer("تم تسجيل خروجك ❌", alert=False)
-        user = await event.client.get_entity(user_id)
 
         if chat_id in LOG_CHANNELS:
-            await event.client.send_message(
-                LOG_CHANNELS[chat_id],
-                f"🔴 [{user.first_name}](tg://user?id={user.id}) خرج من الحضور (زر)."
-            )
+            log_chat_id, topic_id = LOG_CHANNELS[chat_id]
+            try:
+                user = await event.client.get_entity(user_id)
+                await event.client.send_message(
+                    entity=log_chat_id,
+                    message=f"🔴 [{user.first_name}](tg://user?id={user.id}) خرج.",
+                    reply_to=topic_id,
+                    parse_mode="md"
+                )
+            except Exception:
+                pass
     else:
         await event.answer("أنت لست ضمن القائمة!", alert=False)
 
-
-# ✅ أمر تعيين سجل الحضور
-@zedub.bot_cmd(pattern="^/msetlog$")
+@zedub.bot_cmd(pattern="^/msetlog(?: (.+))?")
 async def set_log_topic(event):
-    if not event.is_reply:
-        return await event.reply("↪️ رد على رسالة داخل الموضوع الفرعي الذي تريده كسجل.")
+    arg = event.pattern_match.group(1)
     chat_id = event.chat_id
-    reply_msg = await event.get_reply_message()
-    LOG_CHANNELS[chat_id] = reply_msg.id
-    await event.reply("✅ تم تعيين هذا الموضوع كسجل الحضور.")
+
+    if arg and "t.me" in arg:
+        match = re.search(r"t\.me/c/(-?\d+)/(\d+)", arg)
+        if not match:
+            await event.reply("❌ الرابط غير صالح.")
+            return
+        log_chat_id = int("-100" + match.group(1))
+        topic_id = int(match.group(2))
+    else:
+        result = await event.client(functions.messages.CreateForumTopicRequest(
+            channel=chat_id,
+            title="سجل الحضور"
+        ))
+        log_chat_id = chat_id
+        topic_id = result.topic.id
+
+    LOG_CHANNELS[chat_id] = (log_chat_id, topic_id)
+    await event.reply("✅ تم تعيين سجل الحضور بنجاح.")
