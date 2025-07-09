@@ -1,127 +1,144 @@
-import asyncio, json, os, time
+# © This program was written by Mik
+# @ASX16 , @SLOPK , AHMD
+# I authorize everyone to use it.
+import asyncio
+import sqlite3
+import time
 from telethon import events, Button
-from ..core.session import zedub
-from ..core.managers import edit_or_reply
-from ..sql_helper.globals import addgvar, gvarstatus
+from . import zedub
 from ..Config import Config
 
-plugin_category = "البوت"
 cmhd = Config.COMMAND_HAND_LER
-MLIST_DATA_FILE = "mlist_data.json"
-MLIST_DATA = {}  # (chat_id, msg_id) -> {user_id: join_timestamp}
-MLIST_MSGS = {}  # (chat_id, msg_id) -> message_id
-LOG_THREADS = {}  # (chat_id, thread_msg_id)
+plugin_category = "البوت"
+DB_PATH = "mlist_data.sqlite"
 
-def load():
-    global MLIST_DATA, MLIST_MSGS, LOG_THREADS
-    if os.path.exists(MLIST_DATA_FILE):
-        raw = json.load(open(MLIST_DATA_FILE))
-        MLIST_DATA = {eval(k): v for k, v in raw.get("d", {}).items()}
-        MLIST_MSGS = {eval(k): v for k, v in raw.get("m", {}).items()}
-        LOG_THREADS = {eval(k): v for k, v in raw.get("l", {}).items()}
+# ==== قاعدة البيانات ====
+def init_db():
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS mlist_entries (
+            chat_id INTEGER, msg_id INTEGER, user_id INTEGER, join_time INTEGER,
+            PRIMARY KEY (chat_id, msg_id, user_id)
+        )""")
+        c.execute("""CREATE TABLE IF NOT EXISTS mlist_messages (
+            chat_id INTEGER, msg_id INTEGER, message_id INTEGER,
+            PRIMARY KEY (chat_id, msg_id)
+        )""")
+        c.execute("""CREATE TABLE IF NOT EXISTS mlist_logs (
+            chat_id INTEGER PRIMARY KEY, log_msg_id INTEGER
+        )""")
+        conn.commit()
 
-def save():
-    with open(MLIST_DATA_FILE, "w") as f:
-        json.dump({
-            "d": MLIST_DATA,
-            "m": MLIST_MSGS,
-            "l": LOG_THREADS
-        }, f)
+init_db()
 
-load()
+# ==== أدوات ====
+def get_key(event):
+    reply_to = event.reply_to_msg_id or event.id
+    return (event.chat_id, reply_to)
 
-async def refresh_all():
-    while True:
-        for key in MLIST_MSGS:
-            await update(key)
-        await asyncio.sleep(300)
+async def get_names(client, chat_id, msg_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute("SELECT user_id, join_time FROM mlist_entries WHERE chat_id=? AND msg_id=?", (chat_id, msg_id))
+        entries = c.fetchall()
 
-async def get_names(client, data):
     out = []
-    for uid, ts in data.items():
+    for user_id, join_time in entries:
         try:
-            ent = await client.get_entity(uid)
-            if ent.username:
-                name = f"@{ent.username} [`{uid}`]"
-            else:
-                name = f"[{ent.first_name}](tg://user?id={uid}) [`{uid}`]"
-            delta = int((time.time() - ts) // 60)
+            ent = await client.get_entity(user_id)
+            delta = int((time.time() - join_time) // 60)
+            name = f"@{ent.username} [`{user_id}`]" if ent.username else f"[{ent.first_name}](tg://user?id={user_id}) [`{user_id}`]"
             out.append(f"- {name} – {delta} دقيقة")
         except Exception:
             continue
     return "\n".join(out) or "👀 لا يوجد مشرف حاضر"
 
-async def update(key):
-    chat, msg_id = key
-    data = MLIST_DATA.get(key, {})
-    text = "**قائمة حضور المشرفين:**\n\n" + await get_names(zedub, data)
+async def update_mlist_message(client, chat_id, msg_id):
+    text = "**قائمة حضور المشرفين:**\n\n" + await get_names(client, chat_id, msg_id)
     btns = [
-        [Button.inline("🟢 in", data=f"in|{chat}|{msg_id}"),
-         Button.inline("🔴 out", data=f"out|{chat}|{msg_id}")],
-        [Button.inline("🔄 تحديث", data=f"up|{chat}|{msg_id}")]
+        [Button.inline("🟢 دخول", data=f"in|{chat_id}|{msg_id}"), Button.inline("🔴 خروج", data=f"out|{chat_id}|{msg_id}")],
+        [Button.inline("🔄 تحديث", data=f"up|{chat_id}|{msg_id}")]
     ]
-    try:
-        await zedub.edit_message(chat, MLIST_MSGS[key], text, buttons=btns)
-    except Exception:
-        pass
-    save()
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute("SELECT message_id FROM mlist_messages WHERE chat_id=? AND msg_id=?", (chat_id, msg_id))
+        row = c.fetchone()
+        if row:
+            try:
+                await client.edit_message(chat_id, row[0], text, buttons=btns)
+            except Exception:
+                pass
 
+# ==== الأوامر ====
 @zedub.bot_cmd(pattern=fr"^{cmhd}mlist$")
-async def cmd_mlist(e):
-    key = (e.chat_id, e.reply_to_msg_id or e.id)
-    MLIST_DATA.setdefault(key, {})
-    msg = await e.reply("... جارٍ إنشاء القائمة")
-    text = "**قائمة حضور المشرفين:**\n\n" + await get_names(zedub, {})
-    msg2 = await e.reply(text, buttons=[
-        [Button.inline("🟢 in", data=f"in|{key[0]}|{key[1]}"),
-         Button.inline("🔴 out", data=f"out|{key[0]}|{key[1]}")],
-        [Button.inline("🔄 تحديث", data=f"up|{key[0]}|{key[1]}")]
-    ])
-    MLIST_MSGS[key] = msg2.id
-    save()
-    await msg.delete()
+async def mlist_cmd(e):
+    key = get_key(e)
+    chat_id, msg_id = key
+
+    text = "**قائمة حضور المشرفين:**\n\n👀 لا يوجد مشرف حاضر"
+    btns = [
+        [Button.inline("🟢 دخول", data=f"in|{chat_id}|{msg_id}"), Button.inline("🔴 خروج", data=f"out|{chat_id}|{msg_id}")],
+        [Button.inline("🔄 تحديث", data=f"up|{chat_id}|{msg_id}")]
+    ]
+    msg = await e.reply(text, buttons=btns)
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("INSERT OR REPLACE INTO mlist_messages VALUES (?, ?, ?)", (chat_id, msg_id, msg.id))
+        conn.commit()
 
 @zedub.bot_cmd(pattern=fr"^{cmhd}msetlog$")
-async def cmd_msetlog(e):
-    key = (e.chat_id, e.reply_to_msg_id or e.id)
-    LOG_THREADS[key] = True
-    save()
+async def set_log(e):
+    reply_id = e.reply_to_msg_id
+    if not reply_id:
+        return await e.reply("❗ يجب الرد على رسالة لتعيينها كسجل")
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("INSERT OR REPLACE INTO mlist_logs VALUES (?, ?)", (e.chat_id, reply_id))
+        conn.commit()
     await e.reply("✅ تم تعيين هذا الموضوع كروم للسجل")
 
+# ==== ردود الأزرار ====
 @zedub.tgbot.on(events.CallbackQuery(pattern=r"(in|out|up)\|(-?\d+)\|(\d+)"))
 async def cb_handler(e):
-    cmd, chat, msg_id = e.pattern_match.groups()
-    chat, msg_id = int(chat), int(msg_id)
-    key = (chat, msg_id)
+    cmd, chat_id, msg_id = e.pattern_match.groups()
+    chat_id, msg_id = int(chat_id), int(msg_id)
     uid = e.sender_id
-    name = ""
-    delta = 0
 
     if cmd == "in":
-        MLIST_DATA.setdefault(key, {})[uid] = time.time()
-        msgtxt = "✅ تم تسجيل دخولك"
+        with sqlite3.connect(DB_PATH) as conn:
+            conn.execute("INSERT OR REPLACE INTO mlist_entries VALUES (?, ?, ?, ?)", (chat_id, msg_id, uid, int(time.time())))
+            conn.commit()
+        await e.answer("✅ تم تسجيل دخولك")
+        await log_action(e.client, chat_id, uid, "دخول")
     elif cmd == "out":
-        if uid in MLIST_DATA.get(key, {}):
-            join_time = MLIST_DATA[key].pop(uid)
-            delta = int((time.time() - join_time) // 60)
-            msgtxt = f"❌ تم تسجيل خروجك بعد {delta} دقيقة"
-        else:
-            msgtxt = "⚠️ لم تكن ضمن القائمة"
-    else:
-        await update(key)
-        return await e.answer("🔄 تم التحديث", alert=True)
+        with sqlite3.connect(DB_PATH) as conn:
+            c = conn.cursor()
+            c.execute("SELECT join_time FROM mlist_entries WHERE chat_id=? AND msg_id=? AND user_id=?", (chat_id, msg_id, uid))
+            row = c.fetchone()
+            if row:
+                delta = int((time.time() - row[0]) // 60)
+                conn.execute("DELETE FROM mlist_entries WHERE chat_id=? AND msg_id=? AND user_id=?", (chat_id, msg_id, uid))
+                conn.commit()
+                await e.answer(f"❌ تم تسجيل خروجك بعد {delta} دقيقة")
+                await log_action(e.client, chat_id, uid, f"خروج بعد {delta} دقيقة")
+            else:
+                await e.answer("⚠️ لم تكن ضمن القائمة")
+    elif cmd == "up":
+        await update_mlist_message(e.client, chat_id, msg_id)
+        await e.answer("🔄 تم التحديث", alert=True)
 
-    await update(key)
-    await e.answer(msgtxt, alert=False)
+    if cmd in ["in", "out"]:
+        await update_mlist_message(e.client, chat_id, msg_id)
 
-    # Logging
-    ent = await zedub.get_entity(uid)
-    if ent.username:
-        name = f"@{ent.username} [`{uid}`]"
-    else:
-        name = f"[{ent.first_name}](tg://user?id={uid}) [`{uid}`]"
-
-    for thread_key in LOG_THREADS:
-        if thread_key[0] == chat:
-            log_msg = f"{name} قام {'بالدخول' if cmd == 'in' else f'بالخروج بعد {delta} دقيقة'}"
-            await zedub.send_message(chat, log_msg, reply_to=thread_key[1])
+# ==== التسجيل في السجل ====
+async def log_action(client, chat_id, user_id, action_text):
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute("SELECT log_msg_id FROM mlist_logs WHERE chat_id=?", (chat_id,))
+        row = c.fetchone()
+        if row:
+            ent = await client.get_entity(user_id)
+            name = f"@{ent.username} [`{user_id}`]" if ent.username else f"[{ent.first_name}](tg://user?id={user_id}) [`{user_id}`]"
+            log_text = f"{name} قام بـ {action_text}"
+            try:
+                await client.send_message(chat_id, log_text, reply_to=row[0])
+            except Exception:
+                pass
