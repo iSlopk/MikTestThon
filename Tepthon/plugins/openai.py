@@ -5,7 +5,7 @@ from telethon.tl.functions.channels import GetParticipantRequest
 import openai
 
 # استخدم API مفتوح أو مجاني مؤقتاً (استبدله بمفتاحك إن كنت تستخدم GPT فعلياً)
-openai.api_key = "your-openai-api-key"
+openai.api_key = "hhhh"
 
 async def is_admin(chat, user, client):
     try:
