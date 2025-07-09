@@ -1,8 +1,10 @@
 # © This program was written by Mik
 # @ASX16 , @SLOPK , AHMD
 # I authorize everyone to use it.
+
 import asyncio
 import re
+from datetime import datetime
 from telethon import events, Button, functions, types
 from telethon.events import CallbackQuery, InlineQuery
 from . import zedub
@@ -28,7 +30,8 @@ async def get_names(client, user_ids):
     for uid in user_ids:
         try:
             entity = await client.get_entity(uid)
-            names.append(f"- [{entity.first_name}](tg://user?id={uid})")
+            name = f"[@{entity.username}](tg://user?id={uid})" if getattr(entity, "username", None) else f"[{entity.first_name}](tg://user?id={uid})"
+            names.append(f"- {name}")
         except Exception:
             continue
     return names
@@ -106,6 +109,7 @@ async def mlogin_handler(event):
     reply_to = int(event.pattern_match.group(2))
     key = (chat_id, reply_to)
     user_id = event.sender_id
+
     if key not in MLIST_DATA:
         MLIST_DATA[key] = set()
     MLIST_DATA[key].add(user_id)
@@ -116,9 +120,16 @@ async def mlogin_handler(event):
         log_chat_id, topic_id = LOG_CHANNELS[chat_id]
         try:
             user = await event.client.get_entity(user_id)
+            now = datetime.now().strftime("%H:%M:%S")
+            name_display = f"[@{user.username}](tg://user?id={user.id})" if getattr(user, "username", None) else f"[{user.first_name}](tg://user?id={user.id})"
+            msg = (
+                f"👤 **المستخدم** : {name_display}\n"
+                f"📣 **الحالة** : [ `🟢 تسجيل دخول` ]\n"
+                f"⏰ **الحضور** : [ `{now}` ]"
+            )
             await event.client.send_message(
                 entity=log_chat_id,
-                message=f"🟢 [{user.first_name}](tg://user?id={user.id}) حضر.",
+                message=msg,
                 reply_to=topic_id,
                 parse_mode="md"
             )
@@ -131,8 +142,10 @@ async def mlogout_handler(event):
     reply_to = int(event.pattern_match.group(2))
     key = (chat_id, reply_to)
     user_id = event.sender_id
+
     if key not in MLIST_DATA:
         MLIST_DATA[key] = set()
+
     if user_id in MLIST_DATA[key]:
         MLIST_DATA[key].remove(user_id)
         await update_mlist_message(event.client, chat_id, reply_to, key)
@@ -142,9 +155,16 @@ async def mlogout_handler(event):
             log_chat_id, topic_id = LOG_CHANNELS[chat_id]
             try:
                 user = await event.client.get_entity(user_id)
+                now = datetime.now().strftime("%H:%M:%S")
+                name_display = f"[@{user.username}](tg://user?id={user.id})" if getattr(user, "username", None) else f"[{user.first_name}](tg://user?id={user.id})"
+                msg = (
+                    f"👤 **المستخدم** : {name_display}\n"
+                    f"📣 **الحالة** : [ `🔴 تسجيل خروج` ]\n"
+                    f"⏰ **الخروج** : [ `{now}` ]"
+                )
                 await event.client.send_message(
                     entity=log_chat_id,
-                    message=f"🔴 [{user.first_name}](tg://user?id={user.id}) خرج.",
+                    message=msg,
                     reply_to=topic_id,
                     parse_mode="md"
                 )
