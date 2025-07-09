@@ -107,6 +107,7 @@ async def cmd_tmod(event):
             'members': {},
             'changed': set()
         }
+        LEFT_COUNTS.clear()
         buttons = [
             [Button.inline("🔧 إنشاء الفرق", b"setup_teams")]
         ]
