@@ -109,6 +109,7 @@ async def cmd_tmod(event):
         }
         #written by shahd
         LEFT_COUNTS.clear()
+        """تصفير المغادرة بعد كل tmod on"""
         buttons = [
             [Button.inline("🔧 إنشاء الفرق", b"setup_teams")]
         ]
