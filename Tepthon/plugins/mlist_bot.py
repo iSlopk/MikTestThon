@@ -165,13 +165,7 @@ async def set_log_topic(event):
             return
         log_chat_id = int("-100" + match.group(1))
         topic_id = int(match.group(2))
+        LOG_CHANNELS[chat_id] = (log_chat_id, topic_id)
+        await event.reply("✅ تم تعيين سجل الحضور بنجاح.")
     else:
-        result = await event.client(functions.messages.CreateForumTopicRequest(
-            channel=chat_id,
-            title="سجل الحضور"
-        ))
-        log_chat_id = chat_id
-        topic_id = result.topic.id
-
-    LOG_CHANNELS[chat_id] = (log_chat_id, topic_id)
-    await event.reply("✅ تم تعيين سجل الحضور بنجاح.")
+        await event.reply("❌ يرجى إرسال رابط الموضوع.\nمثال:\n/msetlog https://t.me/c/123456789/55")
