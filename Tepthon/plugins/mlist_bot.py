@@ -17,7 +17,7 @@ MLIST_DATA = {}
 MLIST_MSGS = {}
 LOG_CHANNELS = {}
 
-plugin_category = "البوت"
+plugin_category = "بوت التحضير"
 botusername = Config.TG_BOT_USERNAME
 cmhd = Config.COMMAND_HAND_LER
 
