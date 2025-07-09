@@ -31,7 +31,7 @@ class Config(object):
     # Custom bot tokens
     MLIST_BOT_TOKEN = os.environ.get("MLIST_BOT_TOKEN", None)
     POINTS_BOT_TOKEN = os.environ.get("POINTS_BOT_TOKEN", None)
-    AI_BOT_TOKEN = os.environ.get("AI_BOT_TOKEN", None)
+    """AI_BOT_TOKEN = os.environ.get("AI_BOT_TOKEN", None)"""
     # get this value from http://www.timezoneconverter.com/cgi-bin/findzone.tzc
     TZ = os.environ.get("TZ", "Asia/Riyadh")
     # set this with required zed repo link
