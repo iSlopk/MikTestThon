@@ -194,3 +194,7 @@ async def set_log_topic(event):
         await event.reply("✅ تم تعيين سجل الحضور بنجاح.")
     else:
         await event.reply("❌ يرجى إرسال رابط الموضوع.\nمثال:\n`/msl https://t.me/c/123456789/55`")
+        
+        
+
+mlist_bot.run_until_disconnected()
