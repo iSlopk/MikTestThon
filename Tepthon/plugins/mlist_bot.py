@@ -7,7 +7,6 @@ import re
 from datetime import datetime
 from telethon import events, Button, functions, types
 from telethon.events import CallbackQuery, InlineQuery
-from . import zedub
 from ..core.logger import logging
 from ..core.managers import edit_delete, edit_or_reply
 from ..sql_helper.globals import addgvar, delgvar, gvarstatus
