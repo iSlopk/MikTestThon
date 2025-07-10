@@ -13,6 +13,14 @@ from ..core.managers import edit_delete, edit_or_reply
 from ..sql_helper.globals import addgvar, delgvar, gvarstatus
 from pySmartDL import SmartDL
 
+from telethon import TelegramClient
+from config import Config
+
+api_id = Config.APP_ID
+api_hash = Config.API_HASH
+
+mlist_bot = TelegramClient("mlist_bot", api_id, api_hash).start(bot_token=Config.MLIST_BOT_TOKEN)
+
 MLIST_DATA = {}
 MLIST_MSGS = {}
 LOG_CHANNELS = {}
