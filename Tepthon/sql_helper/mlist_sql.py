@@ -3,7 +3,6 @@ import sqlite3
 conn = sqlite3.connect("mlist.db", check_same_thread=False)
 cursor = conn.cursor()
 
-# إنشاء جدول الحضور
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS mlist_attendance (
     chat_id INTEGER,
@@ -13,7 +12,6 @@ CREATE TABLE IF NOT EXISTS mlist_attendance (
 )
 """)
 
-# إنشاء جدول سجل القنوات
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS mlist_logs (
     chat_id INTEGER PRIMARY KEY,
