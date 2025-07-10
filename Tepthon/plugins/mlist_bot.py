@@ -67,7 +67,7 @@ async def mlist_handler(event):
     if key not in MLIST_DATA:
         MLIST_DATA[key] = set()
     chat_id, reply_to = key
-    names = await get_names(event.client, list(MLIST_DATA[key]))
+    names = await get_names(mlist_bot, list(MLIST_DATA[key]))
     text = "**قـائـمـة الـمـشـرفـيـن الـحـضـور:**\n\n" + ("\n".join(names) if names else "ليس هناك مشرف موجود 👀")
     btns = [
         [
@@ -85,7 +85,7 @@ async def mlist_in(event):
     if key not in MLIST_DATA:
         MLIST_DATA[key] = set()
     MLIST_DATA[key].add(user_id)
-    await update_mlist_message(event.client, key[0], key[1], key)
+    await update_mlist_message(mlist_bot, key[0], key[1], key)
     msg = await event.reply("تم تسجيل حضورك ✅")
     asyncio.create_task(delete_later(msg))
 
@@ -97,7 +97,7 @@ async def mlist_out(event):
         MLIST_DATA[key] = set()
     if user_id in MLIST_DATA[key]:
         MLIST_DATA[key].remove(user_id)
-        await update_mlist_message(event.client, key[0], key[1], key)
+        await update_mlist_message(mlist_bot, key[0], key[1], key)
         msg = await event.reply("تم تسجيل خروجك ❌")
         asyncio.create_task(delete_later(msg))
     else:
@@ -121,7 +121,7 @@ async def mlogin_handler(event):
     if key not in MLIST_DATA:
         MLIST_DATA[key] = set()
     MLIST_DATA[key].add(user_id)
-    await update_mlist_message(event.client, chat_id, reply_to, key)
+    await update_mlist_message(mlist_bot, chat_id, reply_to, key)
     await event.answer("تم تسجيل حضورك ✅", alert=True)
 
     if chat_id in LOG_CHANNELS:
@@ -155,7 +155,7 @@ async def mlogout_handler(event):
 
     if user_id in MLIST_DATA[key]:
         MLIST_DATA[key].remove(user_id)
-        await update_mlist_message(event.client, chat_id, reply_to, key)
+        await update_mlist_message(mlist_bot, chat_id, reply_to, key)
         await event.answer("تم تسجيل خروجك ❌", alert=True)
 
         if chat_id in LOG_CHANNELS:
