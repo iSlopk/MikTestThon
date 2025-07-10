@@ -61,7 +61,7 @@ async def update_mlist_message(client, chat_id, reply_to, key):
     except Exception:
         pass
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}الحضور$")
+@zedub.bot_cmd(events.NewMessage(pattern=fr"^{cmhd}الحضور$"))
 async def mlist_handler(event):
     key = get_key(event)
     if key not in MLIST_DATA:
@@ -78,7 +78,7 @@ async def mlist_handler(event):
     msg = await event.reply(text, buttons=btns, link_preview=False)
     MLIST_MSGS[key] = msg.id
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}دخول$")
+@zedub.bot_cmd(events.NewMessage(pattern=fr"^{cmhd}دخول$"))
 async def mlist_in(event):
     key = get_key(event)
     user_id = event.sender_id
@@ -89,7 +89,7 @@ async def mlist_in(event):
     msg = await event.reply("تم تسجيل حضورك ✅")
     asyncio.create_task(delete_later(msg))
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}خروج$")
+@zedub.bot_cmd(events.NewMessage(pattern=fr"^{cmhd}خروج$"))
 async def mlist_out(event):
     key = get_key(event)
     user_id = event.sender_id
@@ -179,7 +179,7 @@ async def mlogout_handler(event):
     else:
         await event.answer("أنت لست ضمن القائمة!", alert=True)
 
-@zedub.bot_cmd(pattern=fr"^{cmhd}msl(?: (.+))?")
+@zedub.bot_cmd(events.NewMessage(pattern=fr"^{cmhd}msl(?: (.+)?"))
 async def set_log_topic(event):
     arg = event.pattern_match.group(1)
     chat_id = event.chat_id
