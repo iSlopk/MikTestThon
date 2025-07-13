@@ -7,18 +7,11 @@ import re
 from datetime import datetime
 from telethon import events, Button, functions, types
 from telethon.events import CallbackQuery, InlineQuery
+from . import zedub
 from ..core.logger import logging
 from ..core.managers import edit_delete, edit_or_reply
 from ..sql_helper.globals import addgvar, delgvar, gvarstatus
 from pySmartDL import SmartDL
-
-from telethon import TelegramClient
-from config import Config
-
-api_id = Config.APP_ID
-api_hash = Config.API_HASH
-
-mlist_bot = TelegramClient("mlist_bot", api_id, api_hash).start(bot_token=Config.MLIST_BOT_TOKEN)
 
 MLIST_DATA = {}
 MLIST_MSGS = {}
@@ -60,13 +53,13 @@ async def update_mlist_message(client, chat_id, reply_to, key):
     except Exception:
         pass
 
-@mlist_bot.on(events.NewMessage(pattern=fr"^{cmhd}الحضور$"))
+@zedub.bot_cmd(pattern=fr"^{cmhd}الحضور$")
 async def mlist_handler(event):
     key = get_key(event)
     if key not in MLIST_DATA:
         MLIST_DATA[key] = set()
     chat_id, reply_to = key
-    names = await get_names(mlist_bot, list(MLIST_DATA[key]))
+    names = await get_names(event.client, list(MLIST_DATA[key]))
     text = "**قـائـمـة الـمـشـرفـيـن الـحـضـور:**\n\n" + ("\n".join(names) if names else "ليس هناك مشرف موجود 👀")
     btns = [
         [
@@ -77,18 +70,18 @@ async def mlist_handler(event):
     msg = await event.reply(text, buttons=btns, link_preview=False)
     MLIST_MSGS[key] = msg.id
 
-@mlist_bot.on(events.NewMessage(pattern=fr"^{cmhd}دخول$"))
+@zedub.bot_cmd(pattern=fr"^{cmhd}دخول$")
 async def mlist_in(event):
     key = get_key(event)
     user_id = event.sender_id
     if key not in MLIST_DATA:
         MLIST_DATA[key] = set()
     MLIST_DATA[key].add(user_id)
-    await update_mlist_message(mlist_bot, key[0], key[1], key)
+    await update_mlist_message(event.client, key[0], key[1], key)
     msg = await event.reply("تم تسجيل حضورك ✅")
     asyncio.create_task(delete_later(msg))
 
-@mlist_bot.on(events.NewMessage(pattern=fr"^{cmhd}خروج$"))
+@zedub.bot_cmd(pattern=fr"^{cmhd}خروج$")
 async def mlist_out(event):
     key = get_key(event)
     user_id = event.sender_id
@@ -96,7 +89,7 @@ async def mlist_out(event):
         MLIST_DATA[key] = set()
     if user_id in MLIST_DATA[key]:
         MLIST_DATA[key].remove(user_id)
-        await update_mlist_message(mlist_bot, key[0], key[1], key)
+        await update_mlist_message(event.client, key[0], key[1], key)
         msg = await event.reply("تم تسجيل خروجك ❌")
         asyncio.create_task(delete_later(msg))
     else:
@@ -120,7 +113,7 @@ async def mlogin_handler(event):
     if key not in MLIST_DATA:
         MLIST_DATA[key] = set()
     MLIST_DATA[key].add(user_id)
-    await update_mlist_message(mlist_bot, chat_id, reply_to, key)
+    await update_mlist_message(event.client, chat_id, reply_to, key)
     await event.answer("تم تسجيل حضورك ✅", alert=True)
 
     if chat_id in LOG_CHANNELS:
@@ -154,7 +147,7 @@ async def mlogout_handler(event):
 
     if user_id in MLIST_DATA[key]:
         MLIST_DATA[key].remove(user_id)
-        await update_mlist_message(mlist_bot, chat_id, reply_to, key)
+        await update_mlist_message(event.client, chat_id, reply_to, key)
         await event.answer("تم تسجيل خروجك ❌", alert=True)
 
         if chat_id in LOG_CHANNELS:
@@ -178,7 +171,7 @@ async def mlogout_handler(event):
     else:
         await event.answer("أنت لست ضمن القائمة!", alert=True)
 
-@mlist_bot.on(events.NewMessage(pattern=fr"^{cmhd}msl(?: (.+)?"))
+@zedub.bot_cmd(pattern=fr"^{cmhd}msl(?: (.+))?")
 async def set_log_topic(event):
     arg = event.pattern_match.group(1)
     chat_id = event.chat_id
@@ -194,7 +187,3 @@ async def set_log_topic(event):
         await event.reply("✅ تم تعيين سجل الحضور بنجاح.")
     else:
         await event.reply("❌ يرجى إرسال رابط الموضوع.\nمثال:\n`/msl https://t.me/c/123456789/55`")
-        
-        
-
-mlist_bot.run_until_disconnected()
