@@ -208,3 +208,39 @@ async def pick_letter_handler(event):
     await event.respond(f"❓ من الفريق الذي التقط الحرف **{letter}**؟", buttons=buttons)
     
     
+@zedub.tgbot.on(events.CallbackQuery(pattern=r"hc_capture_letter\|(.+?)\|(.+)"))
+async def capture_letter(event):
+    chat_id = event.chat_id
+    letter, team = event.pattern_match.group(1), event.pattern_match.group(2)
+    game = ACTIVE_GAMES.get(chat_id)
+    if not game or game["state"] != "board_built":
+        return
+
+    if letter in game["captured_cells"]:
+        return await event.answer("❗ تم التقاط الحرف سابقاً.", alert=True)
+
+    game["captured_cells"][letter] = team
+    game["captures"][team].append(letter)
+
+    # تحديث الصورة
+    image_bytes = draw_board_image(game["board"], game["team_colors"], game["captured_cells"])
+    file = types.InputMediaUploadedPhoto(await event.client.upload_file(image_bytes))
+    team_text = get_team_display(game["team_data"], game["captures"], game["board"])
+
+    try:
+        await event.client.edit_message(
+            chat_id,
+            message=game["cell_msg_id"],
+            file=file,
+            caption=f"📍 **خلية اللعبة:**\n\n{team_text}",
+            buttons=generate_letter_buttons(game["board"]),
+        )
+    except:
+        pass
+
+    await event.answer("✅ تم تسجيل التقاط الحرف.")
+
+    # فحص الفوز
+    if check_win_condition(game):
+        await announce_winner(event.client, chat_id, game)
+        ACTIVE_GAMES.pop(chat_id, None)
