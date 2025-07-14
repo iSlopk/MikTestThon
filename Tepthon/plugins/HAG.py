@@ -170,3 +170,16 @@ async def build_board_handler(event):
     )
 
     game["cell_msg_id"] = msg.id
+    
+def generate_letter_buttons(board):
+    letters_flat = [cell for row in board for cell in row if cell]
+    buttons = []
+    row = []
+    for i, letter in enumerate(letters_flat):
+        row.append(Button.inline(letter, data=f"hc_pick_letter|{letter}"))
+        if (i + 1) % 6 == 0:
+            buttons.append(row)
+            row = []
+    if row:
+        buttons.append(row)
+    return buttons
