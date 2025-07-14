@@ -136,3 +136,37 @@ async def receive_team_names(event):
         f"✅ تم تعيين أسماء الفرق:\n{colors[0]} **{name1}**\n{colors[1]} **{name2}**",
         buttons=[[Button.inline("🔲 تشكيل الخلية", data="hc_make_board")]]
     )
+    
+def generate_hex_board():
+    letters = random.sample(ARABIC_LETTERS, 19)
+    board = [
+        [None, None, letters[0], letters[1], letters[2]],
+        [None, letters[3], letters[4], letters[5], letters[6]],
+        [letters[7], letters[8], letters[9], letters[10], letters[11]],
+        [None, letters[12], letters[13], letters[14], letters[15]],
+        [None, None, letters[16], letters[17], letters[18]]
+    ]
+    return board
+
+@zedub.tgbot.on(events.CallbackQuery(pattern=r"hc_make_board"))
+async def build_board_handler(event):
+    chat_id = event.chat_id
+    game = ACTIVE_GAMES.get(chat_id)
+    if not game or game["state"] != "ready":
+        return await event.answer("❗ لا يمكن تشكيل الخلية الآن.", alert=True)
+
+    game["board"] = generate_hex_board()
+    game["state"] = "board_built"
+
+    image_bytes = draw_board_image(game["board"], game["team_colors"])
+    file = types.InputMediaUploadedPhoto(await event.client.upload_file(image_bytes))
+
+    team_text = get_team_display(game["team_data"], game["captures"], game["board"])
+    msg = await event.client.send_file(
+        chat_id,
+        file=file,
+        caption=f"📍 **خلية اللعبة:**\n\n{team_text}",
+        buttons=generate_letter_buttons(game["board"]),
+    )
+
+    game["cell_msg_id"] = msg.id
