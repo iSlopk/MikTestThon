@@ -41,3 +41,45 @@ def render_board(board, captures, team_colors):
             line += f"[{color}{board[i]}] "
         result += line + "\n"
     return result
+
+def get_team_display(team_data, captures, board):
+    result = ""
+    for team, users in team_data.items():
+        team_name = team
+        color = users["color"]
+        claimed_letters = captures.get(team, [])
+        captured = "، ".join(claimed_letters) if claimed_letters else "لا شيء"
+        result += f"{color} **{team_name}** : ({captured})\n"
+    return result
+
+@zedub.bot_cmd(pattern=fr"^{cmhd}hroof(?: (on|off))?$")
+async def toggle_hroof(event):
+    chat_id = event.chat_id
+    arg = event.pattern_match.group(1)
+    if not arg:
+        await event.reply("❗ يرجى تحديد on أو off.\nمثال:\n`/hroof on`")
+        return
+
+    if arg == "on":
+        if chat_id in ACTIVE_GAMES:
+            await event.reply("⚠️ اللعبة مفعلة مسبقًا!")
+            return
+        ACTIVE_GAMES[chat_id] = {
+            "state": "choose_colors",
+            "team_colors": {},
+            "team_data": {},
+            "board": [],
+            "captures": {},
+            "players": {},
+            "cell_msg_id": None
+        }
+        buttons = [[Button.inline(c, data=f"hc_color|{c}") for c in AVAILABLE_COLORS[:3]],
+                   [Button.inline(c, data=f"hc_color|{c}") for c in AVAILABLE_COLORS[3:]],
+                   [Button.inline("📝 تسمية الفريقين", data="hc_name_teams")]]
+        await event.reply("🎯 تم تفعيل اللعبة! اختر لونين للفريقين:", buttons=buttons)
+    else:
+        if chat_id in ACTIVE_GAMES:
+            del ACTIVE_GAMES[chat_id]
+            await event.reply("🛑 تم إيقاف اللعبة.")
+        else:
+            await event.reply("❗ اللعبة غير مفعلة أساسًا.")
