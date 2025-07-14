@@ -83,3 +83,35 @@ async def toggle_hroof(event):
             await event.reply("🛑 تم إيقاف اللعبة.")
         else:
             await event.reply("❗ اللعبة غير مفعلة أساسًا.")
+            
+
+@zedub.tgbot.on(events.CallbackQuery(pattern=r"hc_color\|(.+)"))
+async def handle_color_selection(event):
+    chat_id = event.chat_id
+    color = event.pattern_match.group(1)
+    game = ACTIVE_GAMES.get(chat_id)
+    if not game or game["state"] != "choose_colors":
+        return await event.answer("❌ لا يمكنك تحديد الألوان الآن.", alert=True)
+
+    if color in game["team_colors"].values():
+        return await event.answer("❗ اللون مستخدم مسبقًا", alert=True)
+
+    if len(game["team_colors"]) >= 2:
+        return await event.answer("❗ تم اختيار لونين بالفعل.", alert=True)
+
+    team_num = len(game["team_colors"]) + 1
+    game["team_colors"][f"team{team_num}"] = color
+    await event.answer(f"✅ تم اختيار اللون {color}")
+
+    if len(game["team_colors"]) == 2:
+        await event.edit("🔢 تم اختيار اللونين بنجاح!\nاضغط على الزر أدناه لتسمية الفريقين:",
+                         buttons=[[Button.inline("📝 تسمية الفريقين", data="hc_name_teams")]])
+
+@zedub.tgbot.on(events.CallbackQuery(pattern=r"hc_name_teams"))
+async def ask_team_names(event):
+    chat_id = event.chat_id
+    game = ACTIVE_GAMES.get(chat_id)
+    if not game:
+        return await event.answer("❌ اللعبة غير مفعلة.", alert=True)
+    game["state"] = "waiting_team_names"
+    await event.respond("📝 أرسل أسماء الفريقين بهذا الشكل:\n\n`TeamA - TeamB`")
