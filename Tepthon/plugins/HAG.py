@@ -115,3 +115,24 @@ async def ask_team_names(event):
         return await event.answer("❌ اللعبة غير مفعلة.", alert=True)
     game["state"] = "waiting_team_names"
     await event.respond("📝 أرسل أسماء الفريقين بهذا الشكل:\n\n`TeamA - TeamB`")
+
+@zedub.tgbot.on(events.NewMessage(pattern=r"^(.+?)\s*-\s*(.+)$"))
+async def receive_team_names(event):
+    chat_id = event.chat_id
+    game = ACTIVE_GAMES.get(chat_id)
+    if not game or game["state"] != "waiting_team_names":
+        return
+
+    name1, name2 = event.pattern_match.group(1).strip(), event.pattern_match.group(2).strip()
+    colors = list(game["team_colors"].values())
+    game["team_data"] = {
+        name1: {"color": colors[0], "members": []},
+        name2: {"color": colors[1], "members": []}
+    }
+    game["captures"] = {name1: [], name2: []}
+    game["state"] = "ready"
+
+    await event.reply(
+        f"✅ تم تعيين أسماء الفرق:\n{colors[0]} **{name1}**\n{colors[1]} **{name2}**",
+        buttons=[[Button.inline("🔲 تشكيل الخلية", data="hc_make_board")]]
+    )
