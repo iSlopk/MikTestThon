@@ -244,3 +244,4 @@ async def capture_letter(event):
     if check_win_condition(game):
         await announce_winner(event.client, chat_id, game)
         ACTIVE_GAMES.pop(chat_id, None)
+        
