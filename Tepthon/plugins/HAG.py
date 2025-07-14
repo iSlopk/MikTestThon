@@ -183,3 +183,28 @@ def generate_letter_buttons(board):
     if row:
         buttons.append(row)
     return buttons
+    
+@zedub.tgbot.on(events.CallbackQuery(pattern=r"hc_pick_letter\|(.+)"))
+async def pick_letter_handler(event):
+    chat_id = event.chat_id
+    game = ACTIVE_GAMES.get(chat_id)
+    if not game or game["state"] != "board_built":
+        return await event.answer("❗ اللعبة غير جاهزة بعد.", alert=True)
+
+    letter = event.pattern_match.group(1)
+    if letter in game["captured_cells"]:
+        return await event.answer("❗ هذا الحرف تم التقاطه بالفعل.", alert=True)
+
+    # حفظ الحرف الذي سيتم تحديد فريق له الآن
+    game["pending_letter"] = letter
+
+    # أزرار الفرق حسب الألوان
+    buttons = []
+    for team, data in game["team_data"].items():
+        color = data["color"]
+        buttons.append([Button.inline(f"{color} {team}", data=f"hc_capture_letter|{letter}|{team}")])
+
+    await event.answer()
+    await event.respond(f"❓ من الفريق الذي التقط الحرف **{letter}**؟", buttons=buttons)
+    
+    
