@@ -28,7 +28,7 @@ def draw_board_image(board, team_colors, captured_cells=None):
     cell_size = 60
     hex_height = cell_size
     hex_width = cell_size * 1.15
-    font = ImageFont.truetype("arial.ttf", 28)
+    font = ImageFont.truetype("Tepthon/assets/NotoNaskhArabic-Regular.ttf", 28)
 
     image = Image.new("RGB", (width, height), "white")
     draw = ImageDraw.Draw(image)
