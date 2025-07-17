@@ -91,7 +91,8 @@ async def bot_start(event):
     my_username = f"@{user.username}" if user.username else my_mention
     if gvarstatus("START_BUTUN") is not None:
         zz_txt = "⌔ DEV ⌔"
-        zz_ch = gvarstatus("ASX16")
+        zz_ch = gvarstatus((await event.client.get_me()).username)
+        #new edit: "zz_ch = gvarstatus("ASX16")"
         #zz_ch = gvarstatus("START_BUTUN")
     elif user.username:
         zz_txt = "⌔ DEV ⌔"
