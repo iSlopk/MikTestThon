@@ -91,9 +91,8 @@ async def bot_start(event):
     my_username = f"@{user.username}" if user.username else my_mention
     if gvarstatus("START_BUTUN") is not None:
         zz_txt = "⌔ DEV ⌔"
-        zz_ch = gvarstatus((await event.client.get_me()).username)
-        #new edit: "zz_ch = gvarstatus("ASX16")"
-        #zz_ch = gvarstatus("START_BUTUN")
+        #zz_ch = gvarstatus("ASX16")
+        zz_ch = gvarstatus("START_BUTUN")
     elif user.username:
         zz_txt = "⌔ DEV ⌔"
         zz_ch = user.username
@@ -118,12 +117,14 @@ async def bot_start(event):
                 my_mention=my_mention,
             )
         else:
-            start_msg = f"**مرحباً، أنا بوت مساعد خاص 👀**"
-        buttons = [
+            start_msg = f"**Dev**: @ASX16\
+            \n**Ch**: @SLOPK\
+            \n('Be kind 🤭')"
+"""        buttons = [
             (
                 Button.url(zz_txt, f"https://t.me/{zz_ch}")
             )
-        ]
+        ]"""
     else:
         start_msg = "**⌔ مرحبًـا سيـدي المـالك 🧑🏻‍💻..**\n**⌔ أنا البـوت المسـاعـد الخـاص بـك 🤖🦾**\n**⌔ يستطيـع اي شخص التواصل بك من خـلالي 💌**\n\n**⌔ لرؤيـة اوامـري الخاصـه بـك اضغـط :  /help **"
         buttons = None
