@@ -167,7 +167,8 @@ async def hroof_start_setup(event):
     chat_id = event.chat_id
     if chat_id not in ACTIVE_GAMES or ACTIVE_GAMES[chat_id]["status"] != "waiting":
         return await event.reply("❌ اللعبة غير مفعلة.\nقم بتفعيلها باستخدام `/hroof on`.")
-
+        
+    COMMAND_HAND_LER = "/"
     game = ACTIVE_GAMES[chat_id]
     game["team_data"] = {}
 
