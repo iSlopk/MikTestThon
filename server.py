@@ -7,34 +7,92 @@ app = Flask(__name__)
 def home():
     return render_template_string("""
         <!DOCTYPE html>
-        <html lang="ar" dir="rtl">
+        <html lang="en">
         <head>
             <meta charset="UTF-8">
-            <title>SA</title>
+            <title>Mikthon</title>
             <style>
                 body {
-                    background: linear-gradient(to bottom, #1d3557, #457b9d); /* خلفية متدرجة */
-                    color: white;
+                    margin: 0;
+                    padding: 0;
+                    background-image: url('https://files.catbox.moe/lcyvdn.jpg'); /* رابط الصورة */
+                    background-size: cover;
+                    background-position: center;
+                    height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                }
+
+                .overlay {
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    backdrop-filter: blur(8px); /* تأثير البلور */
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
                     text-align: center;
+                    color: white;
                     font-family: 'Arial', sans-serif;
-                    padding-top: 100px;
                 }
-                img {
-                    width: 120px;
-                    margin: 20px;
-                    border: 2px solid white;
-                    border-radius: 8px;
-                }
-                h1 {
-                    font-size: 36px;
+
+                .wings {
+                    display: flex;
+                    gap: 100px;
+                    align-items: center;
                     margin-bottom: 20px;
+                }
+
+                .wing {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .wing img {
+                    width: 120px;
+                    transform: rotate(15deg);
+                    transition: transform 0.3s ease-in-out;
+                }
+
+                .wing.left img {
+                    transform: rotate(-15deg);
+                }
+
+                .wing span {
+                    position: absolute;
+                    top: -25px;
+                    font-size: 32px;
+                    font-weight: bold;
+                    color: white;
+                    text-shadow: 2px 2px 4px black;
+                }
+
+                h2 {
+                    font-size: 32px;
+                    margin-top: 10px;
+                    text-shadow: 2px 2px 8px black;
                 }
             </style>
         </head>
         <body>
-            <h1>Mikthon is running</h1>
-            <img src="https://flagcdn.com/w320/sa.png" alt="علم السعودية">
-            <img src="https://flagcdn.com/w320/sy.png" alt="علم سوريا">
+            <div class="overlay">
+                <div class="wings">
+                    <div class="wing left">
+                        <span>S</span>
+                        <img src="https://flagcdn.com/w320/sy.png" alt="Syria Flag">
+                    </div>
+                    <div class="wing right">
+                        <span>A</span>
+                        <img src="https://flagcdn.com/w320/sa.png" alt="Saudi Flag">
+                    </div>
+                </div>
+                <h2>Mikthon is running</h2>
+            </div>
         </body>
         </html>
     """)
