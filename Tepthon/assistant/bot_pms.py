@@ -120,12 +120,11 @@ async def bot_start(event):
             start_msg = f"**Dev**: @ASX16\
             \n**Ch**: @SLOPK\
             \n('Be kind 🤭')"
-            
-"""        buttons = [
+        buttons = [
             (
                 Button.url(zz_txt, f"https://t.me/{zz_ch}")
             )
-        ]"""
+        ]
     else:
         start_msg = "**⌔ مرحبًـا سيـدي المـالك 🧑🏻‍💻..**\n**⌔ أنا البـوت المسـاعـد الخـاص بـك 🤖🦾**"
         buttons = [
