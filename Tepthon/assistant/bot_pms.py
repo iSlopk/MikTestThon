@@ -128,7 +128,11 @@ async def bot_start(event):
         ]"""
     else:
         start_msg = "**⌔ مرحبًـا سيـدي المـالك 🧑🏻‍💻..**\n**⌔ أنا البـوت المسـاعـد الخـاص بـك 🤖🦾**"
-        buttons = None
+        buttons = [
+            (
+                Button.url(zz_txt, f"https://t.me/{zz_ch}")
+            )
+        ]
     try:
         if custompic:
             await event.client.send_file(
