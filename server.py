@@ -150,13 +150,19 @@ def home():
             <h2>Mikthon is running</h2>
         </div>
 
-        <!-- 🇸🇦 نشيد المملكة -->
-        <audio autoplay>
-            <source src="https://ia800209.us.archive.org/33/items/SaudiNationalAnthem/النشيد_الوطني_السعودي.mp3" type="audio/mpeg">
+        <audio id="ayahAudio">
+            <source src="https://surahquran.com/mp3/Balilah/033056.mp3" type="audio/mpeg">
             متصفحك لا يدعم الصوت.
         </audio>
+
+        <script>
+        document.body.addEventListener("click", function () {
+            document.getElementById("ayahAudio").play();
+        }, { once: true });
+        </script>
     </body>
     </html>
+
     """)
 
 if __name__ == '__main__':
