@@ -2,11 +2,11 @@ import os
 
 from PIL import Image
 
-from Tepthon.core.logger import logging
-from Tepthon.core.managers import edit_or_reply
-from Tepthon.helpers.functions.vidtools import take_screen_shot
-from Tepthon.helpers.tools import fileinfo, media_type, meme_type
-from Tepthon.helpers.utils.utils import runcmd
+from Mikthon.core.logger import logging
+from Mikthon.core.managers import edit_or_reply
+from Mikthon.helpers.functions.vidtools import take_screen_shot
+from Mikthon.helpers.tools import fileinfo, media_type, meme_type
+from Mikthon.helpers.utils.utils import runcmd
 
 LOGS = logging.getLogger(__name__)
 
