@@ -4,7 +4,7 @@ import re
 
 from telethon.events import CallbackQuery
 
-from Tepthon import zedub
+from Mikthon import zedub
 
 
 @zedub.tgbot.on(CallbackQuery(data=re.compile(b"troll_(.*)")))
