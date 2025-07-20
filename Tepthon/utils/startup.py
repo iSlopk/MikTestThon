@@ -231,8 +231,8 @@ async def load_plugins(folder, extfolder=None):
         path = f"{extfolder}/*.py"
         plugin_path = extfolder
     else:
-        path = f"Tepthon/{folder}/*.py"
-        plugin_path = f"Tepthon/{folder}"
+        path = f"Mikthon/{folder}/*.py"
+        plugin_path = f"Mikthon/{folder}"
     files = glob.glob(path)
     files.sort()
     success = 0
