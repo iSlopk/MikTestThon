@@ -12,7 +12,7 @@ from telethon.errors import QueryIdInvalidError
 from telethon.events import CallbackQuery, InlineQuery
 from youtubesearchpython import VideosSearch
 
-from Tepthon import zedub
+from Mikthon import zedub
 
 from ..Config import Config
 from ..helpers.functions import rand_key
