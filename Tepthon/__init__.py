@@ -24,7 +24,7 @@ StartTime = time.time()
 tepversion = "1.1.1"
 
 if Config.UPSTREAM_REPO == "zel":
-    UPSTREAM_REPO_URL = "https://github.com/TepthonArabic/UserBot"
+    UPSTREAM_REPO_URL = "https://github.com"
 else:
     UPSTREAM_REPO_URL = Config.UPSTREAM_REPO
 
