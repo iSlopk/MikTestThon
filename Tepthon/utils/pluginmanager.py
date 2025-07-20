@@ -3,7 +3,7 @@ import importlib
 import sys
 from pathlib import Path
 
-from Tepthon import CMD_HELP, LOAD_PLUG
+from Mikthon import CMD_HELP, LOAD_PLUG
 
 from ..Config import Config
 from ..core import LOADED_CMDS, PLG_INFO
