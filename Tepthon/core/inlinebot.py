@@ -99,7 +99,7 @@ async def inline_handler(event):  # sourcery no-metrics
                     user_list.append(u.id)
                     sandy += " "
                 sandy = sandy[:-1]
-            old_msg = os.path.join("./Tepthon", f"{info_type[0]}.txt")
+            old_msg = os.path.join("./Mikthon", f"{info_type[0]}.txt")
             try:
                 jsondata = json.load(open(old_msg))
             except Exception:
