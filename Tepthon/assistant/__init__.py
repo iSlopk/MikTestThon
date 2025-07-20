@@ -1,4 +1,4 @@
-from Tepthon import BOTLOG, BOTLOG_CHATID, zedub
+from Mikthon import BOTLOG, BOTLOG_CHATID, zedub
 
 from ..Config import Config
 from ..core.inlinebot import *
