@@ -46,10 +46,10 @@ if Config.ZELZAL_A:
                 continue
             plugin_name = plugin.file.name
             if plugin_name.endswith(".py"):
-                if os.path.exists(f"Tepthon/plugins/{plugin_name}"):
+                if os.path.exists(f"Mikthon/plugins/{plugin_name}"):
                     continue
                 downloaded_file_name = await zedub.download_media(
-                    plugin, "Tepthon/plugins/"
+                    plugin, "Mikthon/plugins/"
                 )
                 path1 = Path(downloaded_file_name)
                 shortname = path1.stem
