@@ -10,8 +10,8 @@ from Mikthon import zedub
 @zedub.tgbot.on(CallbackQuery(data=re.compile(b"hide_(.*)")))
 async def on_plug_in_callback_query_handler(event):
     timestamp = int(event.pattern_match.group(1).decode("UTF-8"))
-    if os.path.exists("./Tepthon/hide.txt"):
-        jsondata = json.load(open("./Tepthon/hide.txt"))
+    if os.path.exists("./Mikthon/hide.txt"):
+        jsondata = json.load(open("./Mikthon/hide.txt"))
         try:
             reply_pop_up_alert = jsondata[f"{timestamp}"]["text"]
         except KeyError:
