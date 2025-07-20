@@ -17,8 +17,8 @@ async def on_plug_in_callback_query_handler(event):
         zzz = await event.client.get_entity(ussr)
     except ValueError:
         return
-    if os.path.exists("./Tepthon/secret.txt"):
-        jsondata = json.load(open("./Tepthon/secret.txt"))
+    if os.path.exists("./Mikthon/secret.txt"):
+        jsondata = json.load(open("./Mikthon/secret.txt"))
         try:
             message = jsondata[f"{timestamp}"]
             userid = message["userid"]
