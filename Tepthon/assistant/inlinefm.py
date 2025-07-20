@@ -9,11 +9,11 @@ from telethon import Button, types
 from telethon.events import CallbackQuery
 from telethon.utils import get_attributes
 
-from Tepthon import zedub
-from Tepthon.Config import Config
-from Tepthon.core.decorators import check_owner
-from Tepthon.helpers import humanbytes, progress
-from Tepthon.helpers.utils import _zedutils
+from Mikthon import zedub
+from Mikthon.Config import Config
+from Mikthon.core.decorators import check_owner
+from Mikthon.helpers import humanbytes, progress
+from Mikthon.helpers.utils import _zedutils
 
 CC = []
 PATH = []  # using list method for some reason
