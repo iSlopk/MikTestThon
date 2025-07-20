@@ -26,7 +26,7 @@ from youtubesearchpython import VideosSearch
 
 
 
-from Tepthon import zedub
+from Mikthon import zedub
 
 
 
