@@ -1,4 +1,4 @@
-from Tepthon import zedub
+from Mikthon import zedub
 
 from ..core.managers import edit_or_reply
 from ..helpers.utils import _format
