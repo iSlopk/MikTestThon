@@ -18,7 +18,7 @@ from telethon.events import CallbackQuery
 from telethon.utils import get_attributes
 from wget import download
 
-from Tepthon import zedub
+from Mikthon import zedub
 
 from ..Config import Config
 from ..core import check_owner, pool
