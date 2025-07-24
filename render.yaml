@@ -10,7 +10,7 @@ services:
     env: python
     repo: https://github.com/iSlopk/MikTestThon
     buildCommand: pip install -U -r requirements.txt
-    startCommand: python3 server.py & python3 -m Tepthon
+    startCommand: python3 server.py & python3 -m Mikthon
     region: frankfurt
     envVars:
       - key: ALIVE_NAME
