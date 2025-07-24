@@ -14,7 +14,7 @@ from ..helpers.tools import media_type
 from ..helpers.utils import _zedtools, _zedutils, _format, install_pip, reply_id
 from .decorators import admin_cmd, sudo_cmd
 
-LOGS = logging.getLogger("ZThon")
+LOGS = logging.getLogger("Mikthon")
 inst_done = "✅ تـم تنصيب سـورس ميكثـون .. بنجـاح ⌔\n♥️ اذهب إلى تليجرام الان ⌔\n💡 ثم أرسـل الأمـر ( .الاوامر ) ⌔" 
 
 def load_module(shortname, plugin_path=None):
@@ -23,7 +23,7 @@ def load_module(shortname, plugin_path=None):
     elif shortname.endswith("_"):
         path = Path(f"Mikthon/plugins/{shortname}.py")
         checkplugins(path)
-        name = "Tepthon.plugins.{}".format(shortname)
+        name = "Mikthon.plugins.{}".format(shortname)
         spec = importlib.util.spec_from_file_location(name, path)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
@@ -31,7 +31,7 @@ def load_module(shortname, plugin_path=None):
     else:
         if plugin_path is None:
             path = Path(f"Mikthon/plugins/{shortname}.py")
-            name = f"Tepthon.plugins.{shortname}"
+            name = f"Mikthon.plugins.{shortname}"
         else:
             path = Path((f"{plugin_path}/{shortname}.py"))
             name = f"{plugin_path}/{shortname}".replace("/", ".")
@@ -58,7 +58,7 @@ def load_module(shortname, plugin_path=None):
         mod.borg = zedub
         spec.loader.exec_module(mod)
         # for imports
-        sys.modules[f"Tepthon.plugins.{shortname}"] = mod
+        sys.modules[f"Mikthon.plugins.{shortname}"] = mod
         LOGS.info(f"Successfully imported {shortname}")
 
 
@@ -68,7 +68,7 @@ def lload_module(shortname, plugin_path=None):
     elif shortname.endswith("_"):
         path = Path(f"Mikthon/plugins/{shortname}.py")
         checkplugins(path)
-        name = "Tepthon.plugins.{}".format(shortname)
+        name = "Mikthon.plugins.{}".format(shortname)
         spec = importlib.util.spec_from_file_location(name, path)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
@@ -76,7 +76,7 @@ def lload_module(shortname, plugin_path=None):
     else:
         if plugin_path is None:
             path = Path(f"Mikthon/plugins/{shortname}.py")
-            name = f"Tepthon.plugins.{shortname}"
+            name = f"Mikthon.plugins.{shortname}"
         else:
             path = Path((f"{plugin_path}/{shortname}.py"))
             name = f"{plugin_path}/{shortname}".replace("/", ".")
@@ -103,7 +103,7 @@ def lload_module(shortname, plugin_path=None):
         mod.borg = zedub
         spec.loader.exec_module(mod)
         # for imports
-        sys.modules[f"Tepthon.plugins.{shortname}"] = mod
+        sys.modules[f"Mikthon.plugins.{shortname}"] = mod
         print("Successfully imported library")
 
 
@@ -127,7 +127,7 @@ def remove_plugin(shortname):
             zedub.remove_event_handler(i)
         del LOAD_PLUG[shortname]
     try:
-        name = f"Tepthon.plugins.{shortname}"
+        name = f"Mikthon.plugins.{shortname}"
         for i in reversed(range(len(zedub._event_builders))):
             ev, cb = zedub._event_builders[i]
             if cb.__module__ == name:
