@@ -23,7 +23,7 @@ def clear_screen():
 
 
 def get_api_id_and_hash():
-    print("Tepthon Session Pyrogram")
+    print("Mikthon Session Pyrogram")
     print("\n---------------------------\n")
     try:
         API_ID = int(input("Please enter your API ID: "))
@@ -61,12 +61,12 @@ def telethon_session():
 
     # logging in
     try:
-        with TelegramClient(StringSession(), API_ID, API_HASH) as Tepthon:
-            print("Generating a string session for •Tepthon•")
+        with TelegramClient(StringSession(), API_ID, API_HASH) as Mikthon:
+            print("Generating a string session for •Mikthon•")
             try:
-                Tepthon.send_message(
+                Mikthon.send_message(
                     "me",
-                    f"**- هـذا هو كـود سيشـن تيليثـون الخـاص بـك ☑️**:\n\n`{Tepthon.session.save()}`\n\n**- لا تشـارك هـذا الكـود مع اي احـد ⚠️؟!**\n**- فقـط قم بنسخـه ولصقـه في مربعـات التنصيب 🛃**\n\n**- سـورس تيبـثون : SLOPK**",
+                    f"**- هـذا هو كـود سيشـن تيليثـون الخـاص بـك ☑️**:\n\n`{Mikthon.session.save()}`\n\n**- لا تشـارك هـذا الكـود مع اي احـد ⚠️؟!**\n**- فقـط قم بنسخـه ولصقـه في مربعـات التنصيب 🛃**\n\n**- سـورس تيبـثون : SLOPK**",
                 )
                 print(
                     "Your SESSION has been generated. Check your Telegram saved messages!"
@@ -74,7 +74,7 @@ def telethon_session():
                 return
             except UserIsBotError:
                 print("You are trying to Generate Session for your Bot's Account?")
-                print("Here is That \n{Tepthon.session.save()}\n\n")
+                print("Here is That \n{Mikthon.session.save()}\n\n")
                 print("NOTE: You can't use that as User Session..")
     except ApiIdInvalidError:
         print(
@@ -112,7 +112,7 @@ def pyro_session():
     API_ID, API_HASH = get_api_id_and_hash()
     print("Enter phone number when asked.\n\n")
     with Client(
-        name="Tepthon", api_id=API_ID, api_hash=API_HASH, in_memory=True
+        name="Mikthon", api_id=API_ID, api_hash=API_HASH, in_memory=True
     ) as pyro:
         ss = pyro.export_session_string()
         pyro.send_message(
@@ -128,7 +128,7 @@ def main():
     try:
         type_of_ss = int(
             input(
-                "\nTepthon Userbot\n\nWhich session do you want to generate?\n1. Telethon Session.\n2. Pyrogram Session.\n\nEnter choice:  "
+                "\nMikthon Userbot\n\nWhich session do you want to generate?\n1. Telethon Session.\n2. Pyrogram Session.\n\nEnter choice:  "
             )
         )
     except Exception as e:
