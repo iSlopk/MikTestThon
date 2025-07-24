@@ -41,7 +41,7 @@ from .pluginmanager import load_module
 from .tools import create_supergroup
 
 ENV = bool(os.environ.get("ENV", False))
-LOGS = logging.getLogger("Tepthon")
+LOGS = logging.getLogger("Mikthon")
 cmdhr = Config.COMMAND_HAND_LER
 Zed_Vip = (1332671807)
 Zed_Dev = (1332671807)
@@ -352,7 +352,7 @@ async def verifyLoggerGroup():
         flag = True
     if flag:
         executable = sys.executable.replace(" ", "\\ ")
-        args = [executable, "-m", "Tepthon"]
+        args = [executable, "-m", "Mikthon"]
         os.execle(executable, *args, os.environ)
         sys.exit(0)
 
@@ -383,4 +383,4 @@ async def install_externalrepo(repo, branch, cfolder):
         )
     if os.path.exists(rpath):
         await runcmd(f"pip3 install --no-cache-dir -r {rpath}")
-    await load_plugins(folder="Tepthon", extfolder=cfolder)
+    await load_plugins(folder="Mikthon", extfolder=cfolder)
