@@ -1,5 +1,5 @@
 import sys, asyncio
-import Tepthon
+import Mikthon
 from Mikthon import BOTLOG_CHATID, HEROKU_APP, PM_LOGGER_GROUP_ID
 from telethon import functions
 from .Config import Config
